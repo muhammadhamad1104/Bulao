@@ -36,7 +36,7 @@ async def run(user_text: str) -> Intent:
 
     try:
         response = client.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-2.0-flash',
             contents=user_text,
             config={
                 'system_instruction': _SYSTEM_PROMPT,
@@ -54,7 +54,7 @@ async def run(user_text: str) -> Intent:
     except json.JSONDecodeError:
         try:
             response2 = client.models.generate_content(
-                model='gemini-2.5-flash',
+                model='gemini-2.0-flash',
                 contents=user_text + "\n\nReturn ONLY valid JSON. No markdown.",
                 config={
                     'system_instruction': _SYSTEM_PROMPT,
@@ -80,16 +80,16 @@ async def run(user_text: str) -> Intent:
 def _fallback_intent(user_text: str, reason: str, confidence: float = 0.3) -> Intent:
     """Best-effort keyword-based fallback when the LLM fails."""
     keywords = {
-        "plumber": ["plumber","pani","leak","nal","pipe","ghouse"],
-        "electrician": ["electrician","bijli","light","wiring","switch"],
-        "ac_technician": ["ac","air condition","inverter","split","window"],
-        "geyser_technician": ["geyser","heater","garam pani"],
-        "carpenter": ["carpenter","lakdi","wood","furniture","cupboard"],
-        "painter": ["paint","painter","rang","color"],
-        "beautician": ["beautician","makeup","bridal","facial","hair"],
-        "tutor": ["tutor","teacher","ustaad","math","english"],
-        "appliance_repair": ["fridge","washing machine","oven","appliance"],
-        "gas_leak_specialist": ["gas leak","gas smell"],
+        "plumber": ["plumber", "pani", "leak", "nal", "pipe", "tank", "motor", "sink", "drain", "water"],
+        "electrician": ["electrician", "bijli", "light", "wiring", "switch", "fan", "board", "current", "power", "short"],
+        "ac_technician": ["ac", "air condition", "inverter", "split", "window", "cooling", "gas charge", "chiller"],
+        "geyser_technician": ["geyser", "heater", "garam", "hot water"],
+        "carpenter": ["carpenter", "lakdi", "wood", "furniture", "door", "cabinet", "lock", "bench", "table"],
+        "painter": ["paint", "rang", "color", "wall", "interior", "exterior", "texture"],
+        "beautician": ["beautician", "makeup", "bridal", "mehndi", "facial", "threading", "waxing", "salon"],
+        "tutor": ["tutor", "teacher", "math", "physics", "o levels", "a levels", "matric", "academy", "home tuition"],
+        "appliance_repair": ["fridge", "washing machine", "oven", "microwave", "tv", "refrigerator", "machine"],
+        "gas_leak_specialist": ["gas leak", "gas smell", "cylinder", "regulator", "stove", "chulha"],
     }
     text_lower = user_text.lower()
     service = "plumber"
@@ -98,15 +98,21 @@ def _fallback_intent(user_text: str, reason: str, confidence: float = 0.3) -> In
             service = svc
             break
 
+    # Better complexity detection
+    is_complex = any(x in text_lower for x in ["inverter", "bridal", "pcb", "rewiring", "structural", "expert", "specialist", "heavy", "exterior", "complex"])
+    is_basic = any(x in text_lower for x in ["leak", "tap", "unclog", "bulb", "basic", "chota", "halki", "minor"])
+    
+    complexity = "complex" if is_complex else "basic" if is_basic else "intermediate"
+    
     return Intent(
         service_type=service,
         location=None,
         city="Islamabad",
-        time_window="flexible",
-        urgency="normal",
-        job_complexity="basic",
-        gender_preference="any",
+        time_window="now" if any(x in text_lower for x in ["abhi", "foran", "urgent", "emergency", "jaldi"]) else "flexible",
+        urgency="emergency" if any(x in text_lower for x in ["leak", "short", "fire", "emergency", "foran"]) else "normal",
+        job_complexity=complexity,
+        gender_preference="female" if any(x in text_lower for x in ["female", "bridal", "makeup", "beautician"]) else "any",
         confidence=confidence,
-        clarification_question="Aap ne kya kaam karwana hai? Sector ya area ka naam bhi batayein." if confidence < 0.7 else None,
+        clarification_question="Aap kis ilaake mein hain? (jaise G-13, F-10)" if confidence < 0.7 else None,
         raw_notes=f"fallback:{reason}"
     )
