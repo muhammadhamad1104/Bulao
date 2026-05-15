@@ -1,0 +1,4390 @@
+[
+  {
+    "id": "prov_001",
+    "name": "Bilal Hussain Electrician",
+    "service_categories": [
+      "electrician"
+    ],
+    "specializations": [
+      "house_wiring",
+      "ups_install"
+    ],
+    "lat": 33.513227,
+    "lng": 73.094831,
+    "neighborhood": "Bahria Town Phase 4",
+    "city": "Islamabad",
+    "rating": 4.2,
+    "completed_jobs": 199,
+    "completed_jobs_by_neighborhood": {
+      "Bahria Town Phase 4": 74
+    },
+    "on_time_score": 0.85,
+    "cancellation_rate": 0.07,
+    "review_recency_days": 36,
+    "risk_score": 0.25,
+    "current_workload": 0.01,
+    "available_slots": [
+      "2026-05-16T15:00:00+05:00",
+      "2026-05-19T09:00:00+05:00",
+      "2026-05-19T10:00:00+05:00",
+      "2026-05-20T16:00:00+05:00"
+    ],
+    "phone": "+923331429110",
+    "gender": "male",
+    "years_experience": 23,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 500,
+    "rate_per_hour_pkr": 1000,
+    "price_range_pkr": [
+      1020,
+      5757
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_002",
+    "name": "Ayesha Butt Appliance Repair",
+    "service_categories": [
+      "appliance_repair",
+      "beautician"
+    ],
+    "specializations": [],
+    "lat": 33.681134,
+    "lng": 73.04065,
+    "neighborhood": "G-9",
+    "city": "Islamabad",
+    "rating": 4.3,
+    "completed_jobs": 112,
+    "completed_jobs_by_neighborhood": {
+      "G-9": 78
+    },
+    "on_time_score": 0.8,
+    "cancellation_rate": 0.01,
+    "review_recency_days": 85,
+    "risk_score": 0.08,
+    "current_workload": 0.29,
+    "available_slots": [
+      "2026-05-19T11:00:00+05:00",
+      "2026-05-19T17:00:00+05:00",
+      "2026-05-21T16:00:00+05:00"
+    ],
+    "phone": "+923320709497",
+    "gender": "female",
+    "years_experience": 8,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 600,
+    "rate_per_hour_pkr": 1200,
+    "price_range_pkr": [
+      1264,
+      5988
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_003",
+    "name": "Zain Hussain Appliance Repair",
+    "service_categories": [
+      "appliance_repair"
+    ],
+    "specializations": [],
+    "lat": 33.69209,
+    "lng": 73.06364,
+    "neighborhood": "G-7",
+    "city": "Islamabad",
+    "rating": 4.5,
+    "completed_jobs": 28,
+    "completed_jobs_by_neighborhood": {
+      "G-7": 45
+    },
+    "on_time_score": 0.85,
+    "cancellation_rate": 0.01,
+    "review_recency_days": 73,
+    "risk_score": 0.27,
+    "current_workload": 0.31,
+    "available_slots": [
+      "2026-05-16T17:00:00+05:00",
+      "2026-05-20T11:00:00+05:00",
+      "2026-05-21T09:00:00+05:00",
+      "2026-05-21T17:00:00+05:00"
+    ],
+    "phone": "+923397971488",
+    "gender": "male",
+    "years_experience": 16,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 600,
+    "rate_per_hour_pkr": 1000,
+    "price_range_pkr": [
+      1071,
+      4143
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_004",
+    "name": "Mahnoor Qureshi Painter",
+    "service_categories": [
+      "painter",
+      "ac_technician"
+    ],
+    "specializations": [],
+    "lat": 33.66578,
+    "lng": 73.01994,
+    "neighborhood": "G-11",
+    "city": "Islamabad",
+    "rating": 4.6,
+    "completed_jobs": 36,
+    "completed_jobs_by_neighborhood": {
+      "G-11": 54
+    },
+    "on_time_score": 0.85,
+    "cancellation_rate": 0.15,
+    "review_recency_days": 68,
+    "risk_score": 0.09,
+    "current_workload": 0.55,
+    "available_slots": [
+      "2026-05-15T10:00:00+05:00",
+      "2026-05-15T17:00:00+05:00",
+      "2026-05-15T17:00:00+05:00",
+      "2026-05-18T15:00:00+05:00",
+      "2026-05-20T10:00:00+05:00",
+      "2026-05-21T16:00:00+05:00"
+    ],
+    "phone": "+923311540956",
+    "gender": "female",
+    "years_experience": 22,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 800,
+    "rate_per_hour_pkr": 1200,
+    "price_range_pkr": [
+      1456,
+      5786
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_005",
+    "name": "Iqra Hussain Appliance Repair",
+    "service_categories": [
+      "appliance_repair"
+    ],
+    "specializations": [],
+    "lat": 33.682363,
+    "lng": 73.023765,
+    "neighborhood": "G-9",
+    "city": "Islamabad",
+    "rating": 4.5,
+    "completed_jobs": 173,
+    "completed_jobs_by_neighborhood": {
+      "G-9": 46
+    },
+    "on_time_score": 0.87,
+    "cancellation_rate": 0.02,
+    "review_recency_days": 47,
+    "risk_score": 0.27,
+    "current_workload": 0.83,
+    "available_slots": [
+      "2026-05-16T11:00:00+05:00",
+      "2026-05-19T09:00:00+05:00",
+      "2026-05-19T17:00:00+05:00",
+      "2026-05-21T10:00:00+05:00"
+    ],
+    "phone": "+923351273847",
+    "gender": "female",
+    "years_experience": 8,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 800,
+    "rate_per_hour_pkr": 800,
+    "price_range_pkr": [
+      887,
+      6981
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_006",
+    "name": "Iqra Hussain Carpenter",
+    "service_categories": [
+      "carpenter"
+    ],
+    "specializations": [],
+    "lat": 33.595654,
+    "lng": 73.040515,
+    "neighborhood": "Saddar Rawalpindi",
+    "city": "Rawalpindi",
+    "rating": 4.1,
+    "completed_jobs": 132,
+    "completed_jobs_by_neighborhood": {
+      "Saddar Rawalpindi": 71
+    },
+    "on_time_score": 0.86,
+    "cancellation_rate": 0.04,
+    "review_recency_days": 9,
+    "risk_score": 0.11,
+    "current_workload": 0.59,
+    "available_slots": [
+      "2026-05-16T15:00:00+05:00",
+      "2026-05-18T16:00:00+05:00",
+      "2026-05-20T10:00:00+05:00",
+      "2026-05-20T11:00:00+05:00",
+      "2026-05-20T11:00:00+05:00",
+      "2026-05-21T16:00:00+05:00"
+    ],
+    "phone": "+923340885476",
+    "gender": "female",
+    "years_experience": 19,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 300,
+    "rate_per_hour_pkr": 2500,
+    "price_range_pkr": [
+      1446,
+      3482
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_007",
+    "name": "Usman Butt Geyser Technician",
+    "service_categories": [
+      "geyser_technician"
+    ],
+    "specializations": [],
+    "lat": 31.452728,
+    "lng": 74.405309,
+    "neighborhood": "DHA Lahore Phase 5",
+    "city": "Lahore",
+    "rating": 4.2,
+    "completed_jobs": 125,
+    "completed_jobs_by_neighborhood": {
+      "DHA Lahore Phase 5": 64
+    },
+    "on_time_score": 0.97,
+    "cancellation_rate": 0.01,
+    "review_recency_days": 84,
+    "risk_score": 0.3,
+    "current_workload": 0.1,
+    "available_slots": [
+      "2026-05-15T09:00:00+05:00",
+      "2026-05-16T17:00:00+05:00",
+      "2026-05-17T14:00:00+05:00",
+      "2026-05-18T10:00:00+05:00",
+      "2026-05-18T17:00:00+05:00",
+      "2026-05-20T14:00:00+05:00"
+    ],
+    "phone": "+923364038913",
+    "gender": "male",
+    "years_experience": 24,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 300,
+    "rate_per_hour_pkr": 1000,
+    "price_range_pkr": [
+      996,
+      4558
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_008",
+    "name": "Ahmed Butt Appliance Repair",
+    "service_categories": [
+      "appliance_repair",
+      "gas_leak_specialist"
+    ],
+    "specializations": [],
+    "lat": 33.705238,
+    "lng": 73.029271,
+    "neighborhood": "F-8",
+    "city": "Islamabad",
+    "rating": 3.6,
+    "completed_jobs": 144,
+    "completed_jobs_by_neighborhood": {
+      "F-8": 66
+    },
+    "on_time_score": 0.8,
+    "cancellation_rate": 0.06,
+    "review_recency_days": 8,
+    "risk_score": 0.07,
+    "current_workload": 0.0,
+    "available_slots": [
+      "2026-05-15T17:00:00+05:00",
+      "2026-05-16T14:00:00+05:00",
+      "2026-05-21T10:00:00+05:00"
+    ],
+    "phone": "+923362401521",
+    "gender": "male",
+    "years_experience": 9,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 600,
+    "rate_per_hour_pkr": 1200,
+    "price_range_pkr": [
+      1233,
+      7552
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_009",
+    "name": "Zain Mughal Plumber",
+    "service_categories": [
+      "plumber"
+    ],
+    "specializations": [
+      "geyser_leak",
+      "drain_cleaning"
+    ],
+    "lat": 33.668096,
+    "lng": 73.020934,
+    "neighborhood": "G-10",
+    "city": "Islamabad",
+    "rating": 3.9,
+    "completed_jobs": 192,
+    "completed_jobs_by_neighborhood": {
+      "G-10": 35
+    },
+    "on_time_score": 0.85,
+    "cancellation_rate": 0.14,
+    "review_recency_days": 73,
+    "risk_score": 0.09,
+    "current_workload": 0.59,
+    "available_slots": [
+      "2026-05-15T15:00:00+05:00",
+      "2026-05-15T17:00:00+05:00",
+      "2026-05-16T09:00:00+05:00",
+      "2026-05-19T09:00:00+05:00"
+    ],
+    "phone": "+923393131979",
+    "gender": "male",
+    "years_experience": 3,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 800,
+    "rate_per_hour_pkr": 2000,
+    "price_range_pkr": [
+      1335,
+      5591
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_010",
+    "name": "Sara Hussain Carpenter",
+    "service_categories": [
+      "carpenter"
+    ],
+    "specializations": [],
+    "lat": 33.693895,
+    "lng": 73.016784,
+    "neighborhood": "F-10",
+    "city": "Islamabad",
+    "rating": 4.1,
+    "completed_jobs": 157,
+    "completed_jobs_by_neighborhood": {
+      "F-10": 32
+    },
+    "on_time_score": 0.88,
+    "cancellation_rate": 0.02,
+    "review_recency_days": 45,
+    "risk_score": 0.27,
+    "current_workload": 0.88,
+    "available_slots": [
+      "2026-05-15T09:00:00+05:00",
+      "2026-05-15T14:00:00+05:00",
+      "2026-05-19T15:00:00+05:00"
+    ],
+    "phone": "+923359597086",
+    "gender": "female",
+    "years_experience": 10,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 800,
+    "rate_per_hour_pkr": 2500,
+    "price_range_pkr": [
+      1109,
+      7333
+    ],
+    "verified": false
+  },
+  {
+    "id": "prov_011",
+    "name": "Hassan Malik Electrician",
+    "service_categories": [
+      "electrician"
+    ],
+    "specializations": [
+      "switchboard",
+      "fan_install"
+    ],
+    "lat": 24.803092,
+    "lng": 67.072935,
+    "neighborhood": "DHA Karachi Phase 6",
+    "city": "Karachi",
+    "rating": 4.3,
+    "completed_jobs": 43,
+    "completed_jobs_by_neighborhood": {
+      "DHA Karachi Phase 6": 59
+    },
+    "on_time_score": 0.96,
+    "cancellation_rate": 0.01,
+    "review_recency_days": 43,
+    "risk_score": 0.24,
+    "current_workload": 0.64,
+    "available_slots": [
+      "2026-05-16T16:00:00+05:00",
+      "2026-05-17T15:00:00+05:00",
+      "2026-05-18T11:00:00+05:00",
+      "2026-05-20T17:00:00+05:00",
+      "2026-05-21T09:00:00+05:00"
+    ],
+    "phone": "+923345159040",
+    "gender": "male",
+    "years_experience": 6,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 800,
+    "rate_per_hour_pkr": 2500,
+    "price_range_pkr": [
+      1237,
+      7594
+    ],
+    "verified": false
+  },
+  {
+    "id": "prov_012",
+    "name": "Saad Khan Painter",
+    "service_categories": [
+      "painter"
+    ],
+    "specializations": [],
+    "lat": 33.726501,
+    "lng": 73.05692,
+    "neighborhood": "F-7",
+    "city": "Islamabad",
+    "rating": 4.5,
+    "completed_jobs": 250,
+    "completed_jobs_by_neighborhood": {
+      "F-7": 50
+    },
+    "on_time_score": 0.8,
+    "cancellation_rate": 0.04,
+    "review_recency_days": 14,
+    "risk_score": 0.12,
+    "current_workload": 0.56,
+    "available_slots": [
+      "2026-05-15T11:00:00+05:00",
+      "2026-05-17T17:00:00+05:00",
+      "2026-05-18T10:00:00+05:00",
+      "2026-05-21T09:00:00+05:00"
+    ],
+    "phone": "+923364543049",
+    "gender": "male",
+    "years_experience": 20,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 1000,
+    "price_range_pkr": [
+      981,
+      6377
+    ],
+    "verified": false
+  },
+  {
+    "id": "prov_013",
+    "name": "Hina Malik Ac Technician",
+    "service_categories": [
+      "ac_technician"
+    ],
+    "specializations": [
+      "inverter_ac",
+      "split_ac"
+    ],
+    "lat": 33.51849,
+    "lng": 73.155648,
+    "neighborhood": "DHA Islamabad Phase 2",
+    "city": "Islamabad",
+    "rating": 4.8,
+    "completed_jobs": 78,
+    "completed_jobs_by_neighborhood": {
+      "DHA Islamabad Phase 2": 33
+    },
+    "on_time_score": 0.76,
+    "cancellation_rate": 0.03,
+    "review_recency_days": 43,
+    "risk_score": 0.1,
+    "current_workload": 0.07,
+    "available_slots": [
+      "2026-05-16T17:00:00+05:00",
+      "2026-05-17T17:00:00+05:00",
+      "2026-05-18T11:00:00+05:00",
+      "2026-05-21T17:00:00+05:00"
+    ],
+    "phone": "+923347463522",
+    "gender": "female",
+    "years_experience": 12,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 600,
+    "rate_per_hour_pkr": 2500,
+    "price_range_pkr": [
+      1349,
+      5712
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_014",
+    "name": "Ayesha Ali Gas Leak Specialist",
+    "service_categories": [
+      "gas_leak_specialist"
+    ],
+    "specializations": [],
+    "lat": 33.725141,
+    "lng": 73.048324,
+    "neighborhood": "F-7",
+    "city": "Islamabad",
+    "rating": 3.8,
+    "completed_jobs": 131,
+    "completed_jobs_by_neighborhood": {
+      "F-7": 5
+    },
+    "on_time_score": 0.88,
+    "cancellation_rate": 0.12,
+    "review_recency_days": 88,
+    "risk_score": 0.22,
+    "current_workload": 0.74,
+    "available_slots": [
+      "2026-05-15T16:00:00+05:00",
+      "2026-05-16T11:00:00+05:00",
+      "2026-05-18T15:00:00+05:00",
+      "2026-05-18T15:00:00+05:00",
+      "2026-05-19T09:00:00+05:00"
+    ],
+    "phone": "+923336445607",
+    "gender": "female",
+    "years_experience": 12,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 500,
+    "rate_per_hour_pkr": 2000,
+    "price_range_pkr": [
+      1121,
+      4020
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_015",
+    "name": "Sara Malik Appliance Repair",
+    "service_categories": [
+      "appliance_repair",
+      "beautician"
+    ],
+    "specializations": [],
+    "lat": 33.685142,
+    "lng": 73.012838,
+    "neighborhood": "F-11",
+    "city": "Islamabad",
+    "rating": 4.1,
+    "completed_jobs": 93,
+    "completed_jobs_by_neighborhood": {
+      "F-11": 31
+    },
+    "on_time_score": 0.86,
+    "cancellation_rate": 0.09,
+    "review_recency_days": 84,
+    "risk_score": 0.11,
+    "current_workload": 0.44,
+    "available_slots": [
+      "2026-05-15T11:00:00+05:00",
+      "2026-05-17T14:00:00+05:00",
+      "2026-05-19T15:00:00+05:00",
+      "2026-05-19T17:00:00+05:00"
+    ],
+    "phone": "+923338682516",
+    "gender": "female",
+    "years_experience": 17,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 2500,
+    "price_range_pkr": [
+      886,
+      5324
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_016",
+    "name": "Usman Ahmed Geyser Technician",
+    "service_categories": [
+      "geyser_technician",
+      "plumber"
+    ],
+    "specializations": [],
+    "lat": 33.523385,
+    "lng": 73.081868,
+    "neighborhood": "Bahria Town Phase 4",
+    "city": "Islamabad",
+    "rating": 4.0,
+    "completed_jobs": 167,
+    "completed_jobs_by_neighborhood": {
+      "Bahria Town Phase 4": 29
+    },
+    "on_time_score": 0.93,
+    "cancellation_rate": 0.06,
+    "review_recency_days": 52,
+    "risk_score": 0.09,
+    "current_workload": 0.66,
+    "available_slots": [
+      "2026-05-15T14:00:00+05:00",
+      "2026-05-18T15:00:00+05:00",
+      "2026-05-18T16:00:00+05:00",
+      "2026-05-21T17:00:00+05:00"
+    ],
+    "phone": "+923310744212",
+    "gender": "male",
+    "years_experience": 25,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 300,
+    "rate_per_hour_pkr": 1500,
+    "price_range_pkr": [
+      1024,
+      4440
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_017",
+    "name": "Ahmed Butt Ac Technician",
+    "service_categories": [
+      "ac_technician"
+    ],
+    "specializations": [
+      "window_ac",
+      "split_ac"
+    ],
+    "lat": 33.510359,
+    "lng": 73.141004,
+    "neighborhood": "DHA Islamabad Phase 2",
+    "city": "Islamabad",
+    "rating": 3.9,
+    "completed_jobs": 183,
+    "completed_jobs_by_neighborhood": {
+      "DHA Islamabad Phase 2": 40
+    },
+    "on_time_score": 0.94,
+    "cancellation_rate": 0.08,
+    "review_recency_days": 81,
+    "risk_score": 0.09,
+    "current_workload": 0.44,
+    "available_slots": [
+      "2026-05-16T17:00:00+05:00",
+      "2026-05-17T17:00:00+05:00",
+      "2026-05-18T10:00:00+05:00",
+      "2026-05-18T14:00:00+05:00",
+      "2026-05-20T17:00:00+05:00",
+      "2026-05-21T15:00:00+05:00"
+    ],
+    "phone": "+923348349783",
+    "gender": "male",
+    "years_experience": 8,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 500,
+    "rate_per_hour_pkr": 2000,
+    "price_range_pkr": [
+      882,
+      4133
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_018",
+    "name": "Tariq Qureshi Painter",
+    "service_categories": [
+      "painter"
+    ],
+    "specializations": [],
+    "lat": 33.693079,
+    "lng": 73.037828,
+    "neighborhood": "G-9",
+    "city": "Islamabad",
+    "rating": 3.9,
+    "completed_jobs": 117,
+    "completed_jobs_by_neighborhood": {
+      "G-9": 66
+    },
+    "on_time_score": 0.75,
+    "cancellation_rate": 0.05,
+    "review_recency_days": 50,
+    "risk_score": 0.26,
+    "current_workload": 0.95,
+    "available_slots": [
+      "2026-05-15T10:00:00+05:00",
+      "2026-05-15T17:00:00+05:00",
+      "2026-05-18T17:00:00+05:00",
+      "2026-05-19T16:00:00+05:00",
+      "2026-05-21T14:00:00+05:00",
+      "2026-05-21T15:00:00+05:00"
+    ],
+    "phone": "+923366240084",
+    "gender": "male",
+    "years_experience": 18,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 800,
+    "rate_per_hour_pkr": 2000,
+    "price_range_pkr": [
+      1025,
+      6999
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_019",
+    "name": "Fatima Butt Ac Technician",
+    "service_categories": [
+      "ac_technician"
+    ],
+    "specializations": [
+      "inverter_ac",
+      "split_ac"
+    ],
+    "lat": 33.688913,
+    "lng": 73.031477,
+    "neighborhood": "G-9",
+    "city": "Islamabad",
+    "rating": 3.9,
+    "completed_jobs": 32,
+    "completed_jobs_by_neighborhood": {
+      "G-9": 38
+    },
+    "on_time_score": 0.84,
+    "cancellation_rate": 0.03,
+    "review_recency_days": 42,
+    "risk_score": 0.11,
+    "current_workload": 0.88,
+    "available_slots": [
+      "2026-05-16T17:00:00+05:00",
+      "2026-05-18T10:00:00+05:00",
+      "2026-05-20T14:00:00+05:00"
+    ],
+    "phone": "+923347346970",
+    "gender": "female",
+    "years_experience": 25,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 600,
+    "rate_per_hour_pkr": 1200,
+    "price_range_pkr": [
+      883,
+      6852
+    ],
+    "verified": false
+  },
+  {
+    "id": "prov_020",
+    "name": "Ahmed Khan Plumber",
+    "service_categories": [
+      "plumber"
+    ],
+    "specializations": [
+      "tap_replacement",
+      "geyser_leak"
+    ],
+    "lat": 33.656042,
+    "lng": 73.024038,
+    "neighborhood": "G-11",
+    "city": "Islamabad",
+    "rating": 4.0,
+    "completed_jobs": 199,
+    "completed_jobs_by_neighborhood": {
+      "G-11": 37
+    },
+    "on_time_score": 0.94,
+    "cancellation_rate": 0.03,
+    "review_recency_days": 78,
+    "risk_score": 0.29,
+    "current_workload": 0.72,
+    "available_slots": [
+      "2026-05-15T15:00:00+05:00",
+      "2026-05-16T10:00:00+05:00",
+      "2026-05-16T14:00:00+05:00",
+      "2026-05-18T16:00:00+05:00"
+    ],
+    "phone": "+923331980274",
+    "gender": "male",
+    "years_experience": 10,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 300,
+    "rate_per_hour_pkr": 1200,
+    "price_range_pkr": [
+      1389,
+      6074
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_021",
+    "name": "Ahmed Malik Gas Leak Specialist",
+    "service_categories": [
+      "gas_leak_specialist"
+    ],
+    "specializations": [],
+    "lat": 33.503967,
+    "lng": 73.151842,
+    "neighborhood": "DHA Islamabad Phase 2",
+    "city": "Islamabad",
+    "rating": 4.4,
+    "completed_jobs": 149,
+    "completed_jobs_by_neighborhood": {
+      "DHA Islamabad Phase 2": 48
+    },
+    "on_time_score": 0.75,
+    "cancellation_rate": 0.06,
+    "review_recency_days": 63,
+    "risk_score": 0.05,
+    "current_workload": 0.96,
+    "available_slots": [
+      "2026-05-17T09:00:00+05:00",
+      "2026-05-17T15:00:00+05:00",
+      "2026-05-18T16:00:00+05:00"
+    ],
+    "phone": "+923395306788",
+    "gender": "male",
+    "years_experience": 15,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 600,
+    "rate_per_hour_pkr": 1000,
+    "price_range_pkr": [
+      1334,
+      5212
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_022",
+    "name": "Mahnoor Malik Painter",
+    "service_categories": [
+      "painter"
+    ],
+    "specializations": [],
+    "lat": 31.462863,
+    "lng": 74.40837,
+    "neighborhood": "DHA Lahore Phase 5",
+    "city": "Lahore",
+    "rating": 3.9,
+    "completed_jobs": 176,
+    "completed_jobs_by_neighborhood": {
+      "DHA Lahore Phase 5": 53
+    },
+    "on_time_score": 0.83,
+    "cancellation_rate": 0.07,
+    "review_recency_days": 42,
+    "risk_score": 0.07,
+    "current_workload": 0.21,
+    "available_slots": [
+      "2026-05-16T17:00:00+05:00",
+      "2026-05-17T14:00:00+05:00",
+      "2026-05-18T15:00:00+05:00"
+    ],
+    "phone": "+923344675473",
+    "gender": "female",
+    "years_experience": 11,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 800,
+    "rate_per_hour_pkr": 2500,
+    "price_range_pkr": [
+      1082,
+      7553
+    ],
+    "verified": false
+  },
+  {
+    "id": "prov_023",
+    "name": "Iqra Ahmed Tutor",
+    "service_categories": [
+      "tutor"
+    ],
+    "specializations": [
+      "english",
+      "a_level_business"
+    ],
+    "lat": 33.682212,
+    "lng": 73.024901,
+    "neighborhood": "F-10",
+    "city": "Islamabad",
+    "rating": 4.3,
+    "completed_jobs": 161,
+    "completed_jobs_by_neighborhood": {
+      "F-10": 72
+    },
+    "on_time_score": 0.84,
+    "cancellation_rate": 0.15,
+    "review_recency_days": 71,
+    "risk_score": 0.11,
+    "current_workload": 0.7,
+    "available_slots": [
+      "2026-05-16T11:00:00+05:00",
+      "2026-05-17T14:00:00+05:00",
+      "2026-05-18T16:00:00+05:00",
+      "2026-05-20T15:00:00+05:00"
+    ],
+    "phone": "+923346361787",
+    "gender": "female",
+    "years_experience": 10,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 300,
+    "rate_per_hour_pkr": 2500,
+    "price_range_pkr": [
+      997,
+      5584
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_024",
+    "name": "Bilal Butt Carpenter",
+    "service_categories": [
+      "carpenter"
+    ],
+    "specializations": [],
+    "lat": 33.674018,
+    "lng": 73.018803,
+    "neighborhood": "G-11",
+    "city": "Islamabad",
+    "rating": 4.2,
+    "completed_jobs": 156,
+    "completed_jobs_by_neighborhood": {
+      "G-11": 21
+    },
+    "on_time_score": 0.82,
+    "cancellation_rate": 0.15,
+    "review_recency_days": 71,
+    "risk_score": 0.1,
+    "current_workload": 0.94,
+    "available_slots": [
+      "2026-05-15T16:00:00+05:00",
+      "2026-05-15T17:00:00+05:00",
+      "2026-05-16T11:00:00+05:00",
+      "2026-05-16T11:00:00+05:00",
+      "2026-05-16T11:00:00+05:00"
+    ],
+    "phone": "+923395613415",
+    "gender": "male",
+    "years_experience": 25,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 300,
+    "rate_per_hour_pkr": 2000,
+    "price_range_pkr": [
+      1091,
+      6845
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_025",
+    "name": "Sana Ali Beautician",
+    "service_categories": [
+      "beautician"
+    ],
+    "specializations": [
+      "facial",
+      "bridal"
+    ],
+    "lat": 33.691587,
+    "lng": 73.059328,
+    "neighborhood": "G-7",
+    "city": "Islamabad",
+    "rating": 4.7,
+    "completed_jobs": 77,
+    "completed_jobs_by_neighborhood": {
+      "G-7": 71
+    },
+    "on_time_score": 0.85,
+    "cancellation_rate": 0.14,
+    "review_recency_days": 39,
+    "risk_score": 0.26,
+    "current_workload": 0.99,
+    "available_slots": [
+      "2026-05-15T10:00:00+05:00",
+      "2026-05-15T15:00:00+05:00",
+      "2026-05-19T15:00:00+05:00",
+      "2026-05-21T14:00:00+05:00",
+      "2026-05-21T15:00:00+05:00"
+    ],
+    "phone": "+923350987442",
+    "gender": "female",
+    "years_experience": 19,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 800,
+    "rate_per_hour_pkr": 2500,
+    "price_range_pkr": [
+      901,
+      4702
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_026",
+    "name": "Saad Ali Ac Technician",
+    "service_categories": [
+      "ac_technician",
+      "appliance_repair"
+    ],
+    "specializations": [
+      "central_ac",
+      "split_ac"
+    ],
+    "lat": 33.688209,
+    "lng": 73.002641,
+    "neighborhood": "F-11",
+    "city": "Islamabad",
+    "rating": 4.8,
+    "completed_jobs": 136,
+    "completed_jobs_by_neighborhood": {
+      "F-11": 14
+    },
+    "on_time_score": 0.92,
+    "cancellation_rate": 0.14,
+    "review_recency_days": 81,
+    "risk_score": 0.19,
+    "current_workload": 0.8,
+    "available_slots": [
+      "2026-05-16T11:00:00+05:00",
+      "2026-05-20T11:00:00+05:00",
+      "2026-05-20T17:00:00+05:00"
+    ],
+    "phone": "+923336550845",
+    "gender": "male",
+    "years_experience": 14,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 2500,
+    "price_range_pkr": [
+      952,
+      5176
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_027",
+    "name": "Zoya Ali Tutor",
+    "service_categories": [
+      "tutor"
+    ],
+    "specializations": [
+      "english",
+      "a_level_business"
+    ],
+    "lat": 33.708793,
+    "lng": 73.058953,
+    "neighborhood": "F-7",
+    "city": "Islamabad",
+    "rating": 3.9,
+    "completed_jobs": 84,
+    "completed_jobs_by_neighborhood": {
+      "F-7": 8
+    },
+    "on_time_score": 0.77,
+    "cancellation_rate": 0.14,
+    "review_recency_days": 74,
+    "risk_score": 0.18,
+    "current_workload": 0.02,
+    "available_slots": [
+      "2026-05-17T15:00:00+05:00",
+      "2026-05-18T16:00:00+05:00",
+      "2026-05-19T09:00:00+05:00"
+    ],
+    "phone": "+923346173157",
+    "gender": "female",
+    "years_experience": 19,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 1500,
+    "price_range_pkr": [
+      1331,
+      6622
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_028",
+    "name": "Sana Butt Painter",
+    "service_categories": [
+      "painter"
+    ],
+    "specializations": [],
+    "lat": 33.716739,
+    "lng": 73.032418,
+    "neighborhood": "F-8",
+    "city": "Islamabad",
+    "rating": 4.3,
+    "completed_jobs": 122,
+    "completed_jobs_by_neighborhood": {
+      "F-8": 75
+    },
+    "on_time_score": 0.76,
+    "cancellation_rate": 0.01,
+    "review_recency_days": 33,
+    "risk_score": 0.11,
+    "current_workload": 0.97,
+    "available_slots": [
+      "2026-05-17T14:00:00+05:00",
+      "2026-05-17T16:00:00+05:00",
+      "2026-05-20T09:00:00+05:00",
+      "2026-05-20T14:00:00+05:00",
+      "2026-05-21T10:00:00+05:00"
+    ],
+    "phone": "+923364247457",
+    "gender": "female",
+    "years_experience": 17,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 300,
+    "rate_per_hour_pkr": 2500,
+    "price_range_pkr": [
+      1355,
+      6784
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_029",
+    "name": "Zoya Khan Geyser Technician",
+    "service_categories": [
+      "geyser_technician",
+      "ac_technician"
+    ],
+    "specializations": [],
+    "lat": 33.690869,
+    "lng": 73.022953,
+    "neighborhood": "F-10",
+    "city": "Islamabad",
+    "rating": 4.6,
+    "completed_jobs": 124,
+    "completed_jobs_by_neighborhood": {
+      "F-10": 16
+    },
+    "on_time_score": 0.81,
+    "cancellation_rate": 0.13,
+    "review_recency_days": 15,
+    "risk_score": 0.15,
+    "current_workload": 0.12,
+    "available_slots": [
+      "2026-05-15T09:00:00+05:00",
+      "2026-05-15T15:00:00+05:00",
+      "2026-05-17T15:00:00+05:00",
+      "2026-05-20T10:00:00+05:00",
+      "2026-05-20T15:00:00+05:00",
+      "2026-05-21T10:00:00+05:00"
+    ],
+    "phone": "+923330665654",
+    "gender": "female",
+    "years_experience": 16,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 500,
+    "rate_per_hour_pkr": 2000,
+    "price_range_pkr": [
+      1079,
+      6403
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_030",
+    "name": "Hina Shah Appliance Repair",
+    "service_categories": [
+      "appliance_repair"
+    ],
+    "specializations": [],
+    "lat": 33.669875,
+    "lng": 73.026025,
+    "neighborhood": "G-10",
+    "city": "Islamabad",
+    "rating": 4.1,
+    "completed_jobs": 221,
+    "completed_jobs_by_neighborhood": {
+      "G-10": 69
+    },
+    "on_time_score": 0.82,
+    "cancellation_rate": 0.0,
+    "review_recency_days": 39,
+    "risk_score": 0.25,
+    "current_workload": 0.58,
+    "available_slots": [
+      "2026-05-17T17:00:00+05:00",
+      "2026-05-18T11:00:00+05:00",
+      "2026-05-21T09:00:00+05:00",
+      "2026-05-21T17:00:00+05:00"
+    ],
+    "phone": "+923398575748",
+    "gender": "female",
+    "years_experience": 16,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 600,
+    "rate_per_hour_pkr": 2000,
+    "price_range_pkr": [
+      1295,
+      5827
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_031",
+    "name": "Hina Ahmed Gas Leak Specialist",
+    "service_categories": [
+      "gas_leak_specialist"
+    ],
+    "specializations": [],
+    "lat": 33.595869,
+    "lng": 73.047107,
+    "neighborhood": "Saddar Rawalpindi",
+    "city": "Rawalpindi",
+    "rating": 4.5,
+    "completed_jobs": 58,
+    "completed_jobs_by_neighborhood": {
+      "Saddar Rawalpindi": 68
+    },
+    "on_time_score": 0.99,
+    "cancellation_rate": 0.02,
+    "review_recency_days": 76,
+    "risk_score": 0.11,
+    "current_workload": 0.1,
+    "available_slots": [
+      "2026-05-18T14:00:00+05:00",
+      "2026-05-20T14:00:00+05:00",
+      "2026-05-20T17:00:00+05:00",
+      "2026-05-20T17:00:00+05:00",
+      "2026-05-21T16:00:00+05:00"
+    ],
+    "phone": "+923369096899",
+    "gender": "female",
+    "years_experience": 4,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 600,
+    "rate_per_hour_pkr": 800,
+    "price_range_pkr": [
+      947,
+      6358
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_032",
+    "name": "Nida Shah Beautician",
+    "service_categories": [
+      "beautician"
+    ],
+    "specializations": [
+      "party_makeup",
+      "hair_styling"
+    ],
+    "lat": 33.698297,
+    "lng": 73.039331,
+    "neighborhood": "F-8",
+    "city": "Islamabad",
+    "rating": 4.0,
+    "completed_jobs": 181,
+    "completed_jobs_by_neighborhood": {
+      "F-8": 41
+    },
+    "on_time_score": 1.0,
+    "cancellation_rate": 0.11,
+    "review_recency_days": 56,
+    "risk_score": 0.29,
+    "current_workload": 0.76,
+    "available_slots": [
+      "2026-05-15T10:00:00+05:00",
+      "2026-05-15T15:00:00+05:00",
+      "2026-05-20T16:00:00+05:00",
+      "2026-05-21T14:00:00+05:00",
+      "2026-05-21T15:00:00+05:00"
+    ],
+    "phone": "+923323489853",
+    "gender": "female",
+    "years_experience": 15,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 500,
+    "rate_per_hour_pkr": 800,
+    "price_range_pkr": [
+      847,
+      5657
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_033",
+    "name": "Saad Qureshi Gas Leak Specialist",
+    "service_categories": [
+      "gas_leak_specialist"
+    ],
+    "specializations": [],
+    "lat": 33.682169,
+    "lng": 73.008114,
+    "neighborhood": "F-11",
+    "city": "Islamabad",
+    "rating": 4.4,
+    "completed_jobs": 190,
+    "completed_jobs_by_neighborhood": {
+      "F-11": 6
+    },
+    "on_time_score": 0.97,
+    "cancellation_rate": 0.07,
+    "review_recency_days": 37,
+    "risk_score": 0.21,
+    "current_workload": 0.16,
+    "available_slots": [
+      "2026-05-16T14:00:00+05:00",
+      "2026-05-16T14:00:00+05:00",
+      "2026-05-18T11:00:00+05:00",
+      "2026-05-19T10:00:00+05:00",
+      "2026-05-19T16:00:00+05:00",
+      "2026-05-20T11:00:00+05:00"
+    ],
+    "phone": "+923369287967",
+    "gender": "male",
+    "years_experience": 12,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 500,
+    "rate_per_hour_pkr": 2500,
+    "price_range_pkr": [
+      1234,
+      5048
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_034",
+    "name": "Sana Ahmed Beautician",
+    "service_categories": [
+      "beautician"
+    ],
+    "specializations": [
+      "facial",
+      "party_makeup"
+    ],
+    "lat": 33.678984,
+    "lng": 73.007194,
+    "neighborhood": "F-11",
+    "city": "Islamabad",
+    "rating": 4.5,
+    "completed_jobs": 210,
+    "completed_jobs_by_neighborhood": {
+      "F-11": 11
+    },
+    "on_time_score": 0.98,
+    "cancellation_rate": 0.11,
+    "review_recency_days": 37,
+    "risk_score": 0.24,
+    "current_workload": 0.23,
+    "available_slots": [
+      "2026-05-15T17:00:00+05:00",
+      "2026-05-17T09:00:00+05:00",
+      "2026-05-19T17:00:00+05:00",
+      "2026-05-20T14:00:00+05:00",
+      "2026-05-20T17:00:00+05:00"
+    ],
+    "phone": "+923357287718",
+    "gender": "female",
+    "years_experience": 8,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 800,
+    "rate_per_hour_pkr": 1200,
+    "price_range_pkr": [
+      1494,
+      4120
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_035",
+    "name": "Ayesha Shah Painter",
+    "service_categories": [
+      "painter"
+    ],
+    "specializations": [],
+    "lat": 31.464649,
+    "lng": 74.399488,
+    "neighborhood": "DHA Lahore Phase 5",
+    "city": "Lahore",
+    "rating": 4.5,
+    "completed_jobs": 231,
+    "completed_jobs_by_neighborhood": {
+      "DHA Lahore Phase 5": 66
+    },
+    "on_time_score": 0.99,
+    "cancellation_rate": 0.04,
+    "review_recency_days": 44,
+    "risk_score": 0.25,
+    "current_workload": 0.47,
+    "available_slots": [
+      "2026-05-16T10:00:00+05:00",
+      "2026-05-16T11:00:00+05:00",
+      "2026-05-16T17:00:00+05:00",
+      "2026-05-17T17:00:00+05:00",
+      "2026-05-19T11:00:00+05:00",
+      "2026-05-19T15:00:00+05:00"
+    ],
+    "phone": "+923320106509",
+    "gender": "female",
+    "years_experience": 5,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 2500,
+    "price_range_pkr": [
+      1490,
+      6255
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_036",
+    "name": "Ayesha Malik Appliance Repair",
+    "service_categories": [
+      "appliance_repair",
+      "painter"
+    ],
+    "specializations": [],
+    "lat": 33.596146,
+    "lng": 73.039806,
+    "neighborhood": "Saddar Rawalpindi",
+    "city": "Rawalpindi",
+    "rating": 4.5,
+    "completed_jobs": 178,
+    "completed_jobs_by_neighborhood": {
+      "Saddar Rawalpindi": 76
+    },
+    "on_time_score": 0.83,
+    "cancellation_rate": 0.09,
+    "review_recency_days": 83,
+    "risk_score": 0.04,
+    "current_workload": 0.82,
+    "available_slots": [
+      "2026-05-17T09:00:00+05:00",
+      "2026-05-18T09:00:00+05:00",
+      "2026-05-19T14:00:00+05:00",
+      "2026-05-20T10:00:00+05:00",
+      "2026-05-21T16:00:00+05:00"
+    ],
+    "phone": "+923350559278",
+    "gender": "female",
+    "years_experience": 21,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 800,
+    "price_range_pkr": [
+      838,
+      5493
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_037",
+    "name": "Tariq Butt Painter",
+    "service_categories": [
+      "painter"
+    ],
+    "specializations": [],
+    "lat": 33.709544,
+    "lng": 73.060845,
+    "neighborhood": "F-7",
+    "city": "Islamabad",
+    "rating": 4.3,
+    "completed_jobs": 28,
+    "completed_jobs_by_neighborhood": {
+      "F-7": 52
+    },
+    "on_time_score": 0.8,
+    "cancellation_rate": 0.07,
+    "review_recency_days": 31,
+    "risk_score": 0.26,
+    "current_workload": 0.1,
+    "available_slots": [
+      "2026-05-15T17:00:00+05:00",
+      "2026-05-18T11:00:00+05:00",
+      "2026-05-18T15:00:00+05:00",
+      "2026-05-18T16:00:00+05:00",
+      "2026-05-19T16:00:00+05:00",
+      "2026-05-20T10:00:00+05:00"
+    ],
+    "phone": "+923359302863",
+    "gender": "male",
+    "years_experience": 18,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 500,
+    "rate_per_hour_pkr": 800,
+    "price_range_pkr": [
+      1207,
+      5260
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_038",
+    "name": "Bilal Shah Plumber",
+    "service_categories": [
+      "plumber",
+      "beautician"
+    ],
+    "specializations": [
+      "tap_replacement",
+      "geyser_leak"
+    ],
+    "lat": 33.72658,
+    "lng": 73.059584,
+    "neighborhood": "F-7",
+    "city": "Islamabad",
+    "rating": 3.5,
+    "completed_jobs": 242,
+    "completed_jobs_by_neighborhood": {
+      "F-7": 34
+    },
+    "on_time_score": 0.83,
+    "cancellation_rate": 0.02,
+    "review_recency_days": 77,
+    "risk_score": 0.02,
+    "current_workload": 0.86,
+    "available_slots": [
+      "2026-05-15T17:00:00+05:00",
+      "2026-05-16T15:00:00+05:00",
+      "2026-05-16T17:00:00+05:00",
+      "2026-05-21T15:00:00+05:00"
+    ],
+    "phone": "+923329419691",
+    "gender": "male",
+    "years_experience": 5,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 800,
+    "price_range_pkr": [
+      1476,
+      3211
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_039",
+    "name": "Ayesha Hussain Carpenter",
+    "service_categories": [
+      "carpenter",
+      "tutor"
+    ],
+    "specializations": [],
+    "lat": 33.7037,
+    "lng": 73.063059,
+    "neighborhood": "G-7",
+    "city": "Islamabad",
+    "rating": 3.7,
+    "completed_jobs": 220,
+    "completed_jobs_by_neighborhood": {
+      "G-7": 71
+    },
+    "on_time_score": 0.83,
+    "cancellation_rate": 0.1,
+    "review_recency_days": 4,
+    "risk_score": 0.04,
+    "current_workload": 0.48,
+    "available_slots": [
+      "2026-05-15T16:00:00+05:00",
+      "2026-05-16T15:00:00+05:00",
+      "2026-05-17T15:00:00+05:00",
+      "2026-05-18T15:00:00+05:00",
+      "2026-05-18T17:00:00+05:00",
+      "2026-05-19T09:00:00+05:00"
+    ],
+    "phone": "+923363904155",
+    "gender": "female",
+    "years_experience": 14,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 600,
+    "rate_per_hour_pkr": 2500,
+    "price_range_pkr": [
+      1254,
+      3602
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_040",
+    "name": "Mahnoor Shah Appliance Repair",
+    "service_categories": [
+      "appliance_repair"
+    ],
+    "specializations": [],
+    "lat": 33.700066,
+    "lng": 73.059614,
+    "neighborhood": "G-7",
+    "city": "Islamabad",
+    "rating": 4.2,
+    "completed_jobs": 187,
+    "completed_jobs_by_neighborhood": {
+      "G-7": 75
+    },
+    "on_time_score": 0.93,
+    "cancellation_rate": 0.03,
+    "review_recency_days": 58,
+    "risk_score": 0.27,
+    "current_workload": 0.41,
+    "available_slots": [
+      "2026-05-15T17:00:00+05:00",
+      "2026-05-17T14:00:00+05:00",
+      "2026-05-18T09:00:00+05:00",
+      "2026-05-19T15:00:00+05:00",
+      "2026-05-19T15:00:00+05:00",
+      "2026-05-21T16:00:00+05:00"
+    ],
+    "phone": "+923370867592",
+    "gender": "female",
+    "years_experience": 13,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 300,
+    "rate_per_hour_pkr": 1200,
+    "price_range_pkr": [
+      1237,
+      5560
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_041",
+    "name": "Sana Ali Electrician",
+    "service_categories": [
+      "electrician",
+      "ac_technician"
+    ],
+    "specializations": [
+      "ups_install",
+      "house_wiring"
+    ],
+    "lat": 33.706972,
+    "lng": 73.072036,
+    "neighborhood": "G-7",
+    "city": "Islamabad",
+    "rating": 3.9,
+    "completed_jobs": 33,
+    "completed_jobs_by_neighborhood": {
+      "G-7": 41
+    },
+    "on_time_score": 0.9,
+    "cancellation_rate": 0.05,
+    "review_recency_days": 74,
+    "risk_score": 0.16,
+    "current_workload": 0.15,
+    "available_slots": [
+      "2026-05-18T11:00:00+05:00",
+      "2026-05-20T09:00:00+05:00",
+      "2026-05-21T14:00:00+05:00",
+      "2026-05-21T16:00:00+05:00",
+      "2026-05-21T16:00:00+05:00"
+    ],
+    "phone": "+923374718365",
+    "gender": "female",
+    "years_experience": 8,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 500,
+    "rate_per_hour_pkr": 2000,
+    "price_range_pkr": [
+      1176,
+      3941
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_042",
+    "name": "Zain Malik Plumber",
+    "service_categories": [
+      "plumber",
+      "painter"
+    ],
+    "specializations": [
+      "pipe_burst",
+      "tap_replacement"
+    ],
+    "lat": 33.652923,
+    "lng": 73.046482,
+    "neighborhood": "G-13",
+    "city": "Islamabad",
+    "rating": 4.1,
+    "completed_jobs": 37,
+    "completed_jobs_by_neighborhood": {
+      "G-13": 23
+    },
+    "on_time_score": 0.94,
+    "cancellation_rate": 0.15,
+    "review_recency_days": 12,
+    "risk_score": 0.23,
+    "current_workload": 0.22,
+    "available_slots": [
+      "2026-05-16T15:00:00+05:00",
+      "2026-05-16T17:00:00+05:00",
+      "2026-05-20T14:00:00+05:00"
+    ],
+    "phone": "+923366348963",
+    "gender": "male",
+    "years_experience": 15,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 500,
+    "rate_per_hour_pkr": 1200,
+    "price_range_pkr": [
+      1132,
+      7649
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_043",
+    "name": "Ahmed Malik Tutor",
+    "service_categories": [
+      "tutor"
+    ],
+    "specializations": [
+      "english",
+      "quran"
+    ],
+    "lat": 31.453152,
+    "lng": 74.401848,
+    "neighborhood": "DHA Lahore Phase 5",
+    "city": "Lahore",
+    "rating": 4.0,
+    "completed_jobs": 171,
+    "completed_jobs_by_neighborhood": {
+      "DHA Lahore Phase 5": 67
+    },
+    "on_time_score": 0.88,
+    "cancellation_rate": 0.05,
+    "review_recency_days": 29,
+    "risk_score": 0.13,
+    "current_workload": 0.6,
+    "available_slots": [
+      "2026-05-15T11:00:00+05:00",
+      "2026-05-17T14:00:00+05:00",
+      "2026-05-20T16:00:00+05:00"
+    ],
+    "phone": "+923311031743",
+    "gender": "male",
+    "years_experience": 7,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 1000,
+    "price_range_pkr": [
+      1061,
+      5371
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_044",
+    "name": "Tariq Mughal Geyser Technician",
+    "service_categories": [
+      "geyser_technician"
+    ],
+    "specializations": [],
+    "lat": 33.721748,
+    "lng": 73.065313,
+    "neighborhood": "F-6",
+    "city": "Islamabad",
+    "rating": 4.4,
+    "completed_jobs": 100,
+    "completed_jobs_by_neighborhood": {
+      "F-6": 78
+    },
+    "on_time_score": 0.86,
+    "cancellation_rate": 0.06,
+    "review_recency_days": 82,
+    "risk_score": 0.14,
+    "current_workload": 0.12,
+    "available_slots": [
+      "2026-05-15T14:00:00+05:00",
+      "2026-05-15T14:00:00+05:00",
+      "2026-05-15T14:00:00+05:00",
+      "2026-05-15T17:00:00+05:00",
+      "2026-05-21T16:00:00+05:00"
+    ],
+    "phone": "+923312799319",
+    "gender": "male",
+    "years_experience": 11,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 800,
+    "rate_per_hour_pkr": 1500,
+    "price_range_pkr": [
+      1170,
+      3721
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_045",
+    "name": "Tariq Malik Painter",
+    "service_categories": [
+      "painter",
+      "ac_technician"
+    ],
+    "specializations": [],
+    "lat": 33.712466,
+    "lng": 73.054877,
+    "neighborhood": "F-7",
+    "city": "Islamabad",
+    "rating": 4.7,
+    "completed_jobs": 80,
+    "completed_jobs_by_neighborhood": {
+      "F-7": 18
+    },
+    "on_time_score": 0.79,
+    "cancellation_rate": 0.03,
+    "review_recency_days": 78,
+    "risk_score": 0.06,
+    "current_workload": 0.76,
+    "available_slots": [
+      "2026-05-17T16:00:00+05:00",
+      "2026-05-21T10:00:00+05:00",
+      "2026-05-21T11:00:00+05:00",
+      "2026-05-21T16:00:00+05:00"
+    ],
+    "phone": "+923320113745",
+    "gender": "male",
+    "years_experience": 6,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 600,
+    "rate_per_hour_pkr": 1500,
+    "price_range_pkr": [
+      1377,
+      7747
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_046",
+    "name": "Nida Hussain Tutor",
+    "service_categories": [
+      "tutor",
+      "appliance_repair"
+    ],
+    "specializations": [
+      "quran",
+      "a_level_business"
+    ],
+    "lat": 31.469741,
+    "lng": 74.41156,
+    "neighborhood": "DHA Lahore Phase 5",
+    "city": "Lahore",
+    "rating": 4.5,
+    "completed_jobs": 29,
+    "completed_jobs_by_neighborhood": {
+      "DHA Lahore Phase 5": 12
+    },
+    "on_time_score": 0.84,
+    "cancellation_rate": 0.04,
+    "review_recency_days": 83,
+    "risk_score": 0.26,
+    "current_workload": 0.86,
+    "available_slots": [
+      "2026-05-15T11:00:00+05:00",
+      "2026-05-17T15:00:00+05:00",
+      "2026-05-18T14:00:00+05:00"
+    ],
+    "phone": "+923392545028",
+    "gender": "female",
+    "years_experience": 20,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 600,
+    "rate_per_hour_pkr": 2000,
+    "price_range_pkr": [
+      1367,
+      3336
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_047",
+    "name": "Iqra Hussain Plumber",
+    "service_categories": [
+      "plumber"
+    ],
+    "specializations": [
+      "pipe_burst",
+      "drain_cleaning"
+    ],
+    "lat": 33.596433,
+    "lng": 73.041765,
+    "neighborhood": "Saddar Rawalpindi",
+    "city": "Rawalpindi",
+    "rating": 4.7,
+    "completed_jobs": 176,
+    "completed_jobs_by_neighborhood": {
+      "Saddar Rawalpindi": 25
+    },
+    "on_time_score": 0.84,
+    "cancellation_rate": 0.14,
+    "review_recency_days": 50,
+    "risk_score": 0.13,
+    "current_workload": 0.34,
+    "available_slots": [
+      "2026-05-16T16:00:00+05:00",
+      "2026-05-18T14:00:00+05:00",
+      "2026-05-19T15:00:00+05:00"
+    ],
+    "phone": "+923390246882",
+    "gender": "female",
+    "years_experience": 2,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 500,
+    "rate_per_hour_pkr": 800,
+    "price_range_pkr": [
+      1137,
+      3774
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_048",
+    "name": "Fahad Ali Gas Leak Specialist",
+    "service_categories": [
+      "gas_leak_specialist"
+    ],
+    "specializations": [],
+    "lat": 33.684883,
+    "lng": 73.038175,
+    "neighborhood": "G-9",
+    "city": "Islamabad",
+    "rating": 4.6,
+    "completed_jobs": 163,
+    "completed_jobs_by_neighborhood": {
+      "G-9": 53
+    },
+    "on_time_score": 0.91,
+    "cancellation_rate": 0.05,
+    "review_recency_days": 17,
+    "risk_score": 0.21,
+    "current_workload": 0.83,
+    "available_slots": [
+      "2026-05-15T11:00:00+05:00",
+      "2026-05-17T16:00:00+05:00",
+      "2026-05-18T10:00:00+05:00",
+      "2026-05-19T16:00:00+05:00",
+      "2026-05-20T16:00:00+05:00"
+    ],
+    "phone": "+923380651318",
+    "gender": "male",
+    "years_experience": 3,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 600,
+    "rate_per_hour_pkr": 2000,
+    "price_range_pkr": [
+      1170,
+      3149
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_049",
+    "name": "Hina Ahmed Ac Technician",
+    "service_categories": [
+      "ac_technician",
+      "painter"
+    ],
+    "specializations": [
+      "inverter_ac",
+      "window_ac"
+    ],
+    "lat": 33.715823,
+    "lng": 73.030535,
+    "neighborhood": "F-8",
+    "city": "Islamabad",
+    "rating": 4.4,
+    "completed_jobs": 116,
+    "completed_jobs_by_neighborhood": {
+      "F-8": 24
+    },
+    "on_time_score": 0.79,
+    "cancellation_rate": 0.12,
+    "review_recency_days": 80,
+    "risk_score": 0.25,
+    "current_workload": 0.17,
+    "available_slots": [
+      "2026-05-16T15:00:00+05:00",
+      "2026-05-20T11:00:00+05:00",
+      "2026-05-21T15:00:00+05:00"
+    ],
+    "phone": "+923368743530",
+    "gender": "female",
+    "years_experience": 2,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 1500,
+    "price_range_pkr": [
+      1425,
+      5334
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_050",
+    "name": "Zoya Ahmed Painter",
+    "service_categories": [
+      "painter"
+    ],
+    "specializations": [],
+    "lat": 33.593979,
+    "lng": 73.04868,
+    "neighborhood": "Saddar Rawalpindi",
+    "city": "Rawalpindi",
+    "rating": 3.6,
+    "completed_jobs": 174,
+    "completed_jobs_by_neighborhood": {
+      "Saddar Rawalpindi": 22
+    },
+    "on_time_score": 0.97,
+    "cancellation_rate": 0.01,
+    "review_recency_days": 62,
+    "risk_score": 0.26,
+    "current_workload": 0.55,
+    "available_slots": [
+      "2026-05-16T17:00:00+05:00",
+      "2026-05-16T17:00:00+05:00",
+      "2026-05-17T17:00:00+05:00",
+      "2026-05-18T15:00:00+05:00",
+      "2026-05-18T17:00:00+05:00",
+      "2026-05-19T14:00:00+05:00"
+    ],
+    "phone": "+923323769360",
+    "gender": "female",
+    "years_experience": 23,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 300,
+    "rate_per_hour_pkr": 1200,
+    "price_range_pkr": [
+      885,
+      4313
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_051",
+    "name": "Bilal Butt Painter",
+    "service_categories": [
+      "painter"
+    ],
+    "specializations": [],
+    "lat": 31.462367,
+    "lng": 74.415321,
+    "neighborhood": "DHA Lahore Phase 5",
+    "city": "Lahore",
+    "rating": 4.0,
+    "completed_jobs": 186,
+    "completed_jobs_by_neighborhood": {
+      "DHA Lahore Phase 5": 47
+    },
+    "on_time_score": 0.95,
+    "cancellation_rate": 0.02,
+    "review_recency_days": 37,
+    "risk_score": 0.28,
+    "current_workload": 0.47,
+    "available_slots": [
+      "2026-05-15T11:00:00+05:00",
+      "2026-05-16T09:00:00+05:00",
+      "2026-05-16T14:00:00+05:00",
+      "2026-05-17T09:00:00+05:00",
+      "2026-05-21T16:00:00+05:00"
+    ],
+    "phone": "+923328628439",
+    "gender": "male",
+    "years_experience": 25,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 600,
+    "rate_per_hour_pkr": 2000,
+    "price_range_pkr": [
+      805,
+      3649
+    ],
+    "verified": false
+  },
+  {
+    "id": "prov_052",
+    "name": "Sana Malik Geyser Technician",
+    "service_categories": [
+      "geyser_technician"
+    ],
+    "specializations": [],
+    "lat": 33.697199,
+    "lng": 73.021476,
+    "neighborhood": "F-10",
+    "city": "Islamabad",
+    "rating": 4.5,
+    "completed_jobs": 36,
+    "completed_jobs_by_neighborhood": {
+      "F-10": 19
+    },
+    "on_time_score": 0.96,
+    "cancellation_rate": 0.07,
+    "review_recency_days": 69,
+    "risk_score": 0.02,
+    "current_workload": 0.52,
+    "available_slots": [
+      "2026-05-16T14:00:00+05:00",
+      "2026-05-19T14:00:00+05:00",
+      "2026-05-20T17:00:00+05:00"
+    ],
+    "phone": "+923342472386",
+    "gender": "female",
+    "years_experience": 23,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 600,
+    "rate_per_hour_pkr": 800,
+    "price_range_pkr": [
+      1429,
+      5890
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_053",
+    "name": "Sana Mughal Appliance Repair",
+    "service_categories": [
+      "appliance_repair"
+    ],
+    "specializations": [],
+    "lat": 33.682946,
+    "lng": 73.037064,
+    "neighborhood": "G-9",
+    "city": "Islamabad",
+    "rating": 4.7,
+    "completed_jobs": 108,
+    "completed_jobs_by_neighborhood": {
+      "G-9": 35
+    },
+    "on_time_score": 0.93,
+    "cancellation_rate": 0.09,
+    "review_recency_days": 75,
+    "risk_score": 0.23,
+    "current_workload": 0.33,
+    "available_slots": [
+      "2026-05-15T11:00:00+05:00",
+      "2026-05-15T16:00:00+05:00",
+      "2026-05-17T16:00:00+05:00",
+      "2026-05-18T11:00:00+05:00",
+      "2026-05-21T09:00:00+05:00",
+      "2026-05-21T14:00:00+05:00"
+    ],
+    "phone": "+923315950635",
+    "gender": "female",
+    "years_experience": 12,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 2500,
+    "price_range_pkr": [
+      1275,
+      6920
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_054",
+    "name": "Ayesha Malik Geyser Technician",
+    "service_categories": [
+      "geyser_technician",
+      "carpenter"
+    ],
+    "specializations": [],
+    "lat": 33.587697,
+    "lng": 73.052321,
+    "neighborhood": "Saddar Rawalpindi",
+    "city": "Rawalpindi",
+    "rating": 4.3,
+    "completed_jobs": 141,
+    "completed_jobs_by_neighborhood": {
+      "Saddar Rawalpindi": 37
+    },
+    "on_time_score": 0.76,
+    "cancellation_rate": 0.1,
+    "review_recency_days": 37,
+    "risk_score": 0.12,
+    "current_workload": 0.78,
+    "available_slots": [
+      "2026-05-17T11:00:00+05:00",
+      "2026-05-19T14:00:00+05:00",
+      "2026-05-21T15:00:00+05:00"
+    ],
+    "phone": "+923398010774",
+    "gender": "female",
+    "years_experience": 11,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 500,
+    "rate_per_hour_pkr": 1500,
+    "price_range_pkr": [
+      1209,
+      6602
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_055",
+    "name": "Nida Mughal Carpenter",
+    "service_categories": [
+      "carpenter"
+    ],
+    "specializations": [],
+    "lat": 33.685981,
+    "lng": 73.027436,
+    "neighborhood": "G-9",
+    "city": "Islamabad",
+    "rating": 4.3,
+    "completed_jobs": 98,
+    "completed_jobs_by_neighborhood": {
+      "G-9": 62
+    },
+    "on_time_score": 0.9,
+    "cancellation_rate": 0.06,
+    "review_recency_days": 89,
+    "risk_score": 0.14,
+    "current_workload": 0.45,
+    "available_slots": [
+      "2026-05-15T11:00:00+05:00",
+      "2026-05-17T09:00:00+05:00",
+      "2026-05-19T11:00:00+05:00",
+      "2026-05-20T11:00:00+05:00"
+    ],
+    "phone": "+923357319709",
+    "gender": "female",
+    "years_experience": 20,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 500,
+    "rate_per_hour_pkr": 2500,
+    "price_range_pkr": [
+      858,
+      3614
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_056",
+    "name": "Ali Hussain Gas Leak Specialist",
+    "service_categories": [
+      "gas_leak_specialist"
+    ],
+    "specializations": [],
+    "lat": 33.686466,
+    "lng": 73.039722,
+    "neighborhood": "G-9",
+    "city": "Islamabad",
+    "rating": 4.2,
+    "completed_jobs": 59,
+    "completed_jobs_by_neighborhood": {
+      "G-9": 62
+    },
+    "on_time_score": 0.99,
+    "cancellation_rate": 0.06,
+    "review_recency_days": 10,
+    "risk_score": 0.18,
+    "current_workload": 0.53,
+    "available_slots": [
+      "2026-05-15T10:00:00+05:00",
+      "2026-05-15T10:00:00+05:00",
+      "2026-05-15T15:00:00+05:00",
+      "2026-05-17T11:00:00+05:00",
+      "2026-05-18T15:00:00+05:00",
+      "2026-05-21T16:00:00+05:00"
+    ],
+    "phone": "+923363423225",
+    "gender": "male",
+    "years_experience": 11,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 800,
+    "price_range_pkr": [
+      826,
+      4524
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_057",
+    "name": "Zoya Ahmed Gas Leak Specialist",
+    "service_categories": [
+      "gas_leak_specialist",
+      "tutor"
+    ],
+    "specializations": [],
+    "lat": 33.697471,
+    "lng": 73.026055,
+    "neighborhood": "G-9",
+    "city": "Islamabad",
+    "rating": 4.4,
+    "completed_jobs": 194,
+    "completed_jobs_by_neighborhood": {
+      "G-9": 45
+    },
+    "on_time_score": 0.92,
+    "cancellation_rate": 0.11,
+    "review_recency_days": 71,
+    "risk_score": 0.17,
+    "current_workload": 0.89,
+    "available_slots": [
+      "2026-05-15T17:00:00+05:00",
+      "2026-05-18T10:00:00+05:00",
+      "2026-05-20T14:00:00+05:00"
+    ],
+    "phone": "+923331139996",
+    "gender": "female",
+    "years_experience": 23,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 1200,
+    "price_range_pkr": [
+      1320,
+      4836
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_058",
+    "name": "Ayesha Sheikh Appliance Repair",
+    "service_categories": [
+      "appliance_repair"
+    ],
+    "specializations": [],
+    "lat": 33.696341,
+    "lng": 73.015235,
+    "neighborhood": "F-10",
+    "city": "Islamabad",
+    "rating": 4.5,
+    "completed_jobs": 125,
+    "completed_jobs_by_neighborhood": {
+      "F-10": 57
+    },
+    "on_time_score": 0.96,
+    "cancellation_rate": 0.01,
+    "review_recency_days": 41,
+    "risk_score": 0.2,
+    "current_workload": 0.45,
+    "available_slots": [
+      "2026-05-15T09:00:00+05:00",
+      "2026-05-16T15:00:00+05:00",
+      "2026-05-17T14:00:00+05:00",
+      "2026-05-18T15:00:00+05:00",
+      "2026-05-20T16:00:00+05:00",
+      "2026-05-21T15:00:00+05:00"
+    ],
+    "phone": "+923379438885",
+    "gender": "female",
+    "years_experience": 12,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 800,
+    "rate_per_hour_pkr": 2500,
+    "price_range_pkr": [
+      1401,
+      4490
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_059",
+    "name": "Ahmed Mughal Ac Technician",
+    "service_categories": [
+      "ac_technician"
+    ],
+    "specializations": [
+      "split_ac",
+      "central_ac"
+    ],
+    "lat": 33.705452,
+    "lng": 73.041914,
+    "neighborhood": "F-8",
+    "city": "Islamabad",
+    "rating": 4.5,
+    "completed_jobs": 177,
+    "completed_jobs_by_neighborhood": {
+      "F-8": 73
+    },
+    "on_time_score": 0.77,
+    "cancellation_rate": 0.1,
+    "review_recency_days": 76,
+    "risk_score": 0.28,
+    "current_workload": 0.15,
+    "available_slots": [
+      "2026-05-17T10:00:00+05:00",
+      "2026-05-17T10:00:00+05:00",
+      "2026-05-20T11:00:00+05:00",
+      "2026-05-20T15:00:00+05:00",
+      "2026-05-21T09:00:00+05:00"
+    ],
+    "phone": "+923398413629",
+    "gender": "male",
+    "years_experience": 20,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 800,
+    "rate_per_hour_pkr": 1200,
+    "price_range_pkr": [
+      1377,
+      3337
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_060",
+    "name": "Hina Shah Beautician",
+    "service_categories": [
+      "beautician"
+    ],
+    "specializations": [
+      "bridal",
+      "hair_styling"
+    ],
+    "lat": 33.713424,
+    "lng": 73.075671,
+    "neighborhood": "F-6",
+    "city": "Islamabad",
+    "rating": 4.2,
+    "completed_jobs": 38,
+    "completed_jobs_by_neighborhood": {
+      "F-6": 12
+    },
+    "on_time_score": 0.79,
+    "cancellation_rate": 0.06,
+    "review_recency_days": 60,
+    "risk_score": 0.08,
+    "current_workload": 0.61,
+    "available_slots": [
+      "2026-05-17T14:00:00+05:00",
+      "2026-05-18T10:00:00+05:00",
+      "2026-05-20T11:00:00+05:00",
+      "2026-05-20T14:00:00+05:00",
+      "2026-05-21T17:00:00+05:00"
+    ],
+    "phone": "+923351954112",
+    "gender": "female",
+    "years_experience": 23,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 500,
+    "rate_per_hour_pkr": 1500,
+    "price_range_pkr": [
+      933,
+      6035
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_061",
+    "name": "Zoya Ahmed Ac Technician",
+    "service_categories": [
+      "ac_technician",
+      "painter"
+    ],
+    "specializations": [
+      "central_ac",
+      "window_ac"
+    ],
+    "lat": 33.713982,
+    "lng": 73.052429,
+    "neighborhood": "F-7",
+    "city": "Islamabad",
+    "rating": 3.5,
+    "completed_jobs": 147,
+    "completed_jobs_by_neighborhood": {
+      "F-7": 70
+    },
+    "on_time_score": 0.87,
+    "cancellation_rate": 0.13,
+    "review_recency_days": 64,
+    "risk_score": 0.03,
+    "current_workload": 0.95,
+    "available_slots": [
+      "2026-05-17T10:00:00+05:00",
+      "2026-05-19T16:00:00+05:00",
+      "2026-05-21T10:00:00+05:00",
+      "2026-05-21T11:00:00+05:00"
+    ],
+    "phone": "+923377839607",
+    "gender": "female",
+    "years_experience": 15,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 2000,
+    "price_range_pkr": [
+      1161,
+      3398
+    ],
+    "verified": false
+  },
+  {
+    "id": "prov_062",
+    "name": "Maria Mughal Plumber",
+    "service_categories": [
+      "plumber"
+    ],
+    "specializations": [
+      "drain_cleaning",
+      "geyser_leak"
+    ],
+    "lat": 33.67695,
+    "lng": 73.031857,
+    "neighborhood": "G-10",
+    "city": "Islamabad",
+    "rating": 4.7,
+    "completed_jobs": 69,
+    "completed_jobs_by_neighborhood": {
+      "G-10": 51
+    },
+    "on_time_score": 0.89,
+    "cancellation_rate": 0.01,
+    "review_recency_days": 65,
+    "risk_score": 0.15,
+    "current_workload": 0.55,
+    "available_slots": [
+      "2026-05-17T09:00:00+05:00",
+      "2026-05-18T09:00:00+05:00",
+      "2026-05-19T15:00:00+05:00",
+      "2026-05-20T11:00:00+05:00",
+      "2026-05-21T14:00:00+05:00"
+    ],
+    "phone": "+923393650068",
+    "gender": "female",
+    "years_experience": 22,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 800,
+    "price_range_pkr": [
+      1203,
+      6057
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_063",
+    "name": "Bilal Shah Appliance Repair",
+    "service_categories": [
+      "appliance_repair"
+    ],
+    "specializations": [],
+    "lat": 33.699057,
+    "lng": 73.065612,
+    "neighborhood": "G-7",
+    "city": "Islamabad",
+    "rating": 4.4,
+    "completed_jobs": 101,
+    "completed_jobs_by_neighborhood": {
+      "G-7": 25
+    },
+    "on_time_score": 0.85,
+    "cancellation_rate": 0.09,
+    "review_recency_days": 39,
+    "risk_score": 0.19,
+    "current_workload": 0.51,
+    "available_slots": [
+      "2026-05-16T15:00:00+05:00",
+      "2026-05-17T15:00:00+05:00",
+      "2026-05-19T10:00:00+05:00",
+      "2026-05-19T14:00:00+05:00",
+      "2026-05-21T14:00:00+05:00"
+    ],
+    "phone": "+923378412668",
+    "gender": "male",
+    "years_experience": 18,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 800,
+    "rate_per_hour_pkr": 1200,
+    "price_range_pkr": [
+      1286,
+      3136
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_064",
+    "name": "Ayesha Shah Tutor",
+    "service_categories": [
+      "tutor",
+      "geyser_technician"
+    ],
+    "specializations": [
+      "o_level_math",
+      "quran"
+    ],
+    "lat": 33.513192,
+    "lng": 73.088331,
+    "neighborhood": "Bahria Town Phase 4",
+    "city": "Islamabad",
+    "rating": 4.3,
+    "completed_jobs": 28,
+    "completed_jobs_by_neighborhood": {
+      "Bahria Town Phase 4": 78
+    },
+    "on_time_score": 0.99,
+    "cancellation_rate": 0.02,
+    "review_recency_days": 3,
+    "risk_score": 0.14,
+    "current_workload": 0.42,
+    "available_slots": [
+      "2026-05-16T15:00:00+05:00",
+      "2026-05-16T17:00:00+05:00",
+      "2026-05-19T17:00:00+05:00",
+      "2026-05-20T10:00:00+05:00",
+      "2026-05-20T16:00:00+05:00",
+      "2026-05-21T14:00:00+05:00"
+    ],
+    "phone": "+923365426567",
+    "gender": "female",
+    "years_experience": 23,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 800,
+    "rate_per_hour_pkr": 2000,
+    "price_range_pkr": [
+      1282,
+      3510
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_065",
+    "name": "Iqra Qureshi Painter",
+    "service_categories": [
+      "painter"
+    ],
+    "specializations": [],
+    "lat": 33.659147,
+    "lng": 73.011501,
+    "neighborhood": "G-11",
+    "city": "Islamabad",
+    "rating": 3.9,
+    "completed_jobs": 143,
+    "completed_jobs_by_neighborhood": {
+      "G-11": 29
+    },
+    "on_time_score": 0.99,
+    "cancellation_rate": 0.04,
+    "review_recency_days": 39,
+    "risk_score": 0.08,
+    "current_workload": 0.97,
+    "available_slots": [
+      "2026-05-17T15:00:00+05:00",
+      "2026-05-20T16:00:00+05:00",
+      "2026-05-20T17:00:00+05:00",
+      "2026-05-21T16:00:00+05:00",
+      "2026-05-21T16:00:00+05:00"
+    ],
+    "phone": "+923349945150",
+    "gender": "female",
+    "years_experience": 25,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 2500,
+    "price_range_pkr": [
+      1300,
+      5597
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_066",
+    "name": "Maria Ali Gas Leak Specialist",
+    "service_categories": [
+      "gas_leak_specialist"
+    ],
+    "specializations": [],
+    "lat": 33.673674,
+    "lng": 73.020908,
+    "neighborhood": "G-11",
+    "city": "Islamabad",
+    "rating": 4.4,
+    "completed_jobs": 133,
+    "completed_jobs_by_neighborhood": {
+      "G-11": 37
+    },
+    "on_time_score": 0.94,
+    "cancellation_rate": 0.03,
+    "review_recency_days": 69,
+    "risk_score": 0.1,
+    "current_workload": 0.56,
+    "available_slots": [
+      "2026-05-15T11:00:00+05:00",
+      "2026-05-17T09:00:00+05:00",
+      "2026-05-17T16:00:00+05:00",
+      "2026-05-17T17:00:00+05:00",
+      "2026-05-18T17:00:00+05:00",
+      "2026-05-21T10:00:00+05:00"
+    ],
+    "phone": "+923346456416",
+    "gender": "female",
+    "years_experience": 5,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 800,
+    "rate_per_hour_pkr": 1000,
+    "price_range_pkr": [
+      1048,
+      3415
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_067",
+    "name": "Tariq Sheikh Tutor",
+    "service_categories": [
+      "tutor",
+      "ac_technician"
+    ],
+    "specializations": [
+      "o_level_math",
+      "quran"
+    ],
+    "lat": 33.659513,
+    "lng": 73.009657,
+    "neighborhood": "G-11",
+    "city": "Islamabad",
+    "rating": 4.5,
+    "completed_jobs": 166,
+    "completed_jobs_by_neighborhood": {
+      "G-11": 34
+    },
+    "on_time_score": 0.88,
+    "cancellation_rate": 0.11,
+    "review_recency_days": 5,
+    "risk_score": 0.28,
+    "current_workload": 0.18,
+    "available_slots": [
+      "2026-05-15T16:00:00+05:00",
+      "2026-05-15T17:00:00+05:00",
+      "2026-05-16T17:00:00+05:00",
+      "2026-05-17T11:00:00+05:00",
+      "2026-05-17T16:00:00+05:00",
+      "2026-05-18T16:00:00+05:00"
+    ],
+    "phone": "+923333593960",
+    "gender": "male",
+    "years_experience": 2,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 600,
+    "rate_per_hour_pkr": 1500,
+    "price_range_pkr": [
+      990,
+      5371
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_068",
+    "name": "Maria Butt Appliance Repair",
+    "service_categories": [
+      "appliance_repair"
+    ],
+    "specializations": [],
+    "lat": 33.717768,
+    "lng": 73.068756,
+    "neighborhood": "F-6",
+    "city": "Islamabad",
+    "rating": 4.3,
+    "completed_jobs": 61,
+    "completed_jobs_by_neighborhood": {
+      "F-6": 63
+    },
+    "on_time_score": 0.91,
+    "cancellation_rate": 0.11,
+    "review_recency_days": 2,
+    "risk_score": 0.23,
+    "current_workload": 0.79,
+    "available_slots": [
+      "2026-05-15T11:00:00+05:00",
+      "2026-05-16T17:00:00+05:00",
+      "2026-05-18T11:00:00+05:00",
+      "2026-05-21T15:00:00+05:00"
+    ],
+    "phone": "+923386206305",
+    "gender": "female",
+    "years_experience": 22,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 2000,
+    "price_range_pkr": [
+      1454,
+      6321
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_069",
+    "name": "Hassan Hussain Tutor",
+    "service_categories": [
+      "tutor"
+    ],
+    "specializations": [
+      "a_level_business",
+      "o_level_math"
+    ],
+    "lat": 33.661559,
+    "lng": 73.013017,
+    "neighborhood": "G-11",
+    "city": "Islamabad",
+    "rating": 4.3,
+    "completed_jobs": 80,
+    "completed_jobs_by_neighborhood": {
+      "G-11": 12
+    },
+    "on_time_score": 0.92,
+    "cancellation_rate": 0.07,
+    "review_recency_days": 21,
+    "risk_score": 0.13,
+    "current_workload": 0.5,
+    "available_slots": [
+      "2026-05-17T11:00:00+05:00",
+      "2026-05-17T16:00:00+05:00",
+      "2026-05-17T16:00:00+05:00",
+      "2026-05-19T09:00:00+05:00",
+      "2026-05-19T16:00:00+05:00"
+    ],
+    "phone": "+923351738753",
+    "gender": "male",
+    "years_experience": 23,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 500,
+    "rate_per_hour_pkr": 1200,
+    "price_range_pkr": [
+      1429,
+      4809
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_070",
+    "name": "Sara Mughal Tutor",
+    "service_categories": [
+      "tutor"
+    ],
+    "specializations": [
+      "a_level_business",
+      "o_level_math"
+    ],
+    "lat": 33.706364,
+    "lng": 73.0328,
+    "neighborhood": "F-8",
+    "city": "Islamabad",
+    "rating": 4.6,
+    "completed_jobs": 164,
+    "completed_jobs_by_neighborhood": {
+      "F-8": 19
+    },
+    "on_time_score": 0.77,
+    "cancellation_rate": 0.08,
+    "review_recency_days": 65,
+    "risk_score": 0.08,
+    "current_workload": 0.54,
+    "available_slots": [
+      "2026-05-17T09:00:00+05:00",
+      "2026-05-19T14:00:00+05:00",
+      "2026-05-19T16:00:00+05:00"
+    ],
+    "phone": "+923332083803",
+    "gender": "female",
+    "years_experience": 11,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 600,
+    "rate_per_hour_pkr": 800,
+    "price_range_pkr": [
+      1496,
+      4682
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_071",
+    "name": "Imran Hussain Appliance Repair",
+    "service_categories": [
+      "appliance_repair"
+    ],
+    "specializations": [],
+    "lat": 33.666819,
+    "lng": 73.025208,
+    "neighborhood": "G-10",
+    "city": "Islamabad",
+    "rating": 3.9,
+    "completed_jobs": 31,
+    "completed_jobs_by_neighborhood": {
+      "G-10": 59
+    },
+    "on_time_score": 0.84,
+    "cancellation_rate": 0.01,
+    "review_recency_days": 8,
+    "risk_score": 0.28,
+    "current_workload": 0.07,
+    "available_slots": [
+      "2026-05-18T11:00:00+05:00",
+      "2026-05-19T09:00:00+05:00",
+      "2026-05-20T09:00:00+05:00",
+      "2026-05-20T10:00:00+05:00",
+      "2026-05-21T09:00:00+05:00"
+    ],
+    "phone": "+923373360324",
+    "gender": "male",
+    "years_experience": 2,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 1000,
+    "price_range_pkr": [
+      1456,
+      6443
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_072",
+    "name": "Sara Ali Appliance Repair",
+    "service_categories": [
+      "appliance_repair",
+      "painter"
+    ],
+    "specializations": [],
+    "lat": 31.45975,
+    "lng": 74.416092,
+    "neighborhood": "DHA Lahore Phase 5",
+    "city": "Lahore",
+    "rating": 4.1,
+    "completed_jobs": 77,
+    "completed_jobs_by_neighborhood": {
+      "DHA Lahore Phase 5": 5
+    },
+    "on_time_score": 0.94,
+    "cancellation_rate": 0.15,
+    "review_recency_days": 60,
+    "risk_score": 0.21,
+    "current_workload": 0.54,
+    "available_slots": [
+      "2026-05-16T15:00:00+05:00",
+      "2026-05-16T16:00:00+05:00",
+      "2026-05-18T15:00:00+05:00"
+    ],
+    "phone": "+923381394920",
+    "gender": "female",
+    "years_experience": 13,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 1500,
+    "price_range_pkr": [
+      1154,
+      4270
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_073",
+    "name": "Tariq Shah Plumber",
+    "service_categories": [
+      "plumber",
+      "ac_technician"
+    ],
+    "specializations": [
+      "geyser_leak",
+      "pipe_burst"
+    ],
+    "lat": 31.469604,
+    "lng": 74.41401,
+    "neighborhood": "DHA Lahore Phase 5",
+    "city": "Lahore",
+    "rating": 4.8,
+    "completed_jobs": 158,
+    "completed_jobs_by_neighborhood": {
+      "DHA Lahore Phase 5": 32
+    },
+    "on_time_score": 0.94,
+    "cancellation_rate": 0.12,
+    "review_recency_days": 18,
+    "risk_score": 0.16,
+    "current_workload": 0.29,
+    "available_slots": [
+      "2026-05-15T14:00:00+05:00",
+      "2026-05-16T16:00:00+05:00",
+      "2026-05-18T10:00:00+05:00"
+    ],
+    "phone": "+923387324220",
+    "gender": "male",
+    "years_experience": 11,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 500,
+    "rate_per_hour_pkr": 1000,
+    "price_range_pkr": [
+      1109,
+      4173
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_074",
+    "name": "Saad Shah Ac Technician",
+    "service_categories": [
+      "ac_technician"
+    ],
+    "specializations": [
+      "central_ac",
+      "window_ac"
+    ],
+    "lat": 33.659421,
+    "lng": 73.01101,
+    "neighborhood": "G-11",
+    "city": "Islamabad",
+    "rating": 4.4,
+    "completed_jobs": 96,
+    "completed_jobs_by_neighborhood": {
+      "G-11": 53
+    },
+    "on_time_score": 0.8,
+    "cancellation_rate": 0.08,
+    "review_recency_days": 31,
+    "risk_score": 0.26,
+    "current_workload": 0.3,
+    "available_slots": [
+      "2026-05-15T11:00:00+05:00",
+      "2026-05-18T10:00:00+05:00",
+      "2026-05-18T17:00:00+05:00",
+      "2026-05-19T11:00:00+05:00",
+      "2026-05-20T14:00:00+05:00",
+      "2026-05-20T16:00:00+05:00"
+    ],
+    "phone": "+923329374563",
+    "gender": "male",
+    "years_experience": 15,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 800,
+    "rate_per_hour_pkr": 1500,
+    "price_range_pkr": [
+      1226,
+      7565
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_075",
+    "name": "Imran Sheikh Electrician",
+    "service_categories": [
+      "electrician"
+    ],
+    "specializations": [
+      "switchboard",
+      "house_wiring"
+    ],
+    "lat": 33.684057,
+    "lng": 73.027767,
+    "neighborhood": "G-9",
+    "city": "Islamabad",
+    "rating": 4.2,
+    "completed_jobs": 205,
+    "completed_jobs_by_neighborhood": {
+      "G-9": 76
+    },
+    "on_time_score": 0.8,
+    "cancellation_rate": 0.03,
+    "review_recency_days": 43,
+    "risk_score": 0.1,
+    "current_workload": 0.91,
+    "available_slots": [
+      "2026-05-16T17:00:00+05:00",
+      "2026-05-21T09:00:00+05:00",
+      "2026-05-21T15:00:00+05:00"
+    ],
+    "phone": "+923338428357",
+    "gender": "male",
+    "years_experience": 7,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 300,
+    "rate_per_hour_pkr": 2500,
+    "price_range_pkr": [
+      1290,
+      4987
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_076",
+    "name": "Maria Qureshi Tutor",
+    "service_categories": [
+      "tutor"
+    ],
+    "specializations": [
+      "quran",
+      "a_level_business"
+    ],
+    "lat": 33.50409,
+    "lng": 73.158303,
+    "neighborhood": "DHA Islamabad Phase 2",
+    "city": "Islamabad",
+    "rating": 4.8,
+    "completed_jobs": 101,
+    "completed_jobs_by_neighborhood": {
+      "DHA Islamabad Phase 2": 31
+    },
+    "on_time_score": 0.84,
+    "cancellation_rate": 0.06,
+    "review_recency_days": 73,
+    "risk_score": 0.26,
+    "current_workload": 0.74,
+    "available_slots": [
+      "2026-05-15T17:00:00+05:00",
+      "2026-05-17T15:00:00+05:00",
+      "2026-05-18T14:00:00+05:00",
+      "2026-05-20T14:00:00+05:00",
+      "2026-05-21T17:00:00+05:00"
+    ],
+    "phone": "+923312176998",
+    "gender": "female",
+    "years_experience": 9,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 800,
+    "rate_per_hour_pkr": 2000,
+    "price_range_pkr": [
+      1227,
+      5418
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_077",
+    "name": "Imran Mughal Painter",
+    "service_categories": [
+      "painter",
+      "appliance_repair"
+    ],
+    "specializations": [],
+    "lat": 33.6925,
+    "lng": 73.069696,
+    "neighborhood": "G-7",
+    "city": "Islamabad",
+    "rating": 4.8,
+    "completed_jobs": 184,
+    "completed_jobs_by_neighborhood": {
+      "G-7": 12
+    },
+    "on_time_score": 0.88,
+    "cancellation_rate": 0.13,
+    "review_recency_days": 10,
+    "risk_score": 0.28,
+    "current_workload": 0.67,
+    "available_slots": [
+      "2026-05-16T15:00:00+05:00",
+      "2026-05-16T16:00:00+05:00",
+      "2026-05-17T10:00:00+05:00",
+      "2026-05-18T10:00:00+05:00",
+      "2026-05-19T14:00:00+05:00",
+      "2026-05-20T17:00:00+05:00"
+    ],
+    "phone": "+923310856822",
+    "gender": "male",
+    "years_experience": 14,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 800,
+    "price_range_pkr": [
+      954,
+      3074
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_078",
+    "name": "Zoya Khan Plumber",
+    "service_categories": [
+      "plumber"
+    ],
+    "specializations": [
+      "drain_cleaning",
+      "geyser_leak"
+    ],
+    "lat": 33.672464,
+    "lng": 73.027357,
+    "neighborhood": "G-10",
+    "city": "Islamabad",
+    "rating": 4.2,
+    "completed_jobs": 148,
+    "completed_jobs_by_neighborhood": {
+      "G-10": 60
+    },
+    "on_time_score": 0.95,
+    "cancellation_rate": 0.14,
+    "review_recency_days": 14,
+    "risk_score": 0.28,
+    "current_workload": 0.52,
+    "available_slots": [
+      "2026-05-17T09:00:00+05:00",
+      "2026-05-17T15:00:00+05:00",
+      "2026-05-19T16:00:00+05:00"
+    ],
+    "phone": "+923342342289",
+    "gender": "female",
+    "years_experience": 7,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 500,
+    "rate_per_hour_pkr": 1200,
+    "price_range_pkr": [
+      1073,
+      6251
+    ],
+    "verified": false
+  },
+  {
+    "id": "prov_079",
+    "name": "Usman Ali Plumber",
+    "service_categories": [
+      "plumber",
+      "tutor"
+    ],
+    "specializations": [
+      "drain_cleaning",
+      "pipe_burst"
+    ],
+    "lat": 33.68838,
+    "lng": 73.028564,
+    "neighborhood": "G-9",
+    "city": "Islamabad",
+    "rating": 3.8,
+    "completed_jobs": 239,
+    "completed_jobs_by_neighborhood": {
+      "G-9": 17
+    },
+    "on_time_score": 0.97,
+    "cancellation_rate": 0.14,
+    "review_recency_days": 30,
+    "risk_score": 0.08,
+    "current_workload": 0.87,
+    "available_slots": [
+      "2026-05-15T14:00:00+05:00",
+      "2026-05-17T15:00:00+05:00",
+      "2026-05-20T17:00:00+05:00",
+      "2026-05-21T14:00:00+05:00"
+    ],
+    "phone": "+923386072480",
+    "gender": "male",
+    "years_experience": 16,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 300,
+    "rate_per_hour_pkr": 2500,
+    "price_range_pkr": [
+      1087,
+      7448
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_080",
+    "name": "Bilal Shah Ac Technician",
+    "service_categories": [
+      "ac_technician"
+    ],
+    "specializations": [
+      "central_ac",
+      "inverter_ac"
+    ],
+    "lat": 33.715387,
+    "lng": 73.073709,
+    "neighborhood": "F-6",
+    "city": "Islamabad",
+    "rating": 4.4,
+    "completed_jobs": 118,
+    "completed_jobs_by_neighborhood": {
+      "F-6": 22
+    },
+    "on_time_score": 0.95,
+    "cancellation_rate": 0.1,
+    "review_recency_days": 11,
+    "risk_score": 0.16,
+    "current_workload": 0.97,
+    "available_slots": [
+      "2026-05-16T15:00:00+05:00",
+      "2026-05-16T15:00:00+05:00",
+      "2026-05-18T16:00:00+05:00",
+      "2026-05-19T11:00:00+05:00",
+      "2026-05-21T17:00:00+05:00"
+    ],
+    "phone": "+923317207013",
+    "gender": "male",
+    "years_experience": 4,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 300,
+    "rate_per_hour_pkr": 1200,
+    "price_range_pkr": [
+      1419,
+      7879
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_081",
+    "name": "Zoya Ahmed Painter",
+    "service_categories": [
+      "painter"
+    ],
+    "specializations": [],
+    "lat": 33.591528,
+    "lng": 73.050682,
+    "neighborhood": "Saddar Rawalpindi",
+    "city": "Rawalpindi",
+    "rating": 4.1,
+    "completed_jobs": 202,
+    "completed_jobs_by_neighborhood": {
+      "Saddar Rawalpindi": 24
+    },
+    "on_time_score": 0.93,
+    "cancellation_rate": 0.05,
+    "review_recency_days": 14,
+    "risk_score": 0.05,
+    "current_workload": 0.94,
+    "available_slots": [
+      "2026-05-15T11:00:00+05:00",
+      "2026-05-15T17:00:00+05:00",
+      "2026-05-16T14:00:00+05:00",
+      "2026-05-19T11:00:00+05:00",
+      "2026-05-20T09:00:00+05:00",
+      "2026-05-21T10:00:00+05:00"
+    ],
+    "phone": "+923369691437",
+    "gender": "female",
+    "years_experience": 12,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 300,
+    "rate_per_hour_pkr": 1000,
+    "price_range_pkr": [
+      889,
+      4535
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_082",
+    "name": "Ahmed Sheikh Appliance Repair",
+    "service_categories": [
+      "appliance_repair",
+      "painter"
+    ],
+    "specializations": [],
+    "lat": 33.666095,
+    "lng": 73.013161,
+    "neighborhood": "G-11",
+    "city": "Islamabad",
+    "rating": 4.5,
+    "completed_jobs": 195,
+    "completed_jobs_by_neighborhood": {
+      "G-11": 53
+    },
+    "on_time_score": 0.79,
+    "cancellation_rate": 0.04,
+    "review_recency_days": 35,
+    "risk_score": 0.16,
+    "current_workload": 0.06,
+    "available_slots": [
+      "2026-05-15T11:00:00+05:00",
+      "2026-05-16T15:00:00+05:00",
+      "2026-05-18T14:00:00+05:00",
+      "2026-05-19T10:00:00+05:00",
+      "2026-05-20T15:00:00+05:00",
+      "2026-05-21T09:00:00+05:00"
+    ],
+    "phone": "+923368341261",
+    "gender": "male",
+    "years_experience": 9,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 600,
+    "rate_per_hour_pkr": 800,
+    "price_range_pkr": [
+      1169,
+      5061
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_083",
+    "name": "Imran Ali Ac Technician",
+    "service_categories": [
+      "ac_technician"
+    ],
+    "specializations": [
+      "central_ac",
+      "split_ac"
+    ],
+    "lat": 33.512501,
+    "lng": 73.151876,
+    "neighborhood": "DHA Islamabad Phase 2",
+    "city": "Islamabad",
+    "rating": 4.5,
+    "completed_jobs": 102,
+    "completed_jobs_by_neighborhood": {
+      "DHA Islamabad Phase 2": 30
+    },
+    "on_time_score": 0.87,
+    "cancellation_rate": 0.03,
+    "review_recency_days": 51,
+    "risk_score": 0.29,
+    "current_workload": 0.29,
+    "available_slots": [
+      "2026-05-16T11:00:00+05:00",
+      "2026-05-18T11:00:00+05:00",
+      "2026-05-18T17:00:00+05:00",
+      "2026-05-20T15:00:00+05:00",
+      "2026-05-21T17:00:00+05:00"
+    ],
+    "phone": "+923394946730",
+    "gender": "male",
+    "years_experience": 16,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 1200,
+    "price_range_pkr": [
+      1185,
+      5296
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_084",
+    "name": "Zain Mughal Ac Technician",
+    "service_categories": [
+      "ac_technician"
+    ],
+    "specializations": [
+      "inverter_ac",
+      "window_ac"
+    ],
+    "lat": 33.6865,
+    "lng": 73.042341,
+    "neighborhood": "G-9",
+    "city": "Islamabad",
+    "rating": 4.0,
+    "completed_jobs": 124,
+    "completed_jobs_by_neighborhood": {
+      "G-9": 68
+    },
+    "on_time_score": 0.78,
+    "cancellation_rate": 0.05,
+    "review_recency_days": 33,
+    "risk_score": 0.2,
+    "current_workload": 0.72,
+    "available_slots": [
+      "2026-05-17T17:00:00+05:00",
+      "2026-05-18T17:00:00+05:00",
+      "2026-05-20T09:00:00+05:00",
+      "2026-05-20T10:00:00+05:00",
+      "2026-05-21T17:00:00+05:00",
+      "2026-05-21T17:00:00+05:00"
+    ],
+    "phone": "+923360598851",
+    "gender": "male",
+    "years_experience": 3,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 800,
+    "rate_per_hour_pkr": 1500,
+    "price_range_pkr": [
+      1396,
+      6283
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_085",
+    "name": "Fahad Mughal Gas Leak Specialist",
+    "service_categories": [
+      "gas_leak_specialist"
+    ],
+    "specializations": [],
+    "lat": 31.470508,
+    "lng": 74.412534,
+    "neighborhood": "DHA Lahore Phase 5",
+    "city": "Lahore",
+    "rating": 4.8,
+    "completed_jobs": 104,
+    "completed_jobs_by_neighborhood": {
+      "DHA Lahore Phase 5": 60
+    },
+    "on_time_score": 0.78,
+    "cancellation_rate": 0.01,
+    "review_recency_days": 29,
+    "risk_score": 0.16,
+    "current_workload": 0.52,
+    "available_slots": [
+      "2026-05-16T16:00:00+05:00",
+      "2026-05-18T17:00:00+05:00",
+      "2026-05-19T09:00:00+05:00",
+      "2026-05-19T16:00:00+05:00",
+      "2026-05-20T16:00:00+05:00"
+    ],
+    "phone": "+923387915846",
+    "gender": "male",
+    "years_experience": 23,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 600,
+    "rate_per_hour_pkr": 1200,
+    "price_range_pkr": [
+      1200,
+      6793
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_086",
+    "name": "Imran Ali Carpenter",
+    "service_categories": [
+      "carpenter"
+    ],
+    "specializations": [],
+    "lat": 33.662209,
+    "lng": 73.040915,
+    "neighborhood": "G-13",
+    "city": "Islamabad",
+    "rating": 4.6,
+    "completed_jobs": 107,
+    "completed_jobs_by_neighborhood": {
+      "G-13": 63
+    },
+    "on_time_score": 0.95,
+    "cancellation_rate": 0.08,
+    "review_recency_days": 45,
+    "risk_score": 0.15,
+    "current_workload": 0.44,
+    "available_slots": [
+      "2026-05-15T17:00:00+05:00",
+      "2026-05-17T11:00:00+05:00",
+      "2026-05-20T10:00:00+05:00"
+    ],
+    "phone": "+923370726434",
+    "gender": "male",
+    "years_experience": 11,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 300,
+    "rate_per_hour_pkr": 2500,
+    "price_range_pkr": [
+      917,
+      3185
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_087",
+    "name": "Saad Hussain Appliance Repair",
+    "service_categories": [
+      "appliance_repair",
+      "gas_leak_specialist"
+    ],
+    "specializations": [],
+    "lat": 33.513187,
+    "lng": 73.096001,
+    "neighborhood": "Bahria Town Phase 4",
+    "city": "Islamabad",
+    "rating": 4.0,
+    "completed_jobs": 171,
+    "completed_jobs_by_neighborhood": {
+      "Bahria Town Phase 4": 59
+    },
+    "on_time_score": 0.85,
+    "cancellation_rate": 0.11,
+    "review_recency_days": 27,
+    "risk_score": 0.1,
+    "current_workload": 0.7,
+    "available_slots": [
+      "2026-05-16T14:00:00+05:00",
+      "2026-05-16T16:00:00+05:00",
+      "2026-05-18T09:00:00+05:00",
+      "2026-05-20T10:00:00+05:00",
+      "2026-05-20T14:00:00+05:00",
+      "2026-05-20T15:00:00+05:00"
+    ],
+    "phone": "+923318397164",
+    "gender": "male",
+    "years_experience": 19,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 800,
+    "rate_per_hour_pkr": 1000,
+    "price_range_pkr": [
+      1174,
+      5670
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_088",
+    "name": "Mahnoor Qureshi Gas Leak Specialist",
+    "service_categories": [
+      "gas_leak_specialist"
+    ],
+    "specializations": [],
+    "lat": 33.712847,
+    "lng": 73.060353,
+    "neighborhood": "F-7",
+    "city": "Islamabad",
+    "rating": 4.5,
+    "completed_jobs": 228,
+    "completed_jobs_by_neighborhood": {
+      "F-7": 43
+    },
+    "on_time_score": 0.98,
+    "cancellation_rate": 0.09,
+    "review_recency_days": 87,
+    "risk_score": 0.06,
+    "current_workload": 0.12,
+    "available_slots": [
+      "2026-05-17T11:00:00+05:00",
+      "2026-05-19T10:00:00+05:00",
+      "2026-05-21T14:00:00+05:00"
+    ],
+    "phone": "+923350987410",
+    "gender": "female",
+    "years_experience": 4,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 2000,
+    "price_range_pkr": [
+      1197,
+      6426
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_089",
+    "name": "Saad Hussain Tutor",
+    "service_categories": [
+      "tutor",
+      "ac_technician"
+    ],
+    "specializations": [
+      "quran",
+      "a_level_business"
+    ],
+    "lat": 33.656074,
+    "lng": 73.041615,
+    "neighborhood": "G-13",
+    "city": "Islamabad",
+    "rating": 3.8,
+    "completed_jobs": 149,
+    "completed_jobs_by_neighborhood": {
+      "G-13": 68
+    },
+    "on_time_score": 0.85,
+    "cancellation_rate": 0.07,
+    "review_recency_days": 57,
+    "risk_score": 0.16,
+    "current_workload": 0.08,
+    "available_slots": [
+      "2026-05-16T17:00:00+05:00",
+      "2026-05-18T10:00:00+05:00",
+      "2026-05-18T15:00:00+05:00"
+    ],
+    "phone": "+923314142053",
+    "gender": "male",
+    "years_experience": 25,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 300,
+    "rate_per_hour_pkr": 1200,
+    "price_range_pkr": [
+      1030,
+      7404
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_090",
+    "name": "Iqra Mughal Electrician",
+    "service_categories": [
+      "electrician"
+    ],
+    "specializations": [
+      "ups_install",
+      "fan_install"
+    ],
+    "lat": 33.594146,
+    "lng": 73.05285,
+    "neighborhood": "Saddar Rawalpindi",
+    "city": "Rawalpindi",
+    "rating": 3.8,
+    "completed_jobs": 46,
+    "completed_jobs_by_neighborhood": {
+      "Saddar Rawalpindi": 36
+    },
+    "on_time_score": 0.82,
+    "cancellation_rate": 0.15,
+    "review_recency_days": 58,
+    "risk_score": 0.09,
+    "current_workload": 0.86,
+    "available_slots": [
+      "2026-05-16T14:00:00+05:00",
+      "2026-05-18T15:00:00+05:00",
+      "2026-05-19T17:00:00+05:00",
+      "2026-05-21T09:00:00+05:00",
+      "2026-05-21T16:00:00+05:00"
+    ],
+    "phone": "+923321674661",
+    "gender": "female",
+    "years_experience": 15,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 300,
+    "rate_per_hour_pkr": 1000,
+    "price_range_pkr": [
+      1014,
+      7816
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_091",
+    "name": "Zain Hussain Geyser Technician",
+    "service_categories": [
+      "geyser_technician"
+    ],
+    "specializations": [],
+    "lat": 24.806215,
+    "lng": 67.066955,
+    "neighborhood": "DHA Karachi Phase 6",
+    "city": "Karachi",
+    "rating": 4.5,
+    "completed_jobs": 151,
+    "completed_jobs_by_neighborhood": {
+      "DHA Karachi Phase 6": 17
+    },
+    "on_time_score": 0.78,
+    "cancellation_rate": 0.11,
+    "review_recency_days": 53,
+    "risk_score": 0.28,
+    "current_workload": 0.99,
+    "available_slots": [
+      "2026-05-16T11:00:00+05:00",
+      "2026-05-17T15:00:00+05:00",
+      "2026-05-17T17:00:00+05:00",
+      "2026-05-19T15:00:00+05:00",
+      "2026-05-20T11:00:00+05:00"
+    ],
+    "phone": "+923398032908",
+    "gender": "male",
+    "years_experience": 5,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 1000,
+    "price_range_pkr": [
+      949,
+      5638
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_092",
+    "name": "Zain Malik Beautician",
+    "service_categories": [
+      "beautician"
+    ],
+    "specializations": [
+      "bridal",
+      "facial"
+    ],
+    "lat": 33.601871,
+    "lng": 73.045854,
+    "neighborhood": "Saddar Rawalpindi",
+    "city": "Rawalpindi",
+    "rating": 3.9,
+    "completed_jobs": 236,
+    "completed_jobs_by_neighborhood": {
+      "Saddar Rawalpindi": 16
+    },
+    "on_time_score": 0.93,
+    "cancellation_rate": 0.07,
+    "review_recency_days": 86,
+    "risk_score": 0.22,
+    "current_workload": 0.85,
+    "available_slots": [
+      "2026-05-17T14:00:00+05:00",
+      "2026-05-17T16:00:00+05:00",
+      "2026-05-18T11:00:00+05:00",
+      "2026-05-19T09:00:00+05:00",
+      "2026-05-19T16:00:00+05:00",
+      "2026-05-21T17:00:00+05:00"
+    ],
+    "phone": "+923381729237",
+    "gender": "male",
+    "years_experience": 13,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 600,
+    "rate_per_hour_pkr": 1000,
+    "price_range_pkr": [
+      1306,
+      5199
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_093",
+    "name": "Nida Khan Plumber",
+    "service_categories": [
+      "plumber",
+      "appliance_repair"
+    ],
+    "specializations": [
+      "geyser_leak",
+      "drain_cleaning"
+    ],
+    "lat": 33.681755,
+    "lng": 73.011059,
+    "neighborhood": "F-11",
+    "city": "Islamabad",
+    "rating": 4.5,
+    "completed_jobs": 112,
+    "completed_jobs_by_neighborhood": {
+      "F-11": 37
+    },
+    "on_time_score": 0.77,
+    "cancellation_rate": 0.1,
+    "review_recency_days": 84,
+    "risk_score": 0.07,
+    "current_workload": 0.4,
+    "available_slots": [
+      "2026-05-15T14:00:00+05:00",
+      "2026-05-15T16:00:00+05:00",
+      "2026-05-16T16:00:00+05:00",
+      "2026-05-16T16:00:00+05:00",
+      "2026-05-17T10:00:00+05:00",
+      "2026-05-21T11:00:00+05:00"
+    ],
+    "phone": "+923351004756",
+    "gender": "female",
+    "years_experience": 24,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 1500,
+    "price_range_pkr": [
+      1471,
+      3747
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_094",
+    "name": "Saad Butt Plumber",
+    "service_categories": [
+      "plumber",
+      "beautician"
+    ],
+    "specializations": [
+      "geyser_leak",
+      "tap_replacement"
+    ],
+    "lat": 33.716068,
+    "lng": 73.058259,
+    "neighborhood": "F-6",
+    "city": "Islamabad",
+    "rating": 4.2,
+    "completed_jobs": 46,
+    "completed_jobs_by_neighborhood": {
+      "F-6": 45
+    },
+    "on_time_score": 0.84,
+    "cancellation_rate": 0.04,
+    "review_recency_days": 49,
+    "risk_score": 0.24,
+    "current_workload": 0.75,
+    "available_slots": [
+      "2026-05-15T16:00:00+05:00",
+      "2026-05-16T14:00:00+05:00",
+      "2026-05-18T09:00:00+05:00",
+      "2026-05-21T09:00:00+05:00"
+    ],
+    "phone": "+923327870584",
+    "gender": "male",
+    "years_experience": 21,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 800,
+    "price_range_pkr": [
+      1343,
+      7614
+    ],
+    "verified": false
+  },
+  {
+    "id": "prov_095",
+    "name": "Hassan Qureshi Gas Leak Specialist",
+    "service_categories": [
+      "gas_leak_specialist"
+    ],
+    "specializations": [],
+    "lat": 33.514282,
+    "lng": 73.087024,
+    "neighborhood": "Bahria Town Phase 4",
+    "city": "Islamabad",
+    "rating": 4.4,
+    "completed_jobs": 109,
+    "completed_jobs_by_neighborhood": {
+      "Bahria Town Phase 4": 59
+    },
+    "on_time_score": 0.83,
+    "cancellation_rate": 0.02,
+    "review_recency_days": 36,
+    "risk_score": 0.2,
+    "current_workload": 0.25,
+    "available_slots": [
+      "2026-05-15T15:00:00+05:00",
+      "2026-05-16T17:00:00+05:00",
+      "2026-05-20T14:00:00+05:00"
+    ],
+    "phone": "+923390664728",
+    "gender": "male",
+    "years_experience": 20,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 500,
+    "rate_per_hour_pkr": 2500,
+    "price_range_pkr": [
+      827,
+      5471
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_096",
+    "name": "Ayesha Ahmed Tutor",
+    "service_categories": [
+      "tutor"
+    ],
+    "specializations": [
+      "a_level_business",
+      "english"
+    ],
+    "lat": 33.65859,
+    "lng": 73.052857,
+    "neighborhood": "G-13",
+    "city": "Islamabad",
+    "rating": 4.2,
+    "completed_jobs": 240,
+    "completed_jobs_by_neighborhood": {
+      "G-13": 77
+    },
+    "on_time_score": 0.86,
+    "cancellation_rate": 0.08,
+    "review_recency_days": 23,
+    "risk_score": 0.23,
+    "current_workload": 0.95,
+    "available_slots": [
+      "2026-05-16T14:00:00+05:00",
+      "2026-05-17T11:00:00+05:00",
+      "2026-05-19T09:00:00+05:00"
+    ],
+    "phone": "+923319796799",
+    "gender": "female",
+    "years_experience": 1,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 300,
+    "rate_per_hour_pkr": 1200,
+    "price_range_pkr": [
+      1020,
+      3326
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_097",
+    "name": "Sara Qureshi Electrician",
+    "service_categories": [
+      "electrician"
+    ],
+    "specializations": [
+      "switchboard",
+      "fan_install"
+    ],
+    "lat": 33.59296,
+    "lng": 73.04373,
+    "neighborhood": "Saddar Rawalpindi",
+    "city": "Rawalpindi",
+    "rating": 4.4,
+    "completed_jobs": 233,
+    "completed_jobs_by_neighborhood": {
+      "Saddar Rawalpindi": 13
+    },
+    "on_time_score": 0.83,
+    "cancellation_rate": 0.07,
+    "review_recency_days": 31,
+    "risk_score": 0.04,
+    "current_workload": 0.09,
+    "available_slots": [
+      "2026-05-18T15:00:00+05:00",
+      "2026-05-19T11:00:00+05:00",
+      "2026-05-20T17:00:00+05:00",
+      "2026-05-21T10:00:00+05:00"
+    ],
+    "phone": "+923368315400",
+    "gender": "female",
+    "years_experience": 4,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 800,
+    "rate_per_hour_pkr": 800,
+    "price_range_pkr": [
+      1116,
+      4438
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_098",
+    "name": "Nida Mughal Appliance Repair",
+    "service_categories": [
+      "appliance_repair"
+    ],
+    "specializations": [],
+    "lat": 33.502744,
+    "lng": 73.140227,
+    "neighborhood": "DHA Islamabad Phase 2",
+    "city": "Islamabad",
+    "rating": 4.4,
+    "completed_jobs": 250,
+    "completed_jobs_by_neighborhood": {
+      "DHA Islamabad Phase 2": 8
+    },
+    "on_time_score": 0.83,
+    "cancellation_rate": 0.06,
+    "review_recency_days": 68,
+    "risk_score": 0.04,
+    "current_workload": 0.71,
+    "available_slots": [
+      "2026-05-15T17:00:00+05:00",
+      "2026-05-16T11:00:00+05:00",
+      "2026-05-16T16:00:00+05:00",
+      "2026-05-17T16:00:00+05:00",
+      "2026-05-21T17:00:00+05:00"
+    ],
+    "phone": "+923387396877",
+    "gender": "female",
+    "years_experience": 21,
+    "languages": [
+      "urdu"
+    ],
+    "base_visit_fee_pkr": 600,
+    "rate_per_hour_pkr": 2000,
+    "price_range_pkr": [
+      1168,
+      3454
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_099",
+    "name": "Zain Ali Geyser Technician",
+    "service_categories": [
+      "geyser_technician"
+    ],
+    "specializations": [],
+    "lat": 33.651738,
+    "lng": 73.041046,
+    "neighborhood": "G-13",
+    "city": "Islamabad",
+    "rating": 5.0,
+    "completed_jobs": 65,
+    "completed_jobs_by_neighborhood": {
+      "G-13": 9
+    },
+    "on_time_score": 0.89,
+    "cancellation_rate": 0.14,
+    "review_recency_days": 84,
+    "risk_score": 0.14,
+    "current_workload": 0.32,
+    "available_slots": [
+      "2026-05-16T09:00:00+05:00",
+      "2026-05-18T10:00:00+05:00",
+      "2026-05-18T11:00:00+05:00"
+    ],
+    "phone": "+923365869014",
+    "gender": "male",
+    "years_experience": 24,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 300,
+    "rate_per_hour_pkr": 2000,
+    "price_range_pkr": [
+      1181,
+      3978
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_100",
+    "name": "Tariq Ali Tutor",
+    "service_categories": [
+      "tutor"
+    ],
+    "specializations": [
+      "quran",
+      "a_level_business"
+    ],
+    "lat": 31.453153,
+    "lng": 74.403164,
+    "neighborhood": "DHA Lahore Phase 5",
+    "city": "Lahore",
+    "rating": 4.3,
+    "completed_jobs": 164,
+    "completed_jobs_by_neighborhood": {
+      "DHA Lahore Phase 5": 43
+    },
+    "on_time_score": 0.93,
+    "cancellation_rate": 0.04,
+    "review_recency_days": 48,
+    "risk_score": 0.19,
+    "current_workload": 0.49,
+    "available_slots": [
+      "2026-05-15T11:00:00+05:00",
+      "2026-05-16T11:00:00+05:00",
+      "2026-05-19T14:00:00+05:00"
+    ],
+    "phone": "+923336229153",
+    "gender": "male",
+    "years_experience": 24,
+    "languages": [
+      "urdu",
+      "english"
+    ],
+    "base_visit_fee_pkr": 400,
+    "rate_per_hour_pkr": 1000,
+    "price_range_pkr": [
+      806,
+      6359
+    ],
+    "verified": false
+  }
+]
