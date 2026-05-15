@@ -1,0 +1,10 @@
+{"input": "Mujhe G-13 mein kal subah AC theek karwana hai", "expected": {"service_type": "ac_technician", "location": "G-13", "time_window": "tomorrow_morning", "confidence_min": 0.8, "job_complexity": "basic", "urgency": "normal", "gender_preference": "any", "city": "Islamabad"}}
+{"input": "mere ghar pe plumber bhejo", "expected": {"service_type": "plumber", "needs_clarification": true, "job_complexity": "basic"}}
+{"input": "inverter ac cooling nahi kar raha", "expected": {"service_type": "ac_technician", "job_complexity": "basic", "confidence_min": 0.8}}
+{"input": "f-7 mein geyser repair urgently", "expected": {"service_type": "geyser_technician", "location": "F-7", "urgency": "high", "job_complexity": "basic", "confidence_min": 0.8}}
+{"input": "lakdi ki cupboard theek karni hai", "expected": {"service_type": "carpenter", "job_complexity": "basic", "confidence_min": 0.8}}
+{"input": "O level math tutor required for today", "expected": {"service_type": "tutor", "job_complexity": "basic", "time_window": "today", "confidence_min": 0.8}}
+{"input": "female bridal makeup artist chahiye", "expected": {"service_type": "beautician", "gender_preference": "female", "job_complexity": "basic", "confidence_min": 0.8}}
+{"input": "fridge kharab ho gaya hai", "expected": {"service_type": "appliance_repair", "job_complexity": "basic", "confidence_min": 0.8}}
+{"input": "switchboard repair G-11", "expected": {"service_type": "electrician", "location": "G-11", "job_complexity": "basic", "confidence_min": 0.8}}
+{"input": "room paint karwana hai", "expected": {"service_type": "painter", "job_complexity": "basic", "confidence_min": 0.8}}

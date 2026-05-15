@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "bulao-backend"
+version = "0.1.0"
+description = "Bulao Backend"
+authors = ["Muhammad-Hamad <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = ">=0.115.0"
+uvicorn = {extras = ["standard"], version = ">=0.27.0"}
+google-adk = "^0.5"
+google-genai = ">=1.12.1"
+pydantic = "^2.6"
+pydantic-settings = "^2.2"
+google-cloud-firestore = "^2.15"
+google-cloud-storage = "^2.14"
+reportlab = "^4.0"
+httpx = ">=0.28.1"
+structlog = "^24.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0"
+pytest-asyncio = "^0.23"
+ruff = "^0.4"
+mypy = "^1.9"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

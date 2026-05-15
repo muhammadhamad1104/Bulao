@@ -1,0 +1,119 @@
+============================= test session starts ==============================
+platform linux -- Python 3.14.4, pytest-8.4.2, pluggy-1.6.0 -- /home/muhammad-hamad/.cache/pypoetry/virtualenvs/bulao-backend-UcaufFe2-py3.14/bin/python
+cachedir: .pytest_cache
+rootdir: /home/muhammad-hamad/All-Semester/SEMESTER08/Hackathon/Bulao/backend
+configfile: pyproject.toml
+plugins: asyncio-0.23.8, anyio-4.13.0
+asyncio: mode=Mode.STRICT
+collecting ... collected 5 items
+
+tests/test_orchestrate.py::test_health PASSED                            [ 20%]
+tests/test_orchestrate.py::test_orchestrate_success PASSED               [ 40%]
+tests/test_orchestrate.py::test_orchestrate_clarification PASSED         [ 60%]
+tests/test_orchestrate.py::test_orchestrate_no_match PASSED              [ 80%]
+tests/test_intent_agent.py::test_intent_accuracy FAILED                  [100%]
+
+=================================== FAILURES ===================================
+_____________________________ test_intent_accuracy _____________________________
+
+intent_examples = [{'expected': {'city': 'Islamabad', 'confidence_min': 0.85, 'gender_preference': 'any', 'job_complexity': 'basic', ......ty': 'basic', 'service_type': 'tutor', 'time_window': 'today'}, 'input': 'O level math tutor required for today'}, ...]
+
+    @pytest.mark.asyncio
+    async def test_intent_accuracy(intent_examples):
+        if not settings.GEMINI_API_KEY or settings.GEMINI_API_KEY in ["paste-your-key-here", "fake"]:
+            pytest.skip("Skipping intent agent test because GEMINI_API_KEY is not set")
+    
+        if not intent_examples:
+            pytest.skip("No intent examples found")
+    
+        svc_correct = 0
+        cmplx_correct = 0
+    
+        for ex in intent_examples:
+            actual = await intent_agent.run(ex["input"])
+            expected = ex["expected"]
+    
+            if actual.service_type == expected.get("service_type"):
+                svc_correct += 1
+            if actual.job_complexity == expected.get("job_complexity"):
+                cmplx_correct += 1
+    
+            if expected.get("needs_clarification"):
+                assert actual.confidence < 0.7, f"Expected low confidence for {ex['input']}"
+                assert actual.clarification_question is not None
+            else:
+                conf_min = expected.get("confidence_min", 0.7)
+>               assert actual.confidence >= (conf_min - 0.1), f"Confidence too low for {ex['input']}"
+E               AssertionError: Confidence too low for Mujhe G-13 mein kal subah AC theek karwana hai
+E               assert 0.3 >= (0.85 - 0.1)
+E                +  where 0.3 = Intent(service_type='ac_technician', location=None, city='Islamabad', time_window='flexible', urgency='normal', job_complexity='basic', specialization_hint=None, gender_preference='any', budget_range=None, raw_notes='fallback:llm_failure', confidence=0.3, clarification_question='Aap ne kya kaam karwana hai? Sector ya area ka naam bhi batayein.').confidence
+
+actual     = Intent(service_type='ac_technician', location=None, city='Islamabad', time_window='flexible', urgency='normal', job_co...m_failure', confidence=0.3, clarification_question='Aap ne kya kaam karwana hai? Sector ya area ka naam bhi batayein.')
+cmplx_correct = 1
+conf_min   = 0.85
+ex         = {'expected': {'city': 'Islamabad', 'confidence_min': 0.85, 'gender_preference': 'any', 'job_complexity': 'basic', ...}, 'input': 'Mujhe G-13 mein kal subah AC theek karwana hai'}
+expected   = {'city': 'Islamabad', 'confidence_min': 0.85, 'gender_preference': 'any', 'job_complexity': 'basic', ...}
+intent_examples = [{'expected': {'city': 'Islamabad', 'confidence_min': 0.85, 'gender_preference': 'any', 'job_complexity': 'basic', ......ty': 'basic', 'service_type': 'tutor', 'time_window': 'today'}, 'input': 'O level math tutor required for today'}, ...]
+svc_correct = 1
+
+tests/test_intent_agent.py:44: AssertionError
+----------------------------- Captured stdout call -----------------------------
+2026-05-15 19:52:14 [info     ] agent_start                    agent=intent input_len=46
+2026-05-15 19:52:16 [error    ] agent_llm_failure              agent=intent error=429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\nPlease retry in 44.066066916s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-2.5-flash'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '44s'}]}}
+=============================== warnings summary ===============================
+app/config.py:4
+  /home/muhammad-hamad/All-Semester/SEMESTER08/Hackathon/Bulao/backend/app/config.py:4: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class Settings(BaseSettings):
+
+../../../../../.cache/pypoetry/virtualenvs/bulao-backend-UcaufFe2-py3.14/lib/python3.14/site-packages/google/genai/types.py:42
+  /home/muhammad-hamad/.cache/pypoetry/virtualenvs/bulao-backend-UcaufFe2-py3.14/lib/python3.14/site-packages/google/genai/types.py:42: DeprecationWarning: '_UnionGenericAlias' is deprecated and slated for removal in Python 3.17
+    VersionedUnionType = Union[builtin_types.UnionType, _UnionGenericAlias]
+
+../../../../../.cache/pypoetry/virtualenvs/bulao-backend-UcaufFe2-py3.14/lib/python3.14/site-packages/pytest_asyncio/plugin.py:169: 173 warnings
+  /home/muhammad-hamad/.cache/pypoetry/virtualenvs/bulao-backend-UcaufFe2-py3.14/lib/python3.14/site-packages/pytest_asyncio/plugin.py:169: DeprecationWarning: 'asyncio.iscoroutinefunction' is deprecated and slated for removal in Python 3.16; use inspect.iscoroutinefunction() instead
+    return asyncio.iscoroutinefunction(obj) or inspect.isasyncgenfunction(obj)
+
+../../../../../.cache/pypoetry/virtualenvs/bulao-backend-UcaufFe2-py3.14/lib/python3.14/site-packages/pytest_asyncio/plugin.py:433
+../../../../../.cache/pypoetry/virtualenvs/bulao-backend-UcaufFe2-py3.14/lib/python3.14/site-packages/pytest_asyncio/plugin.py:433
+../../../../../.cache/pypoetry/virtualenvs/bulao-backend-UcaufFe2-py3.14/lib/python3.14/site-packages/pytest_asyncio/plugin.py:433
+../../../../../.cache/pypoetry/virtualenvs/bulao-backend-UcaufFe2-py3.14/lib/python3.14/site-packages/pytest_asyncio/plugin.py:433
+../../../../../.cache/pypoetry/virtualenvs/bulao-backend-UcaufFe2-py3.14/lib/python3.14/site-packages/pytest_asyncio/plugin.py:433
+  /home/muhammad-hamad/.cache/pypoetry/virtualenvs/bulao-backend-UcaufFe2-py3.14/lib/python3.14/site-packages/pytest_asyncio/plugin.py:433: DeprecationWarning: 'asyncio.iscoroutinefunction' is deprecated and slated for removal in Python 3.16; use inspect.iscoroutinefunction() instead
+    return asyncio.iscoroutinefunction(func)
+
+tests/test_orchestrate.py::test_health
+  /home/muhammad-hamad/.cache/pypoetry/virtualenvs/bulao-backend-UcaufFe2-py3.14/lib/python3.14/site-packages/pytest_asyncio/plugin.py:1005: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    return asyncio.get_event_loop_policy()
+
+tests/test_intent_agent.py::test_intent_accuracy
+  /home/muhammad-hamad/.cache/pypoetry/virtualenvs/bulao-backend-UcaufFe2-py3.14/lib/python3.14/site-packages/pytest_asyncio/plugin.py:751: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    _restore_event_loop_policy(asyncio.get_event_loop_policy()),
+
+tests/test_intent_agent.py::test_intent_accuracy
+  /home/muhammad-hamad/.cache/pypoetry/virtualenvs/bulao-backend-UcaufFe2-py3.14/lib/python3.14/site-packages/pytest_asyncio/plugin.py:977: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(new_loop_policy)
+
+tests/test_intent_agent.py::test_intent_accuracy
+  /home/muhammad-hamad/.cache/pypoetry/virtualenvs/bulao-backend-UcaufFe2-py3.14/lib/python3.14/site-packages/pytest_asyncio/plugin.py:978: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+
+tests/test_intent_agent.py::test_intent_accuracy
+  /home/muhammad-hamad/.cache/pypoetry/virtualenvs/bulao-backend-UcaufFe2-py3.14/lib/python3.14/site-packages/pytest_asyncio/plugin.py:766: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_intent_agent.py::test_intent_accuracy
+  /home/muhammad-hamad/.cache/pypoetry/virtualenvs/bulao-backend-UcaufFe2-py3.14/lib/python3.14/site-packages/pytest_asyncio/plugin.py:811: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+tests/test_intent_agent.py::test_intent_accuracy
+  /home/muhammad-hamad/.cache/pypoetry/virtualenvs/bulao-backend-UcaufFe2-py3.14/lib/python3.14/site-packages/pytest_asyncio/plugin.py:835: DeprecationWarning: 'asyncio.set_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    asyncio.set_event_loop_policy(previous_policy)
+
+tests/test_intent_agent.py::test_intent_accuracy
+  /home/muhammad-hamad/.cache/pypoetry/virtualenvs/bulao-backend-UcaufFe2-py3.14/lib/python3.14/site-packages/pytest_asyncio/plugin.py:847: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+    policy = asyncio.get_event_loop_policy()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_intent_agent.py::test_intent_accuracy - AssertionError: Con...
+================== 1 failed, 4 passed, 188 warnings in 20.22s ==================
