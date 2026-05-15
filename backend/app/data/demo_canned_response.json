@@ -1,0 +1,83 @@
+{
+  "intent": {
+    "service_type": "ac_technician",
+    "location": "G-13",
+    "city": "Islamabad",
+    "time_window": "tomorrow_morning",
+    "urgency": "normal",
+    "job_complexity": "intermediate",
+    "specialization_hint": "split_ac",
+    "gender_preference": "any",
+    "confidence": 0.95,
+    "needs_clarification": false
+  },
+  "discovery": {
+    "candidates": [
+      {
+        "id": "prov_001",
+        "name": "Ali Plumbing & AC",
+        "service_categories": ["ac_technician", "plumber"],
+        "distance_km": 1.2,
+        "neighborhood": "G-13",
+        "rating": 4.8,
+        "completed_jobs_in_area": 142,
+        "on_time_score": 0.98,
+        "cancellation_rate": 0.01,
+        "review_recency_days": 1,
+        "risk_score": 0.02,
+        "current_workload": 0.3,
+        "availability_status": "available_now",
+        "next_slot": "2026-05-16T10:00:00+05:00",
+        "base_visit_fee_pkr": 1000,
+        "rate_per_hour_pkr": 800,
+        "gender": "male",
+        "years_experience": 12,
+        "phone_masked": "+92 300 ******"
+      }
+    ],
+    "alternates": []
+  },
+  "ranking": {
+    "recommended_id": "prov_001",
+    "top_three_ids": ["prov_001"],
+    "factor_scores": {
+      "prov_001": {
+        "distance": 0.95,
+        "availability": 1.0,
+        "rating": 0.96,
+        "on_time": 0.98,
+        "specialization": 0.9,
+        "risk": 0.98,
+        "total": 0.96
+      }
+    },
+    "reasoning_english": "Ali is the best match — 1.2km away, 4.8 rating, and a split AC specialist with 12 years of experience.",
+    "reasoning_urdu": "Ali sab se behtar hain — 1.2km door, 4.8 rating, aur split AC ke mahir hain 12 saal ke tajurba ke saath.",
+    "confidence": "high"
+  },
+  "pricing": {
+    "quote_id": "QT-DEMO-X1",
+    "line_items": [
+      {"label_english": "Base Visit Fee", "label_urdu": "Base Visit Fee", "amount_pkr": 1000, "kind": "base"},
+      {"label_english": "Service Est (1.5h)", "label_urdu": "Service Est (1.5h)", "amount_pkr": 1200, "kind": "addon"},
+      {"label_english": "Split AC Complexity", "label_urdu": "Split AC Complexity", "amount_pkr": 500, "kind": "multiplier"},
+      {"label_english": "First Booking Discount", "label_urdu": "First Booking Discount", "amount_pkr": -250, "kind": "discount"}
+    ],
+    "subtotal_pkr": 2450,
+    "estimated_total_pkr": 2450,
+    "estimated_range_pkr": [2200, 2700],
+    "explanation_english": "Standard service for split AC in G-13. Includes travel and 1.5 hours of work.",
+    "explanation_urdu": "G-13 mein split AC ki standard service. Is mein aana aur 1.5 ghante ka kaam shamil hai.",
+    "fairness_note": "Provider receives PKR 1,960 after platform fee.",
+    "expires_at": "2026-05-15T22:00:00+05:00"
+  },
+  "booking_preview": {
+    "provider_id": "prov_001",
+    "scheduled_time": "2026-05-16T10:00:00+05:00",
+    "expected_total_pkr": 2450
+  },
+  "followup_planned": {
+    "reminder_at": "2026-05-16T09:30:00+05:00",
+    "checkin_at": "2026-05-16T13:00:00+05:00"
+  }
+}

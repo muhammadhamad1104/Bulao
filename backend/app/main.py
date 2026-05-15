@@ -1,31 +1,35 @@
-from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 import structlog
+from contextlib import asynccontextmanager
+from app.routers import orchestrate, book, dispute, health, rating, lifecycle, followup_trigger
 from app.config import settings
-from app.models import OrchestrateRequest
-from app import orchestrator
 
+# Setup logging
+structlog.configure(
+    processors=[
+        structlog.processors.add_log_level,
+        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.processors.JSONRenderer(),
+    ]
+)
 log = structlog.get_logger()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Init logger + ADK client at startup
-    structlog.configure(
-        processors=[
-            structlog.stdlib.add_log_level,
-            structlog.processors.TimeStamper(fmt="iso"),
-            structlog.processors.JSONRenderer()
-        ]
-    )
-    log.bind(service="bulao-backend", env=settings.GOOGLE_CLOUD_PROJECT)
-    log.info("Starting Bulao Backend")
+    # Startup
+    log.info("startup", service="bulao-backend", version="1.0.0", env="production" if not settings.DEMO_MODE else "demo")
     yield
-    log.info("Shutting down Bulao Backend")
+    # Shutdown
+    log.info("shutdown")
 
-app = FastAPI(title="Bulao Backend", version="1.0.0", lifespan=lifespan)
+app = FastAPI(
+    title="Bulao Backend",
+    version="1.0.0",
+    lifespan=lifespan
+)
 
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -34,27 +38,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Include Routers
+app.include_router(health.router)
+app.include_router(orchestrate.router)
+app.include_router(book.router)
+app.include_router(dispute.router)
+app.include_router(rating.router)
+app.include_router(lifecycle.router)
+app.include_router(followup_trigger.router)
+
 @app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
-    log.error("Unhandled exception", error=str(exc))
-    return JSONResponse(
-        status_code=500,
-        content={"error": str(exc), "code": 500},
-    )
-
-@app.get("/health")
-async def health():
-    return {"status": "ok", "version": "1.0.0", "commit": "local"}
-
-@app.post("/orchestrate")
-async def orchestrate(req: OrchestrateRequest):
-    try:
-        return await orchestrator.run_pipeline(req)
-    except Exception as e:
-        log.error("Orchestration failed", error=str(e))
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/book")
-async def book():
-    # Stub for Day 3; returns 501 Not Implemented for now
-    raise HTTPException(status_code=501, detail="Not Implemented")
+async def global_exception_handler(request, exc):
+    log.error("unhandled_exception", error=str(exc))
+    return {"error": "internal_server_error", "message": str(exc)}, 500
