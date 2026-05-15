@@ -17,6 +17,7 @@ class Intent(BaseModel):
     budget_range: Optional[Tuple[int,int]] = None
     raw_notes: Optional[str] = None
     confidence: float # 0.0 to 1.0
+    needs_clarification: bool = False
     clarification_question: Optional[str] = None
 
 class ProviderCandidate(BaseModel):
@@ -127,8 +128,12 @@ class OrchestrateRequest(BaseModel):
 
 class OrchestrateResponse(BaseModel):
     intent: Intent
-    discovery: DiscoveryResult
-    ranking: RankingResult
-    pricing: PriceQuote
-    booking_preview: Dict # booking-shaped; not committed until /book
-    followup_planned: Dict # reminder timing only
+    discovery: Optional[DiscoveryResult] = None
+    ranking: Optional[RankingResult] = None
+    pricing: Optional[PriceQuote] = None
+    booking_preview: Optional[Dict] = None
+    followup_planned: Optional[Dict] = None
+    needs_clarification: bool = False
+    clarification_question: Optional[str] = None
+    user_message_urdu: Optional[str] = None
+    user_message_english: Optional[str] = None
