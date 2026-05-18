@@ -6,10 +6,22 @@ import 'widgets/rating_stars.dart';
 import 'widgets/feedback_chip.dart';
 import 'widgets/comment_box.dart';
 import 'widgets/feedback_send_button.dart';
+import '../../core/services/api_service.dart';
 
 /// Screen allowing users to rate and review their completed service.
 class FeedbackScreen extends StatefulWidget {
-  const FeedbackScreen({super.key});
+  final String bookingId;
+  final String providerName;
+  final String providerInitials;
+  final String descriptionLabel;
+
+  const FeedbackScreen({
+    super.key,
+    required this.bookingId,
+    required this.providerName,
+    required this.providerInitials,
+    required this.descriptionLabel,
+  });
 
   @override
   State<FeedbackScreen> createState() => _FeedbackScreenState();
@@ -46,7 +58,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     });
   }
 
-  void _submitFeedback() {
+  Future<void> _submitFeedback() async {
     // Hide keyboard
     FocusScope.of(context).unfocus();
 
@@ -57,28 +69,55 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       return;
     }
 
-    // Prepare mock submission data
-    // final submission = FeedbackSubmissionModel(
-    //   bookingId: FeedbackBookingModel.mockData.bookingId,
-    //   providerId: FeedbackBookingModel.mockData.providerId,
-    //   rating: _selectedRating,
-    //   selectedTags: _selectedTags.toList(),
-    //   comment: _commentController.text.trim(),
-    // );
-    
-    // Future: Send submission to backend API here.
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Feedback submitted. Thank you!'),
-        backgroundColor: Color(0xFF4CAF50),
-        duration: Duration(seconds: 2),
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFC9A84C)),
+        ),
       ),
     );
 
-    // Safely return to Home
-    Navigator.of(context).popUntil((route) => route.isFirst);
+    try {
+      final response = await ApiService.instance.submitRating(
+        bookingId: widget.bookingId,
+        rating: _selectedRating,
+      );
+
+      // Pop loading dialog
+      if (mounted) Navigator.of(context).pop();
+
+      final msg = response['message_urdu'] as String? ?? 'Feedback submitted. Thank you!';
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(msg),
+            backgroundColor: const Color(0xFF4CAF50),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+
+        // Safely return to Home
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      }
+    } catch (e) {
+      // Pop loading dialog
+      if (mounted) Navigator.of(context).pop();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Fail ho gaya: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
+
 
   void _goHome() {
     Navigator.of(context).popUntil((route) => route.isFirst);
@@ -86,8 +125,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final providerInfo = FeedbackBookingModel.mockData;
-
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAF7), // Unified background
       body: SafeArea(
@@ -168,7 +205,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                     ),
                     child: Center(
                       child: Text(
-                        providerInfo.providerInitials,
+                        widget.providerInitials,
                         style: GoogleFonts.ibmPlexSansCondensed(
                           fontSize: 22,
                           fontWeight: FontWeight.w700,
@@ -181,7 +218,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 const SizedBox(height: 12),
                 Center(
                   child: Text(
-                    providerInfo.providerName,
+                    widget.providerName,
                     style: GoogleFonts.ibmPlexSansCondensed(
                       fontSize: 22,
                       fontWeight: FontWeight.w700,
@@ -192,7 +229,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 const SizedBox(height: 4),
                 Center(
                   child: Text(
-                    providerInfo.descriptionLabel,
+                    widget.descriptionLabel,
                     style: GoogleFonts.inter(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,

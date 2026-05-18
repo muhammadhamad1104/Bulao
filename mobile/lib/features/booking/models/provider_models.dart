@@ -19,6 +19,7 @@ class RankingFactorModel {
 
 /// Represents a single ranked provider returned by the backend.
 class ProviderModel {
+  final String id;
   final int rank;
   final String initials;      // e.g. "AK"
   final String name;          // e.g. "Ahmed Khan"
@@ -30,6 +31,7 @@ class ProviderModel {
   final List<RankingFactorModel> factors;
 
   const ProviderModel({
+    required this.id,
     required this.rank,
     required this.initials,
     required this.name,
@@ -41,3 +43,4 @@ class ProviderModel {
     required this.factors,
   });
 }
+

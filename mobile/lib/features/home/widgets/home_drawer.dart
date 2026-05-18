@@ -26,19 +26,7 @@ class HomeDrawer extends StatelessWidget {
 
   void _navigateToTracking(BuildContext context) {
     Navigator.of(context).pop(); // Close drawer first
-    
-    if (hasActiveBooking) {
-      Navigator.of(context).push(
-        PageRouteBuilder(
-          pageBuilder: (_, a, __) => const TrackingScreen(),
-          transitionsBuilder: (_, a, __, child) =>
-              FadeTransition(opacity: a, child: child),
-          transitionDuration: const Duration(milliseconds: 400),
-        ),
-      );
-    } else {
-      _showComingSoon(context, 'No active live tracking right now');
-    }
+    _showComingSoon(context, 'Live Tracking is available after booking');
   }
 
   @override

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import structlog
 from contextlib import asynccontextmanager
-from app.routers import orchestrate, book, dispute, health, rating, lifecycle, followup_trigger
+from app.routers import orchestrate, book, dispute, health, rating, lifecycle, followup_trigger, services
 from app.config import settings
 
 # Setup logging
@@ -46,6 +46,7 @@ app.include_router(dispute.router)
 app.include_router(rating.router)
 app.include_router(lifecycle.router)
 app.include_router(followup_trigger.router)
+app.include_router(services.router)
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request, exc):

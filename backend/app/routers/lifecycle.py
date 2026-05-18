@@ -11,7 +11,9 @@ _BOOKING_START_TIMES = {}
 @router.get("/booking/{booking_id}/lifecycle")
 async def get_lifecycle(booking_id: str):
     """
-    Poll lifecycle status. Returns rotating status for demo purposes.
+    Poll lifecycle status. Returns simulated status and ETA based on elapsed time.
+    This implements the "Static Tracking + ETA" concept advised by Taha, avoiding the
+    need for live location tracking for the hackathon.
     """
     if booking_id not in _BOOKING_START_TIMES:
         _BOOKING_START_TIMES[booking_id] = datetime.now()
