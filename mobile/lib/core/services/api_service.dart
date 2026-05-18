@@ -11,7 +11,7 @@ import '../models/orchestrate_models.dart';
 ///   Local iOS simulator    : 'http://localhost:8000'
 ///   Cloud Run              : 'https://bulao-backend-<hash>-as.a.run.app'
 /// ─────────────────────────────────────────────────────────────────────────────
-const String _backendBaseUrl = 'https://bulou-ex8jo.ondigitalocean.app/api';
+const String _backendBaseUrl = 'https://bulou-ex8jo.ondigitalocean.app';
 
 /// Timeout for the /orchestrate pipeline (it runs 4 agents + Gemini calls).
 const Duration _orchestrateTimeout = Duration(seconds: 60);
