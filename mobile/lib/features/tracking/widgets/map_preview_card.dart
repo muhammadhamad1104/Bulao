@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
-/// A static visual placeholder for the map.
-/// Matches the reference UI without needing a real map SDK yet.
+/// A dynamic visual placeholder for the map.
+/// Animates pin positions based on tracking status.
 class MapPreviewCard extends StatelessWidget {
-  const MapPreviewCard({super.key});
+  final String status;
+
+  const MapPreviewCard({super.key, required this.status});
 
   @override
   Widget build(BuildContext context) {
@@ -35,32 +37,74 @@ class MapPreviewCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: CustomPaint(
           painter: _MockMapPainter(),
-          child: Center(
-            child: _buildPin(),
-          ),
+          child: _buildPins(context),
         ),
       ),
     );
   }
 
-  Widget _buildPin() {
+  Widget _buildPins(BuildContext context) {
+    // Default positions (Coordinates on our custom paint canvas)
+    double userTop = 160;
+    double userLeft = 50;
+    
+    double providerTop = 40;
+    double providerLeft = 250;
+    
+    // Move provider pin based on status
+    if (status == 'en_route') {
+      providerTop = 100;
+      providerLeft = 150;
+    } else if (status == 'arrived' || status == 'in_progress' || status == 'completed') {
+      providerTop = 140;
+      providerLeft = 80; // Close to user
+    }
+
+    return Stack(
+      children: [
+        // User Pin (Navy)
+        Positioned(
+          top: userTop,
+          left: userLeft,
+          child: _buildPin(color: const Color(0xFF1E2D4E), label: 'You'),
+        ),
+        // Provider Pin (Gold)
+        Positioned(
+          top: providerTop,
+          left: providerLeft,
+          child: _buildPin(color: const Color(0xFFC9A84C), label: 'Provider'),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPin({required Color color, required String label}) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(4),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 2),
+            ],
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 10, 
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+        ),
+        const SizedBox(height: 2),
         Icon(
           Icons.location_on,
-          size: 48,
-          color: const Color(0xFF1E2D4E), // Navy pin
-        ),
-        // Small shadow under the pin
-        Container(
-          width: 24,
-          height: 8,
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.elliptical(12, 4)),
-            border: Border.all(color: const Color(0xFFC9A84C), width: 1.5),
-            color: Colors.transparent,
-          ),
+          size: 32,
+          color: color,
         ),
       ],
     );

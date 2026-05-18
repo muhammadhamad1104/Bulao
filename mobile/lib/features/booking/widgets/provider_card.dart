@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/provider_models.dart';
 import 'ranking_factors_panel.dart';
 import 'star_rating_display.dart';
 import '../confirmed_booking_screen.dart';
+import '../../../core/models/orchestrate_models.dart';
+import '../../../core/services/api_service.dart';
 
 /// Expandable provider card — data driven by [ProviderModel].
 ///
@@ -14,7 +17,12 @@ import '../confirmed_booking_screen.dart';
 ///   • All Row children use Expanded or fixed widths — no unconstrained text.
 class ProviderCard extends StatefulWidget {
   final ProviderModel provider;
-  const ProviderCard({super.key, required this.provider});
+  final OrchestrateResponse response;
+  const ProviderCard({
+    super.key,
+    required this.provider,
+    required this.response,
+  });
 
   @override
   State<ProviderCard> createState() => _ProviderCardState();
@@ -31,16 +39,72 @@ class _ProviderCardState extends State<ProviderCard> {
 
   void _toggle() => setState(() => _isExpanded = !_isExpanded);
 
-  void _confirmBooking() {
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        pageBuilder: (_, a, __) => const ConfirmedBookingScreen(),
-        transitionsBuilder: (_, a, __, child) =>
-            FadeTransition(opacity: a, child: child),
-        transitionDuration: const Duration(milliseconds: 400),
+  Future<void> _confirmBooking() async {
+    final user = FirebaseAuth.instance.currentUser;
+    final userId = user?.uid ?? 'anonymous';
+    final userName = user?.displayName ?? 'User';
+
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFC9A84C)),
+        ),
       ),
     );
+
+    try {
+      final booking = await ApiService.instance.book(
+        quoteId: widget.response.pricing?.quoteId ?? 'quote_001',
+        userId: userId,
+        userName: userName,
+        intent: widget.response.intent,
+        providerId: widget.provider.id,
+        acceptedQuote: widget.response.pricing ?? PriceQuote(
+          quoteId: 'quote_001',
+          subtotalPkr: 0,
+          estimatedTotalPkr: 0,
+          explanationEnglish: '',
+          explanationUrdu: '',
+          fairnessNote: '',
+          expiresAt: DateTime.now().toIso8601String(),
+        ),
+      );
+
+      // Pop loading dialog
+      if (mounted) Navigator.of(context).pop();
+
+      if (mounted) {
+        Navigator.of(context).push(
+          PageRouteBuilder(
+            pageBuilder: (_, a, __) => ConfirmedBookingScreen(
+              booking: booking,
+              providerName: widget.provider.name,
+              providerRating: widget.provider.rating,
+            ),
+            transitionsBuilder: (_, a, __, child) =>
+                FadeTransition(opacity: a, child: child),
+            transitionDuration: const Duration(milliseconds: 400),
+          ),
+        );
+      }
+    } catch (e) {
+      // Pop loading dialog
+      if (mounted) Navigator.of(context).pop();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Booking fail ho gayi: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {

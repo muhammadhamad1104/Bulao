@@ -3,18 +3,28 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'widgets/animated_audio_waveform.dart';
 import 'processing_screen.dart';
+import '../../core/services/api_service.dart';
+import '../../core/models/orchestrate_models.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
-/// Processing Loading screen — shown immediately after mic tap/hold on HomeScreen.
+/// Processing Loading screen — shown after the user submits a request.
 ///
 /// Flow:
-///   HomeScreen (mic tap) → ProcessingLoadingScreen → ProcessingScreen
+///   HomeScreen (input dialog) → ProcessingLoadingScreen → ProcessingScreen
 ///
-/// Backend integration point:
-///   When real audio recording is wired, replace the mock Timer delay with
-///   actual STT completion callback. The waveform already accepts a
-///   List<double> amplitudes parameter for real mic amplitude data.
+/// Backend wiring:
+///   Calls POST /orchestrate with [requestText] and [userId].
+///   Passes the full [OrchestrateResponse] to [ProcessingScreen].
+///   On error, shows a Snackbar and pops back to HomeScreen.
 class ProcessingLoadingScreen extends StatefulWidget {
-  const ProcessingLoadingScreen({super.key});
+  final String requestText;
+  final String userId;
+
+  const ProcessingLoadingScreen({
+    super.key,
+    this.requestText = "G-13 mein plumber chahiye",
+    this.userId = "anonymous",
+  });
 
   @override
   State<ProcessingLoadingScreen> createState() =>
@@ -22,41 +32,84 @@ class ProcessingLoadingScreen extends StatefulWidget {
 }
 
 class _ProcessingLoadingScreenState extends State<ProcessingLoadingScreen> {
-  Timer? _mockTimer;
+  final SpeechToText _speech = SpeechToText();
+  bool _isListening = false;
+  String _recognizedText = '';
   bool _hasNavigated = false;
-  // ── Mock delay before auto-navigating to ProcessingScreen ─────────────────
-  // Replace this with real STT/backend completion callback when integrating.
-  static const _mockProcessingDuration = Duration(milliseconds: 2500);
+  bool _isLoading = true;
+  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
-    _startMockProcessing();
+    _initSpeech();
   }
 
-  @override
-  void dispose() {
-    _mockTimer?.cancel();
-    super.dispose();
+  Future<void> _initSpeech() async {
+    try {
+      bool available = await _speech.initialize(
+        onStatus: (status) {
+          if (status == 'notListening') {
+            _callBackend(_recognizedText.isNotEmpty ? _recognizedText : widget.requestText);
+          }
+        },
+        onError: (errorNotification) {
+          print('Speech error: $errorNotification');
+          _callBackend(widget.requestText);
+        },
+      );
+      if (available) {
+        setState(() => _isListening = true);
+        _speech.listen(
+          onResult: (result) {
+            setState(() {
+              _recognizedText = result.recognizedWords;
+            });
+            if (result.finalResult) {
+              setState(() => _isListening = false);
+              _callBackend(_recognizedText.isNotEmpty ? _recognizedText : widget.requestText);
+            }
+          },
+        );
+      } else {
+        _callBackend(widget.requestText);
+      }
+    } catch (e) {
+      print('Speech init exception: $e');
+      _callBackend(widget.requestText);
+    }
   }
 
-  void _startMockProcessing() {
-    _mockTimer = Timer(_mockProcessingDuration, () {
-      _navigateToProcessing();
-    });
+  Future<void> _callBackend(String text) async {
+    try {
+      final response = await ApiService.instance.orchestrate(
+        text: text,
+        userId: widget.userId,
+      );
+      if (!mounted || _hasNavigated) return;
+      _hasNavigated = true;
+      _navigateToProcessing(response);
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _errorMessage = e.userFriendlyMessage;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _errorMessage = 'Kuch masla aa gaya. Dobara try karein.';
+      });
+    }
   }
 
-  void _navigateToProcessing() {
-    if (!mounted || _hasNavigated) return;
-    _hasNavigated = true;
-    _mockTimer?.cancel();
-
+  void _navigateToProcessing(OrchestrateResponse response) {
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
-            const ProcessingScreen(),
-        transitionsBuilder:
-            (context, animation, secondaryAnimation, child) {
+            ProcessingScreen(response: response),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
         transitionDuration: const Duration(milliseconds: 500),
@@ -142,26 +195,29 @@ class _ProcessingLoadingScreenState extends State<ProcessingLoadingScreen> {
                           shape: BoxShape.circle,
                           color: Colors.transparent,
                           border: Border.all(
-                            color: const Color(0xFFCCCCCC), // neutral light grey border
+                            color: const Color(0xFFCCCCCC),
                             width: 1.2,
                           ),
                         ),
                         child: const Icon(
-                          Icons.arrow_back, // plain left arrow, not iOS chevron
+                          Icons.arrow_back,
                           size: 20,
-                          color: Color(0xFF555555), // dark grey matching reference
+                          color: Color(0xFF555555),
                         ),
                       ),
                     ),
                   ),
                 ),
 
-                // ── "Processing Your Audio ..." title ─────────────────────
                 SizedBox(height: size.height * 0.14),
+
+                // ── Status title ───────────────────────────────────────────
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 28),
                   child: Text(
-                    'Processing Your Audio ...',
+                    _isListening 
+                        ? 'Bolain, sun raha hoon...' 
+                        : (_isLoading ? 'Processing Your Request ...' : 'Something went wrong'),
                     textAlign: TextAlign.center,
                     style: GoogleFonts.ibmPlexSans(
                       fontSize: 28,
@@ -172,26 +228,72 @@ class _ProcessingLoadingScreenState extends State<ProcessingLoadingScreen> {
                   ),
                 ),
 
-                // ── Animated waveform — centered vertically ────────────────
+                // ── Request preview ────────────────────────────────────────
+                if (_isLoading) ...[
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                    child: Text(
+                      _recognizedText.isNotEmpty 
+                          ? '"$_recognizedText"' 
+                          : '"${widget.requestText}"',
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.ibmPlexSans(
+                        fontSize: 14,
+                        color: const Color(0xFF9AA5B8),
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ),
+                ],
+
+                // ── Animated waveform / error state ───────────────────────
                 SizedBox(height: size.height * 0.09),
-                // AnimatedAudioWaveform accepts optional amplitudes list.
-                // When real mic integration happens, replace with:
-                //   AnimatedAudioWaveform(amplitudes: _micAmplitudes)
-                const AnimatedAudioWaveform(
-                  barCount: 19,
-                  maxBarHeight: 130,
-                  barWidth: 9,
-                  barSpacing: 4,
-                ),
+
+                if (_isLoading)
+                  const AnimatedAudioWaveform(
+                    barCount: 19,
+                    maxBarHeight: 130,
+                    barWidth: 9,
+                    barSpacing: 4,
+                  )
+                else ...[
+                  const Icon(
+                    Icons.wifi_off_rounded,
+                    size: 56,
+                    color: Color(0xFFB0BAC8),
+                  ),
+                  const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                    child: Text(
+                      _errorMessage ?? '',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.ibmPlexSans(
+                        fontSize: 15,
+                        color: const Color(0xFF9AA5B8),
+                      ),
+                    ),
+                  ),
+                ],
 
                 const Spacer(),
 
-                // ── Send/Action Button ───────────────────────────────────────
+                // ── Retry / Cancel button ──────────────────────────────────
                 Padding(
                   padding: const EdgeInsets.only(bottom: 50),
-                  child: _SendActionButton(
-                    onTap: _navigateToProcessing,
-                  ),
+                  child: _isLoading
+                      ? const SizedBox.shrink()
+                      : _RetryButton(onRetry: () {
+                          setState(() {
+                            _isLoading = true;
+                            _errorMessage = null;
+                            _hasNavigated = false;
+                          });
+                          _callBackend(_recognizedText.isNotEmpty ? _recognizedText : widget.requestText);
+                        }),
                 ),
               ],
             ),
@@ -202,60 +304,50 @@ class _ProcessingLoadingScreenState extends State<ProcessingLoadingScreen> {
   }
 }
 
-/// A sleek, circular send/action button with a scale animation on tap.
-class _SendActionButton extends StatefulWidget {
-  final VoidCallback onTap;
-
-  const _SendActionButton({required this.onTap});
-
-  @override
-  State<_SendActionButton> createState() => _SendActionButtonState();
-}
-
-class _SendActionButtonState extends State<_SendActionButton> {
-  double _scale = 1.0;
+/// Retry button shown when the backend call fails.
+class _RetryButton extends StatelessWidget {
+  final VoidCallback onRetry;
+  const _RetryButton({required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTapDown: (_) => setState(() => _scale = 0.92),
-      onTapUp: (_) {
-        setState(() => _scale = 1.0);
-        widget.onTap();
-      },
-      onTapCancel: () => setState(() => _scale = 1.0),
-      child: AnimatedScale(
-        scale: _scale,
-        duration: const Duration(milliseconds: 100),
-        child: Container(
-          width: 68,
-          height: 68,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: const LinearGradient(
-              colors: [Color(0xFF2A3A5E), Color(0xFF1E2A45)], // Navy base
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+      onTap: onRetry,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF2A3A5E), Color(0xFF1E2A45)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: const Color(0xFFC9A84C).withValues(alpha: 0.5),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF2A3A5E).withValues(alpha: 0.35),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
             ),
-            border: Border.all(
-              color: const Color(0xFFC9A84C).withValues(alpha: 0.5), // Subtle gold
-              width: 1.5,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF2A3A5E).withValues(alpha: 0.35),
-                blurRadius: 16,
-                offset: const Offset(0, 6),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.refresh_rounded, color: Colors.white, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              'Dobara Try Karein',
+              style: GoogleFonts.ibmPlexSans(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
               ),
-            ],
-          ),
-          child: const Center(
-            child: Icon(
-              Icons.arrow_forward_rounded,
-              size: 32,
-              color: Colors.white, // High contrast cream/white
             ),
-          ),
+          ],
         ),
       ),
     );

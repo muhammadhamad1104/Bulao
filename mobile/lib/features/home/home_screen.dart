@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'widgets/home_app_bar.dart';
 import 'widgets/service_chip.dart';
 import 'widgets/interactive_mic_button.dart';
 import '../booking/processing_loading_screen.dart';
-
+import '../../core/services/api_service.dart';
 import 'widgets/home_drawer.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -52,10 +53,12 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final user = FirebaseAuth.instance.currentUser;
+    final nameToShow = (user?.displayName != null && user!.displayName!.isNotEmpty) ? user.displayName! : userName;
 
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAF7), // ── Bulao unified app background
-      drawer: HomeDrawer(userName: userName), // Drawer attached here
+      drawer: HomeDrawer(userName: nameToShow), // Drawer attached here
       body: SafeArea(
         child: Stack(
           children: [
@@ -108,7 +111,7 @@ class HomeScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          'Hey $userName ,',
+                          'Hey $nameToShow ,',
                           textAlign: TextAlign.center,
                           style: GoogleFonts.ibmPlexSans(
                             fontSize: 26,
@@ -144,66 +147,83 @@ class HomeScreen extends StatelessWidget {
                   const SizedBox(height: 4),
 
                   // ── Service chips — scattered layout matching Home.png ──────
-                  // Row 1: Plumbing left-aligned
-                  _ChipRow(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const SizedBox(width: 20),
-                      ServiceChip(
-                        label: 'Plumbing',
-                        onTap: () => _onServiceChipTapped(context, 'Plumbing'),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
+                  FutureBuilder<List<String>>(
+                    future: ApiService.instance.getServices(),
+                    builder: (context, snapshot) {
+                      final services = snapshot.data ?? [];
+                      
+                      // Helper to get service safely
+                      String getService(int index, String fallback) {
+                        if (index < services.length) return services[index];
+                        return fallback;
+                      }
 
-                  // Row 2: Electrical centered
-                  _ChipRow(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ServiceChip(
-                        label: 'Electrical',
-                        onTap: () => _onServiceChipTapped(context, 'Electrical'),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
+                      return Column(
+                        children: [
+                          // Row 1: Plumbing left-aligned
+                          _ChipRow(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const SizedBox(width: 20),
+                              ServiceChip(
+                                label: getService(0, 'Plumbing'),
+                                onTap: () => _onServiceChipTapped(context, getService(0, 'Plumbing')),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
 
-                  // Row 3: Painting left + HVAC right (like reference)
-                  _ChipRow(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20),
-                        child: ServiceChip(
-                          label: 'Painting',
-                          onTap: () => _onServiceChipTapped(context, 'Painting'),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 20),
-                        child: ServiceChip(
-                          label: 'HVAC',
-                          onTap: () => _onServiceChipTapped(context, 'HVAC'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
+                          // Row 2: Electrical centered
+                          _ChipRow(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ServiceChip(
+                                label: getService(1, 'Electrical'),
+                                onTap: () => _onServiceChipTapped(context, getService(1, 'Electrical')),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
 
-                  // Row 4: Locksmith + Carpentry spaced
-                  _ChipRow(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ServiceChip(
-                        label: 'Locksmith',
-                        onTap: () => _onServiceChipTapped(context, 'Locksmith'),
-                      ),
-                      ServiceChip(
-                        label: 'Carpentry',
-                        onTap: () => _onServiceChipTapped(context, 'Carpentry'),
-                      ),
-                    ],
+                          // Row 3: Painting left + HVAC right
+                          _ChipRow(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 20),
+                                child: ServiceChip(
+                                  label: getService(2, 'Painting'),
+                                  onTap: () => _onServiceChipTapped(context, getService(2, 'Painting')),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(right: 20),
+                                child: ServiceChip(
+                                  label: getService(3, 'HVAC'),
+                                  onTap: () => _onServiceChipTapped(context, getService(3, 'HVAC')),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+
+                          // Row 4: Locksmith + Carpentry spaced
+                          _ChipRow(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              ServiceChip(
+                                label: getService(4, 'Locksmith'),
+                                onTap: () => _onServiceChipTapped(context, getService(4, 'Locksmith')),
+                              ),
+                              ServiceChip(
+                                label: getService(5, 'Carpentry'),
+                                onTap: () => _onServiceChipTapped(context, getService(5, 'Carpentry')),
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
                   ),
 
                   SizedBox(height: size.height * 0.015),
@@ -279,3 +299,4 @@ class _ChipRow extends StatelessWidget {
     );
   }
 }
+

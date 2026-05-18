@@ -6,13 +6,23 @@ import 'widgets/confirmation_message_bubble.dart';
 import 'widgets/booking_receipt_card.dart';
 import 'widgets/booking_action_button.dart';
 import '../tracking/tracking_screen.dart';
+import '../../core/models/orchestrate_models.dart';
 
 /// Confirmed Booking Screen
 ///
 /// Displays the confirmation message, receipt, and action buttons.
 /// Data is driven by [ConfirmedBookingModel].
 class ConfirmedBookingScreen extends StatelessWidget {
-  const ConfirmedBookingScreen({super.key});
+  final Booking booking;
+  final String providerName;
+  final double providerRating;
+
+  const ConfirmedBookingScreen({
+    super.key,
+    required this.booking,
+    required this.providerName,
+    required this.providerRating,
+  });
 
   void _goBack(BuildContext context) {
     Navigator.of(context).popUntil((route) => route.isFirst);
@@ -28,9 +38,14 @@ class ConfirmedBookingScreen extends StatelessWidget {
   }
 
   void _navigateToTracking(BuildContext context) {
+    String initials(String name) => name.split(' ').map((e) => e.isNotEmpty ? e[0] : '').join('').toUpperCase();
     Navigator.of(context).push(
       PageRouteBuilder(
-        pageBuilder: (_, a, __) => const TrackingScreen(),
+        pageBuilder: (_, a, __) => TrackingScreen(
+          booking: booking,
+          providerName: providerName,
+          providerInitials: initials(providerName),
+        ),
         transitionsBuilder: (_, a, __, child) =>
             FadeTransition(opacity: a, child: child),
         transitionDuration: const Duration(milliseconds: 400),
@@ -38,9 +53,36 @@ class ConfirmedBookingScreen extends StatelessWidget {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
-    final booking = ConfirmedBookingModel.mockData;
+    String humanize(String s) => s.replaceAll('_', ' ').split(' ').map((w) => w.isEmpty ? '' : '${w[0].toUpperCase()}${w.substring(1)}').join(' ');
+    String formatPkr(int pkr) => pkr.toString().replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+$)'), (m) => '${m[1]},');
+    String humanizeTime(String time) {
+      if (!time.contains('T')) return time;
+      try {
+        final dt = DateTime.parse(time);
+        return '${dt.day}/${dt.month} · ${dt.hour}:${dt.minute.toString().padLeft(2, '0')}';
+      } catch (_) {
+        return time;
+      }
+    }
+
+    final uiBooking = ConfirmedBookingModel(
+      bookingId: booking.bookingId,
+      shortBookingId: booking.bookingId.length > 7
+          ? booking.bookingId.substring(booking.bookingId.length - 7)
+          : booking.bookingId,
+      providerName: providerName,
+      providerRating: providerRating,
+      service: humanize(booking.serviceType),
+      time: humanizeTime(booking.scheduledTime),
+      location: booking.location,
+      total: 'PKR ${formatPkr(booking.acceptedQuote.estimatedTotalPkr)}',
+      confirmationMessage: booking.confirmationMessageUrdu.isNotEmpty
+          ? booking.confirmationMessageUrdu
+          : booking.confirmationMessageEnglish,
+    );
 
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAF7), // Bulao unified background
@@ -113,12 +155,12 @@ class ConfirmedBookingScreen extends StatelessWidget {
                 const SizedBox(height: 24),
 
                 // ── Confirmation Message Bubble ──────────────────────────────
-                ConfirmationMessageBubble(message: booking.confirmationMessage),
+                ConfirmationMessageBubble(message: uiBooking.confirmationMessage),
 
                 const SizedBox(height: 24),
 
                 // ── Booking Receipt Card ─────────────────────────────────────
-                BookingReceiptCard(booking: booking),
+                BookingReceiptCard(booking: uiBooking),
 
                 const SizedBox(height: 32),
 

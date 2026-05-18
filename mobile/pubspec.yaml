@@ -37,6 +37,8 @@ dependencies:
   google_fonts: ^6.1.0
   firebase_core: ^4.9.0
   firebase_auth: ^6.5.1
+  http: ^1.2.0
+  speech_to_text: ^7.3.0
 
 dev_dependencies:
   flutter_test:
