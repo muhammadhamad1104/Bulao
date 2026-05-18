@@ -28,7 +28,8 @@ def _call_groq(prompt: str) -> str:
     url = "https://api.groq.com/openai/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {settings.GROQ_API_KEY}",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "User-Agent": "Bulao-App/1.0"
     }
     data = {
         "model": "llama-3.1-70b-versatile",
