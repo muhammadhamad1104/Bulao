@@ -1,6 +1,7 @@
 from typing import Dict, Any
 from app.models import OrchestrateRequest, OrchestrateResponse, PriceQuote
 from app.agents import intent_agent, discovery_agent, ranking_agent, pricing_agent
+from app.db import cache_manager
 from datetime import datetime, timedelta
 
 async def run_pipeline(req: OrchestrateRequest) -> Dict[str, Any]:
@@ -15,20 +16,41 @@ async def run_pipeline(req: OrchestrateRequest) -> Dict[str, Any]:
             "clarification_question": intent.clarification_question
         }
         
-    # 2. Discovery Agent
-    discovery = await discovery_agent.run(intent, req.user_location)
+    # 2. Check Cache First (Saves time and compute)
+    cached_discovery, cached_ranking = cache_manager.get_cached_results(
+        service_type=intent.service_type, 
+        location=intent.location, 
+        city=intent.city,
+        max_age_hours=48 # Cache valid for 2 days as requested
+    )
     
-    # No match path
-    if discovery.no_match_reason:
-        return {
-            "intent": intent,
-            "discovery": discovery,
-            "user_message_urdu": "Maaf kijiye, abhi is waqt koi available nahi hai.",
-            "user_message_english": discovery.no_match_reason
-        }
+    if cached_discovery and cached_ranking:
+        discovery = cached_discovery
+        ranking = cached_ranking
+    else:
+        # 3. Discovery Agent (Live Maps API)
+        discovery = await discovery_agent.run(intent, req.user_location)
         
-    # 3. Ranking Agent
-    ranking = await ranking_agent.run(intent, discovery.candidates)
+        # No match path
+        if discovery.no_match_reason or len(discovery.candidates) == 0:
+            return {
+                "intent": intent,
+                "discovery": discovery,
+                "user_message_urdu": "Maaf kijiye, abhi is waqt koi available nahi hai.",
+                "user_message_english": discovery.no_match_reason or "No providers found in your area."
+            }
+            
+        # 4. Ranking Agent (Heavy LLM Task)
+        ranking = await ranking_agent.run(intent, discovery.candidates)
+        
+        # Save to Cache
+        cache_manager.save_results(
+            service_type=intent.service_type,
+            location=intent.location,
+            city=intent.city,
+            discovery=discovery,
+            ranking=ranking
+        )
     
     # Find recommended provider
     recommended_provider = next((c for c in discovery.candidates if c.id == ranking.recommended_id), None)
@@ -36,7 +58,7 @@ async def run_pipeline(req: OrchestrateRequest) -> Dict[str, Any]:
         recommended_provider = discovery.candidates[0]
         ranking.recommended_id = recommended_provider.id
         
-    # 4. Pricing Agent
+    # 5. Pricing Agent
     if recommended_provider:
         pricing = await pricing_agent.run(intent, recommended_provider, market_demand=0.65, is_first_booking=True)
     else:

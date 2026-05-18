@@ -5,9 +5,8 @@ from typing import List, Tuple
 from pathlib import Path
 from datetime import datetime, timedelta
 import structlog
-from google.genai import Client
-from app.config import settings
 from app.models import Intent, ProviderCandidate, PriceLineItem, PriceQuote
+from app.utils.llm_client import get_client, safe_generate
 
 log = structlog.get_logger()
 
@@ -17,11 +16,6 @@ _PROMPT = _PROMPT_PATH.read_text(encoding="utf-8") if _PROMPT_PATH.exists() else
 COMPLEXITY_HOURS = {"basic": 1.0, "intermediate": 1.5, "complex": 2.5}
 COMPLEXITY_MULTIPLIER = {"basic": 1.0, "intermediate": 1.25, "complex": 1.6}
 URGENCY_SURCHARGE = {"emergency": 500, "high": 200, "normal": 0, "flexible": -100}
-
-def get_client():
-    if settings.GEMINI_API_KEY and settings.GEMINI_API_KEY != "paste-your-key-here" and settings.GEMINI_API_KEY != "fake":
-        return Client(api_key=settings.GEMINI_API_KEY)
-    return None
 
 def _compute_line_items(intent: Intent, provider: ProviderCandidate, market_demand: float, is_first_booking: bool) -> Tuple[List[PriceLineItem], int]:
     items = []
@@ -41,19 +35,13 @@ def _compute_line_items(intent: Intent, provider: ProviderCandidate, market_dema
     multiplier = COMPLEXITY_MULTIPLIER[intent.job_complexity]
     if multiplier > 1.0:
         adjustment = int(subtotal_pre * (multiplier - 1.0))
-        items.append(PriceLineItem(label_english=f"Complexity adjustment ({intent.job_complexity})", label_urdu=f"Complexity ({intent.job_complexity})", amount_pkr=adjustment, kind="multiplier"))
+        items.append(PriceLineItem(label_english=f"Complexity ({intent.job_complexity})", label_urdu=f"Complexity ({intent.job_complexity})", amount_pkr=adjustment, kind="multiplier"))
         
     surcharge = URGENCY_SURCHARGE[intent.urgency]
     if surcharge != 0:
         items.append(PriceLineItem(label_english=f"Urgency ({intent.urgency})", label_urdu=f"Urgency ({intent.urgency})", amount_pkr=surcharge, kind="addon"))
         
-    if market_demand > 0.7:
-        surge_pct = 0.20
-    elif market_demand > 0.5:
-        surge_pct = 0.10
-    else:
-        surge_pct = 0.0
-        
+    surge_pct = 0.20 if market_demand > 0.7 else (0.10 if market_demand > 0.5 else 0.0)
     if surge_pct > 0:
         running = sum(i.amount_pkr for i in items)
         surge_amount = int(running * surge_pct)
@@ -77,12 +65,13 @@ async def run(intent: Intent, provider: ProviderCandidate, market_demand: float 
     range_high = int(total * 1.15)
     if range_high - range_low < 250:
         range_high = range_low + 250
-        
-    client = get_client()
-    explanation_en = f"Your estimate is PKR {range_low:,}-{range_high:,} based on the line items below."
-    explanation_ur = f"Aapka estimate PKR {range_low:,}-{range_high:,} hai, neeche di gayi tafseelat ke mutaabiq."
+
+    # Deterministic defaults — valid even if LLM fails
+    explanation_en = f"Your estimate is PKR {range_low:,}–{range_high:,}. Includes visit fee, service time, and adjustments shown below."
+    explanation_ur = f"Aapka estimate PKR {range_low:,}–{range_high:,} hai. Visit fee, service time, aur neeche di gayi tafseelat shamil hain."
     fairness = f"Provider receives PKR {int(total * 0.85):,} after platform fee."
     
+    client = get_client()
     if client:
         payload = {
             "intent": intent.model_dump(),
@@ -93,24 +82,29 @@ async def run(intent: Intent, provider: ProviderCandidate, market_demand: float 
             "estimated_total_pkr": total,
             "estimated_range_pkr": [range_low, range_high],
         }
-        try:
-            response = client.models.generate_content(
-                model='gemini-2.5-flash',
-                contents=json.dumps(payload, ensure_ascii=False),
-                config={
-                    'system_instruction': _PROMPT,
-                    'temperature': 0.1,
-                    'response_mime_type': 'application/json'
-                }
-            )
-            data = json.loads(response.text)
-            explanation_en = data.get("explanation_english", explanation_en)
-            explanation_ur = data.get("explanation_urdu", explanation_ur)
-            fairness = data.get("fairness_note", fairness)
-        except Exception as e:
-            log.error("pricing_llm_failure", error=str(e))
+        raw = await safe_generate(
+            client=client,
+            model="gemini-2.0-flash",
+            contents=json.dumps(payload, ensure_ascii=False),
+            config={
+                "system_instruction": _PROMPT,
+                "temperature": 0.1,
+                "response_mime_type": "application/json",
+            },
+            agent_name="pricing",
+        )
+        if raw:
+            try:
+                data = json.loads(raw)
+                explanation_en = data.get("explanation_english", explanation_en)
+                explanation_ur = data.get("explanation_urdu", explanation_ur)
+                fairness = data.get("fairness_note", fairness)
+            except Exception:
+                log.warning("pricing_json_parse_failure", raw_preview=raw[:200])
+        else:
+            log.warning("pricing_llm_fallback", reason="all_retries_exhausted")
     else:
-        log.warn("pricing_agent_mock_mode", reason="no_api_key")
+        log.warning("pricing_agent_mock_mode", reason="no_api_key")
 
     quote = PriceQuote(
         quote_id=f"QT-{datetime.now().strftime('%Y%m%d')}-{uuid.uuid4().hex[:6].upper()}",
