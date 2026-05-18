@@ -4,7 +4,7 @@ from pathlib import Path
 from pydantic import ValidationError
 import structlog
 from app.models import Intent
-from google.genai import Client
+from app.utils.llm_client import get_client, safe_generate
 from app.config import settings
 
 log = structlog.get_logger()
@@ -12,17 +12,13 @@ log = structlog.get_logger()
 _PROMPT_PATH = Path(__file__).parent.parent / "prompts" / "intent.md"
 _SYSTEM_PROMPT = _PROMPT_PATH.read_text(encoding="utf-8") if _PROMPT_PATH.exists() else ""
 
-def get_client():
-    if settings.GEMINI_API_KEY and settings.GEMINI_API_KEY != "paste-your-key-here" and settings.GEMINI_API_KEY != "fake":
-        return Client(api_key=settings.GEMINI_API_KEY)
-    return None
-
 def _call_groq(prompt: str) -> str:
-    """Fallback call to Groq API using standard library."""
+    """Fallback call to Groq API using standard library when Gemini fails."""
     import urllib.request
     import json
     
     if not settings.GROQ_API_KEY:
+        log.warning("groq_fallback_skipped", reason="no_api_key")
         return ""
         
     url = "https://api.groq.com/openai/v1/chat/completions"
@@ -46,8 +42,7 @@ def _call_groq(prompt: str) -> str:
             res_json = json.loads(res_data)
             return res_json['choices'][0]['message']['content']
     except Exception as e:
-        import structlog
-        structlog.get_logger().error("groq_fallback_failure", error=str(e))
+        log.error("groq_fallback_failure", error=str(e))
         return ""
 
 async def run(user_text: str) -> Intent:
@@ -57,8 +52,7 @@ async def run(user_text: str) -> Intent:
     
     client = get_client()
     if not client:
-        log.warn("intent_agent_mock_mode", reason="no_api_key")
-        # For mock tests without API key
+        log.warning("intent_agent_mock_mode", reason="no_api_key")
         if "plumber" in user_text.lower():
             if "mere ghar" in user_text.lower():
                 return _fallback_intent(user_text, reason="mock", confidence=0.3)
@@ -67,39 +61,51 @@ async def run(user_text: str) -> Intent:
             return Intent(service_type="ac_technician", location="G-13", time_window="tomorrow_morning", urgency="normal", job_complexity="basic", confidence=0.9, city="Islamabad")
         return _fallback_intent(user_text, reason="mock", confidence=0.8)
 
-    try:
-        response = client.models.generate_content(
-            model='gemini-2.0-flash',
-            contents=user_text,
-            config={
-                'system_instruction': _SYSTEM_PROMPT,
-                'temperature': 0.1,
-                'response_mime_type': 'application/json'
-            }
-        )
-        raw = response.text
-    except Exception as e:
-        log.error("agent_llm_failure", agent="intent", error=str(e))
-        # Try Groq fallback
+    # 1. Attempt Gemini Call (with up to 3 automatic retries on rate-limit/quota errors)
+    raw = await safe_generate(
+        client=client,
+        model="gemini-2.0-flash",
+        contents=user_text,
+        config={
+            "system_instruction": _SYSTEM_PROMPT,
+            "temperature": 0.1,
+            "response_mime_type": "application/json",
+        },
+        agent_name="intent",
+    )
+
+    # 2. If Gemini fails completely, fall back to Groq Llama-3.1 API
+    if raw is None:
         log.info("trying_groq_fallback", agent="intent")
         raw = _call_groq(user_text)
-        if not raw:
-            return _fallback_intent(user_text, reason="llm_and_groq_failure")
+        
+    # 3. If both Gemini and Groq fail, fall back to deterministic keywords
+    if not raw:
+        return _fallback_intent(user_text, reason="llm_and_groq_failure")
 
     try:
         data = json.loads(raw)
     except json.JSONDecodeError:
+        # Retry Gemini once with explicit JSON reinforcement
+        raw2 = await safe_generate(
+            client=client,
+            model="gemini-2.0-flash",
+            contents=user_text + "\n\nReturn ONLY valid JSON. No markdown.",
+            config={
+                "system_instruction": _SYSTEM_PROMPT,
+                "temperature": 0.0,
+                "response_mime_type": "application/json",
+            },
+            agent_name="intent_retry",
+        )
+        if raw2 is None:
+            # Try Groq one final time
+            raw2 = _call_groq(user_text)
+            
+        if not raw2:
+            return _fallback_intent(user_text, reason="json_parse_and_fallback_failed")
+            
         try:
-            response2 = client.models.generate_content(
-                model='gemini-2.0-flash',
-                contents=user_text + "\n\nReturn ONLY valid JSON. No markdown.",
-                config={
-                    'system_instruction': _SYSTEM_PROMPT,
-                    'temperature': 0.1,
-                    'response_mime_type': 'application/json'
-                }
-            )
-            raw2 = response2.text
             data = json.loads(raw2)
         except Exception:
             log.error("agent_json_parse_failure", agent="intent", raw_preview=raw[:200])
@@ -111,7 +117,8 @@ async def run(user_text: str) -> Intent:
         log.error("agent_schema_violation", agent="intent", errors=e.errors()[:3])
         return _fallback_intent(user_text, reason="schema_violation")
 
-    log.info("agent_end", agent="intent", duration_ms=int((time.monotonic()-t0)*1000), service_type=intent.service_type, confidence=intent.confidence)
+    log.info("agent_end", agent="intent", duration_ms=int((time.monotonic()-t0)*1000),
+             service_type=intent.service_type, confidence=intent.confidence)
     return intent
 
 def _fallback_intent(user_text: str, reason: str, confidence: float = 0.3) -> Intent:
@@ -135,10 +142,8 @@ def _fallback_intent(user_text: str, reason: str, confidence: float = 0.3) -> In
             service = svc
             break
 
-    # Better complexity detection
     is_complex = any(x in text_lower for x in ["inverter", "bridal", "pcb", "rewiring", "structural", "expert", "specialist", "heavy", "exterior", "complex"])
     is_basic = any(x in text_lower for x in ["leak", "tap", "unclog", "bulb", "basic", "chota", "halki", "minor"])
-    
     complexity = "complex" if is_complex else "basic" if is_basic else "intermediate"
     
     return Intent(
