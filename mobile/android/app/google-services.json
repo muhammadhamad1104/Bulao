@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "262779976977",
+    "project_id": "bulao-hackathon",
+    "storage_bucket": "bulao-hackathon.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:262779976977:android:1343254dd485492293e0b0",
+        "android_client_info": {
+          "package_name": "com.example.mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0jrI3Qv0g-lWyC9qxZ0jh5DQA3okp9oY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

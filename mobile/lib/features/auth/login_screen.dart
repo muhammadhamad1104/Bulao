@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../core/widgets/bulao_toast.dart';
+import '../../core/utils/firebase_error_helper.dart';
 import 'forgot_password_screen.dart';
 import 'signup_screen.dart';
-import '../home/home_screen.dart';
 import 'widgets/auth_header_logo.dart';
 import 'widgets/auth_text_field.dart';
 import 'widgets/auth_primary_button.dart';
@@ -18,6 +20,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -26,19 +29,32 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _onLoginPressed() {
-    // TODO: Validate credentials against backend before navigating.
-    // When backend is ready: HomeScreen(userName: authResult.name)
-    Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            const HomeScreen(userName: 'Wajeeha'),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(opacity: animation, child: child);
-        },
-        transitionDuration: const Duration(milliseconds: 450),
-      ),
-    );
+  Future<void> _onLoginPressed() async {
+    if (_emailController.text.trim().isEmpty || _passwordController.text.isEmpty) {
+      BulaoToast.show(context, message: 'Please enter email and password', type: ToastType.error);
+      return;
+    }
+
+    setState(() { _isLoading = true; });
+
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+      if (mounted) {
+        BulaoToast.show(context, message: 'You are logged in successfully', type: ToastType.success);
+      }
+      // AuthGate will automatically handle the navigation to HomeScreen.
+    } catch (e) {
+      if (mounted) {
+        BulaoToast.show(context, message: FirebaseErrorHelper.getMessage(e), type: ToastType.error);
+      }
+    } finally {
+      if (mounted) {
+        setState(() { _isLoading = false; });
+      }
+    }
   }
 
   void _onSignUpPressed() {
@@ -151,10 +167,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 26),
 
                     // ── Log In button (centered, 78% wide) ────────────────
-                    AuthPrimaryButton(
-                      label: 'Log In',
-                      onPressed: _onLoginPressed,
-                    ),
+                    _isLoading
+                        ? const Center(child: CircularProgressIndicator(color: Color(0xFFC9A84C)))
+                        : AuthPrimaryButton(
+                            label: 'Log In',
+                            onPressed: _onLoginPressed,
+                          ),
                     const SizedBox(height: 22),
 
                     // ── "Don't Have An Account?" + "Sign Up Now!" ─────────

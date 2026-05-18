@@ -1,201 +1,174 @@
 # Bulao Mobile App
-**"bolo, aur kaam ho jaye"**
+> “bolo, aur kaam ho jaye”
 
-Bulao is a voice-first service booking Flutter frontend. 
-Users simply speak their service requests into the app, and an AI/agentic flow handles the rest. The app visually walks the user through AI agent processing, finding ranked service providers, confirming the booking, tracking the provider en-route, and submitting feedback upon completion. 
+## Project Description
+Bulao is a Flutter-based mobile frontend for a voice-first service booking application designed specifically for Pakistan’s informal economy. The application emphasizes ease of use, leveraging speech-to-text to orchestrate complex booking flows with simple voice commands.
 
-Currently, the mobile frontend is structurally complete and relies on centralized mock/demo data. Backend integration with the existing Bulao backend (which features STT, LLM agents, and lifecycle state) is planned as the immediate next step.
+## Current Status
+- **Frontend UI complete**: All core screens have been built following a premium design system (cream, navy, gold).
+- **Firebase Auth integrated**: Firebase Authentication (Email/Password) is successfully wired up.
+- **Mock Data**: Currently, booking flows, providers, tracking, and feedback screens use mock/demo data for UI demonstration.
+- **Backend pending**: The FastAPI backend is set up but not yet integrated with the Flutter frontend. 
 
 ## Tech Stack
-* **Framework:** Flutter / Dart
-* **IDE:** Android Studio / VS Code / Antigravity
-* **Typography:** Google Fonts (`ibmPlexSansCondensed`, `inter`)
-* **State & Data:** Centralized mock models (backend-ready)
-* **Future Backend Integration:** FastAPI / Firebase / Firestore / Cloud Run
+- **Flutter** & **Dart**
+- **Firebase Core** & **Firebase Auth**
+- **Google Fonts** (`google_fonts`)
+- **Cupertino Icons** (`cupertino_icons`)
+- **Flutter Native Splash** (`flutter_native_splash`)
+- *(Planned)* Existing Python FastAPI backend for AI orchestration.
 
-## Current Frontend Status
-* **Frontend UI:** Complete and demo-ready.
-* **Architecture:** Feature-based modular structure with clean separation of widgets and models.
-* **Backend-Ready:** Screens are implemented using structured models to allow seamless swap-out of mock data for real API streams.
-* **Pending Integration:** Real voice recording (mic), real STT processing, real map rendering, real calendar/WhatsApp intents, and real backend lifecycle updates.
+## Firebase Setup Status
+The app is fully configured for Firebase:
+- **Firebase Project ID**: `bulao-hackathon`
+- **Android Package**: `com.example.mobile`
+- **Authentication**: Email/Password provider is enabled.
+- Configuration files (`firebase_options.dart` and `google-services.json`) are already included in the repository.
 
-## Completed Screens / Features
-* **Splash Screen:** Beautiful, animated entry screen featuring the main Bulao logo.
-* **Login Screen:** Clean authentication UI with the Bulao vector wave.
-* **Sign Up Screen:** Account creation flow.
-* **Forgot Password Screen:** Password recovery UI.
-* **Home Screen:** The central hub featuring the voice-recording microphone and quick-action chips.
-* **Home Drawer / Sidebar:** Accessible via the hamburger menu, contains navigation for "Live Tracking", "My Bookings", and "Logout".
-* **Processing Loading Screen:** An animated waveform UI simulating voice transcription.
-* **Processing Agents Screen:** Displays the multi-agent AI pipeline (Intent, Discovery, Ranking, Pricing) analyzing the request in real-time.
-* **Provider Selection Screen:** Shows ranked providers ("Best Match") based on the AI's analysis, including price estimates and ratings.
-* **Booking Confirmed Screen:** A premium receipt UI confirming the provider dispatch, with hooks for Calendar and WhatsApp.
-* **Tracking Screen:** A live tracking interface showing a map preview, provider en-route status, and a vertical lifecycle timeline.
-* **Feedback Screen:** A 5-star rating UI with selectable feedback chips ("On Time", "Professional") and a comment box to rate the completed service.
+**Important for Teammates**: 
+If you clone this repository, you **can run the app immediately** without creating a new Firebase project. Firebase Auth will work out-of-the-box. You only need access to the Firebase Console if you wish to manage users, security rules, or project settings.
 
-## Demo Flow
-The app is currently configured to follow a linear "happy path" demo flow:
+### Safe/Required Files (Committed)
+These files are already in the repository and are required for Firebase to work:
+- `lib/firebase_options.dart`
+- `android/app/google-services.json`
 
-**Splash** → **Login** → **Home** → *(Tap & Hold Mic)* → **Processing Loading** → **Processing Agents** → **Provider Selection** → **Confirm Booking** → **Booking Confirmed** → **Track** → **Tracking** → *(Tap 'Mark Completed' Demo)* → **Feedback** → **Send Feedback** → **Home**
-
-*Note: You can also access the Tracking screen via the Home Drawer.*
-
-## Folder Structure
-```text
-mobile/
-├── assets/
-│   └── images/                 # App logos, vectors, and reference graphics
-├── lib/
-│   ├── features/
-│   │   ├── auth/               # Login, Signup, Forgot Password
-│   │   ├── booking/            # Processing, Agents, Provider Selection, Confirmed Receipt
-│   │   ├── feedback/           # Rating and Review UI
-│   │   ├── home/               # Main Mic Screen, Drawer
-│   │   ├── splash/             # Initial animated splash
-│   │   └── tracking/           # Live Map tracking and Timeline
-│   └── main.dart               # App entry point
-├── pubspec.yaml                # Dependencies and asset declarations
-└── README.md                   # This file
-```
-
-## Assets Used
-The following key assets from `assets/images/` power the app's visual identity:
-* `splash_main.png` / `splashLogo.png`
-* `login_logo.png` / `signup_logo.png`
-* `home_wave.png` / `mic_home.png`
-* `provider_logo.png`
-* `confirm_book_logo.png`
-* `tracking_logo.png`
-* `feedback_logo.png`
-
-## Dependencies
-This project relies on the following packages (as defined in `pubspec.yaml`):
-* `flutter`
-* `cupertino_icons` (^1.0.8)
-* `google_fonts` (^6.1.0)
-* `flutter_native_splash` (^2.4.7) *(dev dependency)*
-* `flutter_lints` (^5.0.0) *(dev dependency)*
+### DO NOT COMMIT
+Please ensure the following are never committed to version control:
+- `.firebase/` directory
+- `serviceAccountKey.json`
+- `.env` files
+- Backend secrets or Firebase Admin private keys.
 
 ## Setup Requirements
-1. **Flutter SDK** installed and added to PATH.
-2. **Dart SDK** (comes bundled with Flutter).
-3. **Android Studio** (or VS Code with Flutter extensions).
-4. **Android SDK** configured.
-5. **Physical Device:** USB debugging enabled (if testing on a real Android phone).
-6. **Git** installed.
+To run this project, ensure you have:
+- Flutter SDK installed (Dart comes with Flutter)
+- Android Studio / Android SDK
+- Git
+- A real Android device (with USB debugging enabled) or an Android Emulator
 
-## How to Clone and Run
-Open your terminal and run the following commands:
+## Clone and Run
+Run the following commands to clone the repository and start the app:
 
 ```bash
 git clone https://github.com/muhammadhamad1104/Bulao.git
-cd Bulao/mobile
+cd Bulao
+git checkout taha-fayyaz
+cd mobile
 flutter pub get
 flutter devices
 flutter run
 ```
 
-If you pull new changes and the app shows an older UI, refresh your build cache:
+If you encounter issues, try a clean rebuild:
 ```bash
 flutter clean
 flutter pub get
 flutter run
 ```
 
-## Running on Real Android Phone
-1. Connect your Android phone to your computer via USB cable.
-2. Go to **Settings > Developer Options** on your phone and enable **USB Debugging**.
-3. Accept the RSA prompt that appears on your phone screen to allow your computer access.
-4. In your terminal, run `flutter devices` to ensure your phone is listed.
-5. Run `flutter run`.
+## Firebase Auth Testing
+You can test the real Firebase Auth flow immediately:
+1. Open the app. It will route you to the **Login Screen**.
+2. Tap "Sign Up Now!". Enter a name, email, and password (>6 characters).
+3. The app will create a Firebase user, log you out, and return you to the Login Screen.
+4. Log in with your new credentials. You will be routed to the **Home Screen**.
+5. Test "Forgot Password" to receive a real password reset link via email.
+6. Open the sidebar drawer and tap **Logout** to return to the Login Screen.
+*(New users can be verified in the Authentication -> Users tab of the Firebase Console).*
 
-## Branch / Git Workflow
-All frontend UI work should be committed to the `taha-fayyaz` branch unless the team dictates otherwise.
+## Completed Screens & Features
+- **Splash Screen**: Custom native and Flutter splash loading.
+- **AuthGate**: Automatically routes users based on active Firebase Auth state.
+- **Login Screen**: Authenticates existing users with Firebase.
+- **Sign Up Screen**: Creates new Firebase users and updates their display name.
+- **Forgot Password Screen**: Sends a Firebase password reset email.
+- **Home Screen**: Features a central mic button and greets the user using their Firebase display name.
+- **Home Drawer**: Sidebar for navigation (Live Tracking) and Logout.
+- **Processing Loading Screen**: Audio waveform animation while waiting for backend orchestration.
+- **Processing Agents Screen**: Visual representation of AI agents parsing the request.
+- **Provider Screen**: Displays a ranked list of available service providers (mock data).
+- **Booking Confirmed Screen**: Beautiful confirmation receipt.
+- **Tracking Screen**: Mock interactive map interface for live tracking.
+- **Feedback Screen**: Star rating and review submission UI.
 
-**If creating the branch for the first time:**
-```bash
-git checkout -b taha-fayyaz
-git status
-git add mobile/
-git commit -m "Complete Bulao Flutter mobile frontend"
-git push origin taha-fayyaz
+## Folder Structure
+```text
+mobile/
+├── android/            # Android native project files
+├── assets/
+│   └── images/         # App logos, icons, and illustrations
+├── lib/
+│   ├── core/           # Core utilities and shared widgets (e.g. bulao_toast.dart, firebase_error_helper.dart)
+│   ├── features/
+│   │   ├── auth/       # Login, Signup, Forgot Password, AuthGate
+│   │   ├── booking/    # Processing, Provider Selection, Confirmed Booking
+│   │   ├── feedback/   # Rating and Review screens
+│   │   ├── home/       # Home screen and Drawer
+│   │   ├── splash/     # Custom Splash screen
+│   │   └── tracking/   # Live Map Tracking screen
+│   ├── firebase_options.dart # Firebase initialization config
+│   └── main.dart       # App entry point
+├── test/               # Unit and widget tests
+├── pubspec.yaml        # Flutter dependencies
+└── README.md           # This documentation
 ```
 
-**If the branch already exists:**
-```bash
-git checkout taha-fayyaz
-git pull origin taha-fayyaz
-git add mobile/
-git commit -m "Update Bulao Flutter mobile frontend"
-git push origin taha-fayyaz
-```
+## Important Assets
+The `mobile/assets/images/` directory contains critical design assets:
+- `splashLogo.png`, `splash_main.png`
+- `login_logo.png`, `signup_logo.png`, `auth_vector.png`
+- `home_wave.png`, `mic_home.png`
+- `provider_logo.png`
+- `confirm_book_logo.png`
+- `tracking_logo.png`
+- `feedback_logo.png`
 
----
+## Backend Integration Pending
+The FastAPI backend (`backend/app/routers/`) is structured to handle core flows. The following integrations are pending:
 
-## Backend Integration Pending / Future Work
-The UI is structurally complete, but the following areas require backend integration:
+1. **`POST /orchestrate`**: Will replace the current Processing and Provider Selection mock flows. It will take STT text and return available providers.
+2. **`POST /book`**: Will replace the Confirm Booking mock action to create a real booking in Firestore.
+3. **`GET /lifecycle`**: Will replace the mock Tracking timeline with real-time status updates.
+4. **`POST /rating`**: Will replace the Feedback screen mock submission.
 
-### A) Auth
-* Replace mock login/signup flows with Firebase Auth or backend custom auth.
-* Fetch and store the logged-in user's profile.
-* Update the Home greeting (`Hey Wajeeha`) with the actual user's name.
+### Frontend-to-Backend Work to be Done
+- Implement an HTTP/API client service in Flutter (using `http` or `dio`).
+- Configure a base URL and environment variables.
+- Pass the Firebase user UID (and potentially an ID token in the `Authorization` header) to the backend.
+- Map FastAPI response JSON to Dart models.
+- Swap out hardcoded mock UI lists with real asynchronous backend data.
 
-### B) Voice / Home
-* Replace the mock mic tap navigation with a real audio recorder plugin (e.g., `record`).
-* Capture the user's voice, implement local STT, or send the audio payload to the backend for transcription.
-
-### C) ProcessingLoading
-* Show real upload/transcription progress.
-* Animate the waveform based on real audio amplitude instead of a loop.
-
-### D) ProcessingScreen
-* Replace the hardcoded transcript with the real transcribed text.
-* Populate the keyword chips dynamically from the backend's NLP analysis.
-* Update the Agent status cards (Intent, Discovery, Ranking, Pricing, Booking) via WebSockets or polling based on real pipeline progress.
-
-### E) ProviderScreen
-* Fetch the ranked provider list directly from the backend.
-* Make provider names, estimated prices, star ratings, and the expanded "Ranking Factors" dynamic.
-* The "Confirm Booking" action should execute a real backend booking/dispatch endpoint.
-
-### F) BookingConfirmed
-* The receipt data (Booking ID, time, location, total amount) should come from the successful booking API response.
-* Calendar integration should use a device calendar plugin to create an actual event.
-* WhatsApp integration should use `url_launcher` to open a real WhatsApp intent.
-
-### G) TrackingScreen
-* Replace the static mock `MapPreviewCard` with the `google_maps_flutter` or `mapbox` package.
-* Bind the provider's live latitude/longitude to the map pin.
-* The timeline states (Booking Confirmed, On his way, In Progress, Completed) should update based on the backend's booking lifecycle status.
-* The "Live Tracking" drawer item should fetch active bookings from the backend (and show a fallback message if none exist).
-
-### H) FeedbackScreen
-* The temporary "Mark Completed (Demo)" button should be removed.
-* The app should automatically push/open the Feedback screen when the backend signals that the `booking.status == "completed"`.
-* Submitting the feedback must perform a POST request attaching the `bookingId`, `providerId`, `rating`, `selectedTags`, and `comment`.
-
-## Mock Data Note
-To facilitate seamless backend integration, the frontend relies on centralized mock models (e.g., `TrackingModel`, `FeedbackBookingModel`). Mock data is intentionally kept at the Model/Screen level rather than deeply hardcoded inside individual widget layouts. When the APIs are ready, you only need to swap the `TrackingModel.mockData` assignment with real JSON deserialization.
+### Screen-by-Screen Integration Details
+- **Auth**: Fully connected to Firebase. User profiles may later sync to Firestore via the backend.
+- **Home**: Real Speech-to-Text (STT) integration needed. Currently, tapping the mic starts a demo flow.
+- **Processing Loading**: Needs to display real STT progress or audio waveform rendering.
+- **Processing Agents**: Needs to dynamically display the transcript and detected intent/keywords from the backend.
+- **Provider Screen**: Needs to render the real list of ranked providers and pricing returned by `/orchestrate`.
+- **Booking Confirmed**: Needs to show real receipt data from the `/book` response. Calendar and WhatsApp actions are currently placeholders.
+- **Tracking Screen**: Needs real Google Maps or Mapbox integration and live Firestore listeners for lifecycle changes.
+- **Feedback Screen**: Needs to be triggered dynamically when a booking lifecycle status turns to "completed".
 
 ## Known Limitations
-* No real backend API connection yet.
-* No authentication persistence yet.
-* No real hardware microphone recording yet.
-* No real Google Maps SDK integrated yet.
-* Calendar / WhatsApp intents trigger mock SnackBars.
-* Feedback submission only resets the navigation stack locally.
+- The backend is not yet connected to the Flutter app.
+- Real voice recording and transcription (STT) are not active.
+- Real maps and location services are not yet integrated.
+- WhatsApp and Calendar actions are UI placeholders.
+- The Tracking and Feedback screens currently operate on a static mock flow.
 
-## Troubleshooting
-* **`flutter command not found`**: Ensure the Flutter SDK `bin` folder is added to your system's PATH variables.
-* **`no devices found`**: Ensure your Android phone is plugged in, unlocked, and USB Debugging is authorized.
-* **Gradle / Build Issues or Old UI**: Run `flutter clean`, then `flutter pub get`, then `flutter run`.
-* **Assets not loading**: Ensure the filename casing in `pubspec.yaml` and your Dart code exactly matches the actual file on disk.
+## Git Branch Workflow
+This frontend work is actively being maintained on the `taha-fayyaz` branch.
+
+To push changes to this branch:
+```bash
+git status
+git checkout taha-fayyaz
+git add mobile/
+git commit -m "Update mobile README after Firebase auth integration"
+git push origin taha-fayyaz
+```
 
 ## Contribution Notes
-* **Frontend Scope:** Keep all Flutter work constrained to the `mobile/` directory.
-* **Backend Scope:** Do not modify the `backend/` or `data/` directories without team approval.
-* **Architecture:** Adhere to the feature-based folder structure inside `lib/features/`.
-* **Reusability:** Keep UI widgets small, reusable, and driven by state/models.
-
-***
-*This mobile frontend was designed and implemented by the mobile frontend team for the Bulao hackathon demo.*
+- **Frontend Changes**: All Flutter work should remain inside the `mobile/` directory.
+- **Backend/Data Changes**: Do not modify `backend/` or `data/` directories unless explicitly assigned.
+- **Code Quality**: Keep widgets modular and reusable. Retain centralized mock data until real endpoints are wired. Keep Dart models backend-ready to match FastAPI schemas.
