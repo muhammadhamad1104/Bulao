@@ -17,6 +17,39 @@ def get_client():
         return Client(api_key=settings.GEMINI_API_KEY)
     return None
 
+def _call_groq(prompt: str) -> str:
+    """Fallback call to Groq API using standard library."""
+    import urllib.request
+    import json
+    
+    if not settings.GROQ_API_KEY:
+        return ""
+        
+    url = "https://api.groq.com/openai/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {settings.GROQ_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    data = {
+        "model": "llama-3.1-70b-versatile",
+        "messages": [
+            {"role": "system", "content": _SYSTEM_PROMPT},
+            {"role": "user", "content": prompt}
+        ],
+        "temperature": 0.1,
+        "response_format": {"type": "json_object"}
+    }
+    req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers=headers)
+    try:
+        with urllib.request.urlopen(req, timeout=10) as response:
+            res_data = response.read().decode('utf-8')
+            res_json = json.loads(res_data)
+            return res_json['choices'][0]['message']['content']
+    except Exception as e:
+        import structlog
+        structlog.get_logger().error("groq_fallback_failure", error=str(e))
+        return ""
+
 async def run(user_text: str) -> Intent:
     """Extract structured Intent from user text. Falls back gracefully on parse failure."""
     log.info("agent_start", agent="intent", input_len=len(user_text))
@@ -47,7 +80,11 @@ async def run(user_text: str) -> Intent:
         raw = response.text
     except Exception as e:
         log.error("agent_llm_failure", agent="intent", error=str(e))
-        return _fallback_intent(user_text, reason="llm_failure")
+        # Try Groq fallback
+        log.info("trying_groq_fallback", agent="intent")
+        raw = _call_groq(user_text)
+        if not raw:
+            return _fallback_intent(user_text, reason="llm_and_groq_failure")
 
     try:
         data = json.loads(raw)

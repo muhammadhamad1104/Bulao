@@ -3,6 +3,7 @@ from typing import Optional
 
 class Settings(BaseSettings):
     GEMINI_API_KEY: str
+    GROQ_API_KEY: Optional[str] = None
     GOOGLE_CLOUD_PROJECT: str = "bulao-hackathon"
     DEMO_MODE: bool = False
     FIRESTORE_EMULATOR_HOST: Optional[str] = None
