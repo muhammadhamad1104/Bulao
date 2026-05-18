@@ -2,9 +2,7 @@ from pydantic_settings import BaseSettings
 from typing import Optional
 
 class Settings(BaseSettings):
-    # Optional — app starts in mock/fallback mode if not set
-    GEMINI_API_KEY: str = ""
-    GROQ_API_KEY: Optional[str] = None
+    # API Keys removed — system is 100% self-hosted
     GOOGLE_CLOUD_PROJECT: str = "bulao-hackathon"
     DEMO_MODE: bool = False
     FIRESTORE_EMULATOR_HOST: Optional[str] = None
@@ -19,4 +17,3 @@ class Settings(BaseSettings):
         extra = "ignore"
 
 settings = Settings() # type: ignore
-

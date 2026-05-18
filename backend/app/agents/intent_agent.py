@@ -4,7 +4,7 @@ from pathlib import Path
 from pydantic import ValidationError
 import structlog
 from app.models import Intent
-from app.utils.llm_client import get_client, safe_generate
+from app.utils.llm_client import safe_generate
 from app.config import settings
 
 log = structlog.get_logger()
@@ -12,59 +12,15 @@ log = structlog.get_logger()
 _PROMPT_PATH = Path(__file__).parent.parent / "prompts" / "intent.md"
 _SYSTEM_PROMPT = _PROMPT_PATH.read_text(encoding="utf-8") if _PROMPT_PATH.exists() else ""
 
-def _call_groq(prompt: str) -> str:
-    """Fallback call to Groq API using standard library when Gemini fails."""
-    import urllib.request
-    import json
-    
-    if not settings.GROQ_API_KEY:
-        log.warning("groq_fallback_skipped", reason="no_api_key")
-        return ""
-        
-    url = "https://api.groq.com/openai/v1/chat/completions"
-    headers = {
-        "Authorization": f"Bearer {settings.GROQ_API_KEY}",
-        "Content-Type": "application/json"
-    }
-    data = {
-        "model": "llama-3.1-70b-versatile",
-        "messages": [
-            {"role": "system", "content": _SYSTEM_PROMPT},
-            {"role": "user", "content": prompt}
-        ],
-        "temperature": 0.1,
-        "response_format": {"type": "json_object"}
-    }
-    req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers=headers)
-    try:
-        with urllib.request.urlopen(req, timeout=10) as response:
-            res_data = response.read().decode('utf-8')
-            res_json = json.loads(res_data)
-            return res_json['choices'][0]['message']['content']
-    except Exception as e:
-        log.error("groq_fallback_failure", error=str(e))
-        return ""
-
 async def run(user_text: str) -> Intent:
-    """Extract structured Intent from user text. Falls back gracefully on parse failure."""
+    """Extract structured Intent from user text using the bundled local model."""
     log.info("agent_start", agent="intent", input_len=len(user_text))
     t0 = time.monotonic()
     
-    client = get_client()
-    if not client:
-        log.warning("intent_agent_mock_mode", reason="no_api_key")
-        if "plumber" in user_text.lower():
-            if "mere ghar" in user_text.lower():
-                return _fallback_intent(user_text, reason="mock", confidence=0.3)
-            return Intent(service_type="plumber", time_window="now", urgency="normal", job_complexity="basic", confidence=0.8, city="Islamabad")
-        elif "ac" in user_text.lower():
-            return Intent(service_type="ac_technician", location="G-13", time_window="tomorrow_morning", urgency="normal", job_complexity="basic", confidence=0.9, city="Islamabad")
-        return _fallback_intent(user_text, reason="mock", confidence=0.8)
-
-    # 1. Attempt Gemini Call (with up to 3 automatic retries on rate-limit/quota errors)
+    # 1. Attempt Local Model Call
     raw = await safe_generate(
-        client=client,
-        model="gemini-2.0-flash",
+        client=None,
+        model="local",
         contents=user_text,
         config={
             "system_instruction": _SYSTEM_PROMPT,
@@ -74,42 +30,15 @@ async def run(user_text: str) -> Intent:
         agent_name="intent",
     )
 
-    # 2. If Gemini fails completely, fall back to Groq Llama-3.1 API
-    if raw is None:
-        log.info("trying_groq_fallback", agent="intent")
-        raw = _call_groq(user_text)
-        
-    # 3. If both Gemini and Groq fail, fall back to deterministic keywords
+    # 2. If local model fails, fall back to deterministic keywords
     if not raw:
-        return _fallback_intent(user_text, reason="llm_and_groq_failure")
+        return _fallback_intent(user_text, reason="local_llm_failure")
 
     try:
         data = json.loads(raw)
     except json.JSONDecodeError:
-        # Retry Gemini once with explicit JSON reinforcement
-        raw2 = await safe_generate(
-            client=client,
-            model="gemini-2.0-flash",
-            contents=user_text + "\n\nReturn ONLY valid JSON. No markdown.",
-            config={
-                "system_instruction": _SYSTEM_PROMPT,
-                "temperature": 0.0,
-                "response_mime_type": "application/json",
-            },
-            agent_name="intent_retry",
-        )
-        if raw2 is None:
-            # Try Groq one final time
-            raw2 = _call_groq(user_text)
-            
-        if not raw2:
-            return _fallback_intent(user_text, reason="json_parse_and_fallback_failed")
-            
-        try:
-            data = json.loads(raw2)
-        except Exception:
-            log.error("agent_json_parse_failure", agent="intent", raw_preview=raw[:200])
-            return _fallback_intent(user_text, reason="json_parse")
+        log.error("agent_json_parse_failure", agent="intent", raw_preview=raw[:200])
+        return _fallback_intent(user_text, reason="json_parse")
 
     try:
         intent = Intent.model_validate(data)

@@ -1,69 +1,103 @@
 """
-Shared LLM client utility with exponential backoff retry for 429/quota errors.
-All agents should use safe_generate() instead of calling client directly.
+100% Self-Hosted Local LLM Client using llama-cpp-python.
+Zero external API calls. Runs locally in the Docker container.
 """
-import asyncio
+import os
 import time
+import json
+import asyncio
 import structlog
 from typing import Optional
-from app.config import settings
+from pathlib import Path
 
 log = structlog.get_logger()
 
-_INVALID_KEYS = {"", "paste-your-key-here", "fake", "your_gemini_api_key_here"}
+# Global LLM instance (loaded once into memory when the app boots)
+_llm = None
+
+def _get_llm():
+    global _llm
+    if _llm is None:
+        try:
+            from llama_cpp import Llama
+            
+            # Docker path or local fallback path
+            model_path = "/app/models/qwen.gguf"
+            if not os.path.exists(model_path):
+                # Fallback for local PC execution outside Docker
+                local_path = Path(__file__).parent.parent.parent / "models" / "qwen.gguf"
+                model_path = str(local_path)
+                
+            if not os.path.exists(model_path):
+                log.warning("local_model_not_found", path=model_path)
+                return None
+                
+            log.info("loading_local_llm_into_memory", path=model_path)
+            # n_ctx=2048 is plenty for our tasks, keeping RAM usage low
+            _llm = Llama(model_path=model_path, n_ctx=2048, verbose=False)
+            log.info("local_llm_loaded_successfully")
+        except ImportError:
+            log.error("llama_cpp_python_not_installed")
+        except Exception as e:
+            log.error("llm_initialization_failure", error=str(e))
+            
+    return _llm
 
 def get_client():
-    """Return a google-genai Client if a valid API key is set, else None."""
-    from google.genai import Client
-    key = settings.GEMINI_API_KEY.strip()
-    if key and key not in _INVALID_KEYS:
-        return Client(api_key=key)
+    """
+    Returns None since we no longer use a google/groq client object.
+    The agents will pass None, and safe_generate handles the rest.
+    """
     return None
 
 async def safe_generate(
-    client,
-    model: str,
+    client,  # Ignored now
+    model: str, # Ignored now
     contents: str,
     config: dict,
-    max_retries: int = 3,
+    max_retries: int = 1, # Local models don't have rate limits, so no retries needed
     agent_name: str = "unknown",
 ) -> Optional[str]:
     """
-    Call client.models.generate_content with exponential backoff on 429 errors.
-    Returns response.text on success, None on final failure.
+    Generate content using the bundled local GGUF model.
+    Guarantees strict JSON output if requested.
     """
-    for attempt in range(max_retries):
-        try:
-            response = client.models.generate_content(
-                model=model,
-                contents=contents,
-                config=config,
-            )
-            return response.text
-        except Exception as e:
-            err_str = str(e)
-            is_quota = "429" in err_str or "RESOURCE_EXHAUSTED" in err_str or "quota" in err_str.lower()
-            
-            if is_quota and attempt < max_retries - 1:
-                wait = 2 ** attempt  # 1s, 2s, 4s
-                log.warning(
-                    "llm_quota_retry",
-                    agent=agent_name,
-                    attempt=attempt + 1,
-                    wait_s=wait,
-                    error=err_str[:120],
-                )
-                await asyncio.sleep(wait)
-                continue
-            
-            # Non-retriable error or final attempt
-            log.error(
-                "llm_failure",
-                agent=agent_name,
-                attempt=attempt + 1,
-                error=err_str[:200],
-                is_quota=is_quota,
-            )
-            return None
+    system_instruction = config.get("system_instruction", "")
+    
+    llm = _get_llm()
+    if not llm:
+        log.warning("bundled_llm_unavailable", agent=agent_name)
+        return None
+        
+    messages = []
+    if system_instruction:
+        messages.append({"role": "system", "content": system_instruction})
+    messages.append({"role": "user", "content": contents})
 
-    return None
+    # Determine if JSON format is required
+    response_format = None
+    if config.get("response_mime_type") == "application/json":
+        response_format = {"type": "json_object"}
+
+    t0 = time.monotonic()
+    log.info("local_llm_start", agent=agent_name, prompt_length=len(contents))
+    
+    try:
+        # llama_cpp inference (blocking, so we offload it to threadpool if needed, 
+        # but for hackathon a direct call is perfectly fine for low concurrency)
+        response = llm.create_chat_completion(
+            messages=messages,
+            temperature=config.get("temperature", 0.1),
+            response_format=response_format,
+            max_tokens=1024
+        )
+        
+        result_text = response['choices'][0]['message']['content']
+        duration = int((time.monotonic() - t0) * 1000)
+        
+        log.info("local_llm_success", agent=agent_name, duration_ms=duration, output_length=len(result_text))
+        return result_text
+        
+    except Exception as e:
+        log.error("local_llm_failure", agent=agent_name, error=str(e))
+        return None
