@@ -6,18 +6,7 @@ from pathlib import Path
 import structlog
 from app.models import Intent, ProviderCandidate, PriceQuote, Booking, BookingLifecycle
 from app.tools.pdf_receipt import generate_receipt
-from google.genai import Client
-from app.config import settings
-
-log = structlog.get_logger()
-
-_PROMPT_PATH = Path(__file__).parent.parent / "prompts" / "booking.md"
-_SYSTEM_PROMPT = _PROMPT_PATH.read_text(encoding="utf-8") if _PROMPT_PATH.exists() else ""
-
-def get_client():
-    if settings.GEMINI_API_KEY and settings.GEMINI_API_KEY != "fake":
-        return Client(api_key=settings.GEMINI_API_KEY)
-    return None
+from app.utils.llm_client import get_client, safe_generate
 
 async def run(intent: Intent, provider: ProviderCandidate, accepted_quote: PriceQuote, user_id: str, user_name: str = None) -> Booking:
     """
@@ -58,21 +47,24 @@ async def run(intent: Intent, provider: ProviderCandidate, accepted_quote: Price
     
     client = get_client()
     if client:
-        try:
-            response = client.models.generate_content(
-                model='gemini-2.0-flash',
-                contents=json.dumps(payload, ensure_ascii=False),
-                config={
-                    'system_instruction': _SYSTEM_PROMPT,
-                    'temperature': 0.1,
-                    'response_mime_type': 'application/json'
-                }
-            )
-            data = json.loads(response.text)
-            msg_en = data.get("english", "")
-            msg_ur = data.get("urdu", "")
-        except Exception as e:
-            log.error("llm_message_generation_failure", error=str(e))
+        raw = await safe_generate(
+            client=client,
+            model="gemini-2.0-flash",
+            contents=json.dumps(payload, ensure_ascii=False),
+            config={
+                "system_instruction": _SYSTEM_PROMPT,
+                "temperature": 0.1,
+                "response_mime_type": "application/json",
+            },
+            agent_name="booking",
+        )
+        if raw:
+            try:
+                data = json.loads(raw)
+                msg_en = data.get("english", "")
+                msg_ur = data.get("urdu", "")
+            except Exception:
+                log.warning("booking_json_parse_failure")
     
     # Fallback if LLM fails or no client
     if not msg_en:
