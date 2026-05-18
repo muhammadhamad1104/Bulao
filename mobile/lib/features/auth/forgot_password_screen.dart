@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../core/widgets/bulao_toast.dart';
+import '../../core/utils/firebase_error_helper.dart';
 import 'widgets/auth_header_logo.dart';
 import 'widgets/auth_text_field.dart';
 import 'widgets/auth_primary_button.dart';
@@ -15,6 +18,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _emailController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -28,19 +32,32 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     }
   }
 
-  void _onSendLinkPressed() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Password reset backend will be connected later',
-          style: GoogleFonts.ibmPlexSans(color: Colors.white),
-        ),
-        backgroundColor: const Color(0xFF1A2A5E),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.all(16),
-      ),
-    );
+  Future<void> _onSendLinkPressed() async {
+    if (_emailController.text.trim().isEmpty) {
+      BulaoToast.show(context, message: 'Please enter your email', type: ToastType.error);
+      return;
+    }
+
+    setState(() { _isLoading = true; });
+
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(
+        email: _emailController.text.trim(),
+      );
+
+      if (mounted) {
+        BulaoToast.show(context, message: 'Password reset link sent to your email', type: ToastType.success);
+        _goBack();
+      }
+    } catch (e) {
+      if (mounted) {
+        BulaoToast.show(context, message: FirebaseErrorHelper.getMessage(e), type: ToastType.error);
+      }
+    } finally {
+      if (mounted) {
+        setState(() { _isLoading = false; });
+      }
+    }
   }
 
   @override
@@ -134,11 +151,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 onPressed: _goBack,
                               ),
                               // Send Link — primary gradient button
-                              AuthPrimaryButton(
-                                label: 'Send Link',
-                                width: btnWidth,
-                                onPressed: _onSendLinkPressed,
-                              ),
+                              _isLoading
+                                  ? SizedBox(
+                                      width: btnWidth,
+                                      child: const Center(
+                                          child: CircularProgressIndicator(color: Color(0xFFC9A84C))),
+                                    )
+                                  : AuthPrimaryButton(
+                                      label: 'Send Link',
+                                      width: btnWidth,
+                                      onPressed: _onSendLinkPressed,
+                                    ),
                             ],
                           ),
                         ),

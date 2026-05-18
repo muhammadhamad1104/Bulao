@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../../core/widgets/bulao_toast.dart';
 import '../../tracking/tracking_screen.dart';
+import '../../auth/auth_gate.dart';
 
 /// Side drawer for the HomeScreen.
 /// Provides navigation to Live Tracking, My Bookings, and Logout.
@@ -18,16 +21,7 @@ class HomeDrawer extends StatelessWidget {
   });
 
   void _showComingSoon(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: const Color(0xFF2A3A5E),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.all(16),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+    BulaoToast.show(context, message: message, type: ToastType.info);
   }
 
   void _navigateToTracking(BuildContext context) {
@@ -140,9 +134,16 @@ class HomeDrawer extends StatelessWidget {
             title: 'Logout',
             textColor: const Color(0xFFD32F2F),
             iconColor: const Color(0xFFD32F2F),
-            onTap: () {
+            onTap: () async {
               Navigator.of(context).pop();
-              _showComingSoon(context, 'Logout will be connected later');
+              await FirebaseAuth.instance.signOut();
+              if (context.mounted) {
+                BulaoToast.show(context, message: 'You are logged out successfully', type: ToastType.success);
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => const AuthGate()),
+                  (route) => false,
+                );
+              }
             },
           ),
           const SizedBox(height: 24),

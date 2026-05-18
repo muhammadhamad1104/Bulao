@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../core/widgets/bulao_toast.dart';
+import '../../core/utils/firebase_error_helper.dart';
 import 'widgets/auth_header_logo.dart';
 import 'widgets/auth_text_field.dart';
 import 'widgets/auth_primary_button.dart';
@@ -16,6 +19,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -25,12 +29,46 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
-  void _onSignUpPressed() {
-    // Navigate back to LoginScreen.
-    // TODO: When backend is ready, POST registration data first, then
-    // on success navigate to HomeScreen(userName: result.name).
-    if (Navigator.of(context).canPop()) {
-      Navigator.of(context).pop();
+  Future<void> _onSignUpPressed() async {
+    if (_nameController.text.trim().isEmpty || 
+        _emailController.text.trim().isEmpty || 
+        _passwordController.text.isEmpty) {
+      BulaoToast.show(context, message: 'Please fill all fields', type: ToastType.error);
+      return;
+    }
+
+    if (_passwordController.text.length < 6) {
+      BulaoToast.show(context, message: 'Password must be at least 6 characters', type: ToastType.error);
+      return;
+    }
+
+    setState(() { _isLoading = true; });
+
+    try {
+      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+
+      await credential.user?.updateDisplayName(_nameController.text.trim());
+      
+      // Sign out so they have to log in manually
+      await FirebaseAuth.instance.signOut();
+
+      if (mounted) {
+        BulaoToast.show(context, message: 'Account created successfully. Please log in.', type: ToastType.success);
+        if (Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        BulaoToast.show(context, message: FirebaseErrorHelper.getMessage(e), type: ToastType.error);
+      }
+    } finally {
+      if (mounted) {
+        setState(() { _isLoading = false; });
+      }
     }
   }
 
@@ -122,10 +160,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     const SizedBox(height: 30),
 
                     // ── Sign Up button ────────────────────────────────────
-                    AuthPrimaryButton(
-                      label: 'Sign Up',
-                      onPressed: _onSignUpPressed,
-                    ),
+                    _isLoading
+                        ? const Center(child: CircularProgressIndicator(color: Color(0xFFC9A84C)))
+                        : AuthPrimaryButton(
+                            label: 'Sign Up',
+                            onPressed: _onSignUpPressed,
+                          ),
                     const SizedBox(height: 22),
 
                     // ── "Already Have An Account?" + "Log In Now!" ────────
