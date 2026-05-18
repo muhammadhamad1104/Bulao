@@ -103,8 +103,8 @@ If we kept building after May 20:
 ## Team
 - **Ibrahim** — Product & Urdu lead. Owned the 50-example dataset, six agent system prompts, demo direction, README, pitch.
 - **Muhammad Hamad** — Backend & Infrastructure lead. Built Intent, Discovery, Ranking, Pricing agents, and the orchestration pipeline.
-- **[Partner 3]** — Mobile lead. Built the Flutter app, agent cards, and voice UI.
-- **[Partner 4]** — Infrastructure lead. Cloud Run, deployment pipeline, and trace capture.
+- **Taha Fayyaz and Wajeeha Kamran** — Mobile lead. Built the Flutter app, agent cards, and voice UI.
+- **Ghufran Mehmood** — Infrastructure lead. Cloud Run, deployment pipeline, and trace capture.
 
 ---
 
