@@ -40,7 +40,7 @@ app.add_middleware(
 
 # Include Routers
 app.include_router(health.router)
-app.include_router(orchestrate.router, prefix="/api")
+app.include_router(orchestrate.router)
 app.include_router(book.router)
 app.include_router(dispute.router)
 app.include_router(rating.router)
