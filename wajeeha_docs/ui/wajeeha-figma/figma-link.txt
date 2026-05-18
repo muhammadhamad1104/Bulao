@@ -1,0 +1,11 @@
+Bulao Figma Design File:
+https://www.figma.com/design/LzWmmr6aESzCEFgKsyKz7b/Untitled?node-id=0-1&t=32Mwno8yqFnefBTY-1
+
+Designer:
+Wajeeha Kamran
+
+Role:
+UI/UX Designer
+
+Notes:
+These designs were used as the visual reference for the Bulao Flutter mobile frontend.
