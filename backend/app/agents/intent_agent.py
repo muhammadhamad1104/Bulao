@@ -20,6 +20,7 @@ def get_client():
 def _call_groq(prompt: str) -> str:
     """Fallback call to Groq API using standard library."""
     import urllib.request
+    import urllib.error
     import json
     
     if not settings.GROQ_API_KEY:
@@ -32,13 +33,12 @@ def _call_groq(prompt: str) -> str:
         "User-Agent": "Bulao-App/1.0"
     }
     data = {
-        "model": "llama-3.1-70b-versatile",
+        "model": "llama-3.1-8b-instant",
         "messages": [
-            {"role": "system", "content": _SYSTEM_PROMPT},
+            {"role": "system", "content": _SYSTEM_PROMPT + "\n\nYou MUST return ONLY a valid JSON object matching the requested schema. No other text."},
             {"role": "user", "content": prompt}
         ],
         "temperature": 0.1,
-        "response_format": {"type": "json_object"}
     }
     req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers=headers)
     try:
@@ -46,6 +46,11 @@ def _call_groq(prompt: str) -> str:
             res_data = response.read().decode('utf-8')
             res_json = json.loads(res_data)
             return res_json['choices'][0]['message']['content']
+    except urllib.error.HTTPError as e:
+        import structlog
+        res_body = e.read().decode('utf-8')
+        structlog.get_logger().error("groq_fallback_failure", error=str(e), body=res_body)
+        return ""
     except Exception as e:
         import structlog
         structlog.get_logger().error("groq_fallback_failure", error=str(e))
