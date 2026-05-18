@@ -83,13 +83,13 @@ async def safe_generate(
     log.info("local_llm_start", agent=agent_name, prompt_length=len(contents))
     
     try:
-        # llama_cpp inference (blocking, so we offload it to threadpool if needed, 
-        # but for hackathon a direct call is perfectly fine for low concurrency)
-        response = llm.create_chat_completion(
+        # llama_cpp inference (blocking, so we MUST offload to threadpool to prevent health check timeouts)
+        response = await asyncio.to_thread(
+            llm.create_chat_completion,
             messages=messages,
             temperature=config.get("temperature", 0.1),
             response_format=response_format,
-            max_tokens=1024
+            max_tokens=250  # Reduced to speed up generation
         )
         
         result_text = response['choices'][0]['message']['content']

@@ -57,6 +57,16 @@ clarification_question — ONLY populate if confidence < 0.7. A natural one-sent
   question to ask the user. Format: { "urdu": "...", "english": "..." }
   Otherwise null. The question should target the MOST ambiguous field.
 
+SPEECH-TO-TEXT AUTOCORRECT:
+The user is speaking into a voice dictation system. Expect transcription errors.
+If you see phonetic mistakes, intelligently autocorrect them to home services.
+Examples:
+- "number" or "lamber" -> "plumber"
+- "easy technician" -> "ac_technician"
+- "car painter" or "punter" -> "carpenter" / "painter"
+- "teaser" or "geezer" -> "geyser_technician"
+- "tooter" -> "tutor"
+
 URDU / ROMAN URDU CHEAT-SHEET:
   "Mujhe ___ chahiye"       = I need ___
   "___ bhejo / bhejein"      = send ___
