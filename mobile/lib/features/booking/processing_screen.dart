@@ -16,8 +16,13 @@ import '../../core/models/orchestrate_models.dart';
 ///   Widget layer needs zero changes — it consumes models via constructors.
 class ProcessingScreen extends StatelessWidget {
   final OrchestrateResponse response;
+  final String originalText;
 
-  const ProcessingScreen({super.key, required this.response});
+  const ProcessingScreen({
+    super.key,
+    required this.response,
+    required this.originalText,
+  });
 
   // ── Map backend OrchestrateResponse → UI models ──────────────────────────
 
@@ -27,19 +32,15 @@ class ProcessingScreen extends StatelessWidget {
       _humanize(intent.serviceType),
       if (intent.location != null && intent.location!.isNotEmpty)
         intent.location!,
-      if (intent.timeWindow.isNotEmpty) _humanizeWindow(intent.timeWindow),
+      if (intent.timeWindow.isNotEmpty && intent.timeWindow != 'flexible')
+        _humanizeWindow(intent.timeWindow),
       _humanize(intent.urgency),
       if (intent.specializationHint != null) intent.specializationHint!,
     ];
 
-    // Build a human-readable transcript from intent fields
-    final transcript = response.intent.rawNotes?.isNotEmpty == true
-        ? response.intent.rawNotes!
-        : '${_humanize(intent.serviceType)} — ${intent.location ?? intent.city} — '
-            '${_humanizeWindow(intent.timeWindow)}';
-
+    // Always show the actual spoken words as transcript
     return ProcessingRequestModel(
-      transcript: transcript,
+      transcript: '"$originalText"',
       keywords: keywords.where((k) => k.isNotEmpty).take(6).toList(),
     );
   }
@@ -55,19 +56,22 @@ class ProcessingScreen extends StatelessWidget {
         agentName: 'Intent Agent',
         description:
             '${_humanize(intent.serviceType)} · ${intent.location ?? intent.city}'
-            ' · ${_humanizeWindow(intent.timeWindow)}'
             ' · ${(intent.confidence * 100).toStringAsFixed(0)}% confidence',
-        status: AgentStatus.completed,
+        // Only mark completed if confidence is meaningful (LLM actually ran)
+        status: intent.confidence >= 0.6
+            ? AgentStatus.completed
+            : AgentStatus.pending,
         leftIconData: Icons.manage_search_rounded,
       ),
       AgentProgressModel(
         agentName: 'Discovery Agent',
-        description: discovery != null
+        description: discovery != null && discovery.candidates.isNotEmpty
             ? '${discovery.candidates.length} providers found'
                 '${discovery.alternates.isNotEmpty ? " · ${discovery.alternates.length} alternates" : ""}'
             : response.needsClarification
                 ? 'Clarification needed'
                 : 'No providers found',
+        // Only tick if we actually got candidates
         status: discovery != null && discovery.candidates.isNotEmpty
             ? AgentStatus.completed
             : AgentStatus.pending,
@@ -172,6 +176,8 @@ class ProcessingScreen extends StatelessWidget {
     final request = _buildRequestModel();
     final agents = _buildAgents();
     final hasProviders = (response.discovery?.candidates.isNotEmpty ?? false);
+    // Always allow proceeding — even with clarification needed, show providers button
+    final canProceed = hasProviders || response.needsClarification == false;
 
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAF7),
@@ -204,31 +210,40 @@ class ProcessingScreen extends StatelessWidget {
 
                     const SizedBox(height: 24),
 
-                    // ── Continue button if providers are available ────────────
-                    if (hasProviders)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: SizedBox(
-                          width: double.infinity,
-                          height: 52,
-                          child: ElevatedButton.icon(
-                            onPressed: () => _goToProviders(context),
-                            icon: const Icon(Icons.arrow_forward_rounded,
-                                color: Colors.white),
-                            label: const Text('See Providers',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600)),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF2A3A5E),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                              elevation: 4,
+                    // ── Continue button — always shown so user is never stuck ──
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: ElevatedButton.icon(
+                          onPressed: hasProviders
+                              ? () => _goToProviders(context)
+                              : null,
+                          icon: Icon(
+                            hasProviders
+                                ? Icons.arrow_forward_rounded
+                                : Icons.hourglass_empty_rounded,
+                            color: Colors.white),
+                          label: Text(
+                            hasProviders
+                                ? 'See Providers'
+                                : 'No Providers Found — Go Back',
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: hasProviders
+                                ? const Color(0xFF2A3A5E)
+                                : const Color(0xFF8A95A8),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
                             ),
+                            elevation: 4,
                           ),
                         ),
                       ),
+                    ),
 
                     const SizedBox(height: 32),
                   ],

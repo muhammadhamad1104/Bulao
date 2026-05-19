@@ -33,19 +33,29 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _initSpeech() async {
-    await _speech.initialize();
+    await _speech.initialize(
+      onError: (error) => setState(() => _isListening = false),
+    );
   }
 
   void _startListening() async {
-    bool available = await _speech.initialize();
+    bool available = await _speech.initialize(
+      onError: (error) => setState(() => _isListening = false),
+    );
     if (available) {
-      setState(() => _isListening = true);
+      setState(() {
+        _isListening = true;
+        _recognizedText = '';
+      });
       _speech.listen(
+        listenMode: ListenMode.dictation,
         onResult: (result) {
           setState(() {
             _recognizedText = result.recognizedWords;
           });
         },
+        cancelOnError: true,
+        partialResults: true,
       );
     }
   }
@@ -53,11 +63,25 @@ class _HomeScreenState extends State<HomeScreen> {
   void _stopListening() async {
     await _speech.stop();
     setState(() => _isListening = false);
-    if (_recognizedText.isNotEmpty) {
-      _navigateToProcessing(context, _recognizedText);
+    // Small delay to allow the speech engine to finalize the last words
+    await Future.delayed(const Duration(milliseconds: 300));
+    final text = _recognizedText.trim();
+    if (text.isNotEmpty) {
+      _navigateToProcessing(context, text);
     } else {
-      // Fallback if no text recognized
-      _navigateToProcessing(context, "G-13 mein plumber chahiye");
+      // Show a snackbar instead of silently sending a hardcoded fallback
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Kuch sunai nahi diya. Dobara try karein.',
+                style: GoogleFonts.ibmPlexSans(color: Colors.white)),
+            backgroundColor: const Color(0xFF2A3A5E),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            margin: const EdgeInsets.all(16),
+          ),
+        );
+      }
     }
   }
 

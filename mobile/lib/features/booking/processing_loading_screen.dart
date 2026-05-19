@@ -108,7 +108,7 @@ class _ProcessingLoadingScreenState extends State<ProcessingLoadingScreen> {
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
-            ProcessingScreen(response: response),
+            ProcessingScreen(response: response, originalText: widget.requestText),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
