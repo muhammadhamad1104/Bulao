@@ -18,11 +18,12 @@ COPY pyproject.toml poetry.lock* ./
 RUN poetry config virtualenvs.in-project true \
  && poetry install --no-root --without dev --no-interaction --no-ansi
 
-# Build llama-cpp-python from source with AVX disabled for CPU compatibility
-# Pre-built wheels use AVX2/AVX512 which can cause SIGSEGV (exit 139) on some CPUs
+# Build llama-cpp-python from source with ALL CPU-specific opts disabled
+# Prevents SIGSEGV (139) and SIGILL (132) on DigitalOcean CPUs
 RUN apt-get install -y build-essential cmake && \
-    CMAKE_ARGS="-DGGML_AVX=OFF -DGGML_AVX2=OFF -DGGML_AVX512=OFF -DGGML_FMA=OFF" \
-    /app/.venv/bin/pip install llama-cpp-python --no-binary llama-cpp-python
+    CMAKE_ARGS="-DGGML_NATIVE=OFF -DGGML_AVX=OFF -DGGML_AVX2=OFF -DGGML_AVX512=OFF -DGGML_FMA=OFF -DGGML_F16C=OFF" \
+    FORCE_CMAKE=1 \
+    /app/.venv/bin/pip install llama-cpp-python --no-binary llama-cpp-python --verbose
 
 # ── Stage 2: Runtime ─────────────────────────────────────────────────────────
 FROM python:3.11-slim
