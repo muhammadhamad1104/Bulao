@@ -32,8 +32,9 @@ async def orchestrate(req: OrchestrateRequest):
              service=intent.service_type, confidence=round(intent.confidence, 2),
              location=intent.location, elapsed_ms=int((time.monotonic()-t)*1000))
     
-    # Clarification Path
-    if intent.needs_clarification or intent.confidence < 0.7:
+    # Clarification Path — only if service type itself is unknown (confidence < 0.4)
+    # Missing location alone should NOT block discovery
+    if intent.needs_clarification or intent.confidence < 0.4:
         log.info("pipeline_early_exit", reason="clarification_needed",
                  confidence=round(intent.confidence, 2),
                  total_ms=int((time.monotonic()-pipeline_start)*1000))
