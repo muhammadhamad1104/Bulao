@@ -7,6 +7,7 @@ import 'widgets/interactive_mic_button.dart';
 import '../booking/processing_loading_screen.dart';
 import '../../core/services/api_service.dart';
 import 'widgets/home_drawer.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 class HomeScreen extends StatefulWidget {
   final String userName;

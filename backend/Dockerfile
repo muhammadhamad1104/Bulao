@@ -46,7 +46,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 EXPOSE 8080
 
 # Healthcheck for Cloud / App Runner
-HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
   CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')" || exit 1
 
 # Note: workers set to 1 because the model resides in RAM. Multiple workers would duplicate the 1GB RAM footprint.
