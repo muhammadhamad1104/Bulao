@@ -88,7 +88,7 @@ async def safe_generate(
     
     try:
         # llama_cpp inference (blocking, so we MUST offload to threadpool)
-        # Timeout after 25s — fall back to keyword detection rather than hanging
+        # Timeout after 60s — fall back to keyword detection rather than hanging
         response = await asyncio.wait_for(
             asyncio.to_thread(
                 llm.create_chat_completion,
@@ -97,7 +97,7 @@ async def safe_generate(
                 response_format=response_format,
                 max_tokens=250
             ),
-            timeout=25.0
+            timeout=60.0
         )
         
         result_text = response['choices'][0]['message']['content']
