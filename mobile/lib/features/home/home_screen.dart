@@ -25,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final SpeechToText _speech = SpeechToText();
   bool _isListening = false;
   String _recognizedText = '';
+  String _bestRecognizedText = ''; // Tracks longest result seen this session
 
   @override
   void initState() {
@@ -46,12 +47,19 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _isListening = true;
         _recognizedText = '';
+        _bestRecognizedText = ''; // Reset for new session
       });
       _speech.listen(
         listenMode: ListenMode.dictation,
         onResult: (result) {
+          final words = result.recognizedWords;
           setState(() {
-            _recognizedText = result.recognizedWords;
+            _recognizedText = words;
+            // Keep the longest version seen — Android can restart mid-session
+            // and return only the tail end of what was said
+            if (words.trim().length > _bestRecognizedText.trim().length) {
+              _bestRecognizedText = words;
+            }
           });
         },
         cancelOnError: true,
@@ -63,13 +71,16 @@ class _HomeScreenState extends State<HomeScreen> {
   void _stopListening() async {
     await _speech.stop();
     setState(() => _isListening = false);
-    // Small delay to allow the speech engine to finalize the last words
-    await Future.delayed(const Duration(milliseconds: 300));
-    final text = _recognizedText.trim();
+    // Wait for speech engine to finalize — Android needs time to flush the last segment
+    await Future.delayed(const Duration(milliseconds: 600));
+    // Use the best (longest) result captured during the full session
+    final text = (_bestRecognizedText.trim().isNotEmpty
+            ? _bestRecognizedText
+            : _recognizedText)
+        .trim();
     if (text.isNotEmpty) {
       _navigateToProcessing(context, text);
     } else {
-      // Show a snackbar instead of silently sending a hardcoded fallback
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
