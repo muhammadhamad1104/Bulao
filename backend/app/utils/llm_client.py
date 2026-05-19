@@ -33,8 +33,8 @@ def _get_llm():
                 return None
                 
             log.info("loading_local_llm_into_memory", path=model_path)
-            # n_ctx=2048, n_threads=1: safe for 4GB RAM, avoids threading CPU issues
-            _llm = Llama(model_path=model_path, n_ctx=2048, n_threads=1, verbose=False)
+            # n_ctx=2048, n_threads=4: use all dedicated CPU cores for faster inference
+            _llm = Llama(model_path=model_path, n_ctx=2048, n_threads=4, verbose=False)
             log.info("local_llm_loaded_successfully")
         except ImportError:
             log.error("llama_cpp_python_not_installed")

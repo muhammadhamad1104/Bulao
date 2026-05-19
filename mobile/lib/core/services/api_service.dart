@@ -13,8 +13,8 @@ import '../models/orchestrate_models.dart';
 /// ─────────────────────────────────────────────────────────────────────────────
 const String _backendBaseUrl = 'https://bulou-ex8jo.ondigitalocean.app';
 
-/// Timeout for the /orchestrate pipeline (it runs 4 agents + Gemini calls).
-const Duration _orchestrateTimeout = Duration(seconds: 60);
+/// Timeout for the /orchestrate pipeline (local LLM on dedicated CPU can be slow).
+const Duration _orchestrateTimeout = Duration(seconds: 90);
 
 /// HTTP client for all Bulao backend API calls.
 class ApiService {
