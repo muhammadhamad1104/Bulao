@@ -40,7 +40,7 @@ class ProcessingScreen extends StatelessWidget {
 
     // Always show the actual spoken words as transcript
     return ProcessingRequestModel(
-      transcript: '"$originalText"',
+      transcript: originalText,
       keywords: keywords.where((k) => k.isNotEmpty).take(6).toList(),
     );
   }
@@ -57,8 +57,7 @@ class ProcessingScreen extends StatelessWidget {
         description:
             '${_humanize(intent.serviceType)} · ${intent.location ?? intent.city}'
             ' · ${(intent.confidence * 100).toStringAsFixed(0)}% confidence',
-        // Only mark completed if confidence is meaningful (LLM actually ran)
-        status: intent.confidence >= 0.6
+        status: intent.confidence >= 0.3
             ? AgentStatus.completed
             : AgentStatus.pending,
         leftIconData: Icons.manage_search_rounded,
@@ -71,16 +70,18 @@ class ProcessingScreen extends StatelessWidget {
             : response.needsClarification
                 ? 'Clarification needed'
                 : 'No providers found',
-        // Only tick if we actually got candidates
-        status: discovery != null && discovery.candidates.isNotEmpty
+        // Tick green if the agent completed its run successfully, regardless of findings
+        status: discovery != null
             ? AgentStatus.completed
             : AgentStatus.pending,
         leftIconData: Icons.travel_explore_rounded,
-      ),
-      AgentProgressModel(
+    ),
+    AgentProgressModel(
         agentName: 'Ranking Agent',
         description: ranking != null
-            ? 'Top pick: ${_topProviderName()} · ${ranking.confidence} confidence'
+            ? discovery != null && discovery.candidates.isNotEmpty
+                ? 'Top pick: ${_topProviderName()} · ${ranking.confidence} confidence'
+                : 'Skipped — no candidates to rank'
             : 'Waiting ...',
         status: ranking != null ? AgentStatus.completed : AgentStatus.pending,
         leftIconData: Icons.leaderboard_rounded,
@@ -88,10 +89,12 @@ class ProcessingScreen extends StatelessWidget {
       AgentProgressModel(
         agentName: 'Pricing Agent',
         description: pricing != null
-            ? 'PKR ${pricing.estimatedTotalPkr.toString().replaceAllMapped(
-                  RegExp(r'(\d)(?=(\d{3})+$)'),
-                  (m) => '${m[1]},',
-                )} estimated'
+            ? pricing.estimatedTotalPkr > 0
+                ? 'PKR ${pricing.estimatedTotalPkr.toString().replaceAllMapped(
+                      RegExp(r'(\d)(?=(\d{3})+$)'),
+                      (m) => '${m[1]},',
+                    )} estimated'
+                : 'Skipped — no provider assigned'
             : 'Waiting ....',
         status: pricing != null ? AgentStatus.completed : AgentStatus.pending,
         leftIconData: Icons.local_offer_outlined,
@@ -99,7 +102,9 @@ class ProcessingScreen extends StatelessWidget {
       AgentProgressModel(
         agentName: 'Booking Agent',
         description: response.bookingPreview != null
-            ? 'Slot reserved · pending confirmation'
+            ? response.bookingPreview!['provider_id']?.toString().isNotEmpty == true
+                ? 'Slot reserved · pending confirmation'
+                : 'No slot reserved'
             : 'Waiting ......',
         status: response.bookingPreview != null
             ? AgentStatus.completed
