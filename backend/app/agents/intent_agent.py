@@ -53,23 +53,31 @@ async def run(user_text: str) -> Intent:
 def _fallback_intent(user_text: str, reason: str, confidence: float = 0.3) -> Intent:
     """Best-effort keyword-based fallback when the LLM fails."""
     keywords = {
-        "plumber": ["plumber", "pani", "leak", "nal", "pipe", "tank", "motor", "sink", "drain", "water"],
-        "electrician": ["electrician", "bijli", "light", "wiring", "switch", "fan", "board", "current", "power", "short"],
-        "ac_technician": ["ac", "air condition", "inverter", "split", "window", "cooling", "gas charge", "chiller"],
-        "geyser_technician": ["geyser", "heater", "garam", "hot water"],
-        "carpenter": ["carpenter", "lakdi", "wood", "furniture", "door", "cabinet", "lock", "bench", "table"],
-        "painter": ["paint", "rang", "color", "wall", "interior", "exterior", "texture"],
-        "beautician": ["beautician", "makeup", "bridal", "mehndi", "facial", "threading", "waxing", "salon"],
-        "tutor": ["tutor", "teacher", "math", "physics", "o levels", "a levels", "matric", "academy", "home tuition"],
-        "appliance_repair": ["fridge", "washing machine", "oven", "microwave", "tv", "refrigerator", "machine"],
-        "gas_leak_specialist": ["gas leak", "gas smell", "cylinder", "regulator", "stove", "chulha"],
+        "plumber": ["plumber", "pani", "leak", "nal", "pipe", "tank", "motor", "sink", "drain", "water", "nalkaa"],
+        "electrician": ["electrician", "electrical", "electric", "engineer", "bijli", "light", "wiring",
+                        "switch", "fan", "board", "current", "power", "short", "voltage", "circuit",
+                        "socket", "plug", "fuse", "meter", "transformer", "electrical engineer"],
+        "ac_technician": ["ac", "air condition", "air conditioning", "inverter ac", "split ac",
+                          "window ac", "cooling", "gas charge", "chiller", "garam ho raha"],
+        "geyser_technician": ["geyser", "heater", "garam pani", "hot water", "water heater"],
+        "carpenter": ["carpenter", "lakdi", "wood", "furniture", "door", "cabinet", "lock", "bench", "table", "barhain"],
+        "painter": ["paint", "rang", "color", "wall", "interior", "exterior", "texture", "painting"],
+        "beautician": ["beautician", "makeup", "bridal", "mehndi", "facial", "threading", "waxing", "salon", "beauty"],
+        "tutor": ["tutor", "teacher", "math", "physics", "o levels", "a levels", "matric", "academy", "home tuition", "padhai"],
+        "appliance_repair": ["fridge", "washing machine", "oven", "microwave", "tv", "refrigerator", "machine", "repair"],
+        "gas_leak_specialist": ["gas leak", "gas smell", "cylinder", "regulator", "stove", "chulha", "gas"],
     }
     text_lower = user_text.lower()
-    service = "plumber"
+    # Try to match a service — default to None so we can detect complete failure
+    service = None
     for svc, kws in keywords.items():
         if any(kw in text_lower for kw in kws):
             service = svc
             break
+    # If no keyword matched at all, default to plumber but keep confidence very low
+    if service is None:
+        service = "plumber"
+        confidence = 0.2
 
     is_complex = any(x in text_lower for x in ["inverter", "bridal", "pcb", "rewiring", "structural", "expert", "specialist", "heavy", "exterior", "complex"])
     is_basic = any(x in text_lower for x in ["leak", "tap", "unclog", "bulb", "basic", "chota", "halki", "minor"])
