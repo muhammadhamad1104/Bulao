@@ -3,26 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'widgets/animated_audio_waveform.dart';
 import 'processing_screen.dart';
+import 'widgets/processing_header.dart';
+import 'widgets/transcript_card.dart';
+import 'widgets/agent_progress_card.dart';
+import 'models/processing_models.dart';
 import '../../core/services/api_service.dart';
 import '../../core/models/orchestrate_models.dart';
-import 'package:speech_to_text/speech_to_text.dart';
+import 'package:geolocator/geolocator.dart';
 
 /// Processing Loading screen — shown after the user submits a request.
 ///
 /// Flow:
 ///   HomeScreen (input dialog) → ProcessingLoadingScreen → ProcessingScreen
 ///
-/// Backend wiring:
-///   Calls POST /orchestrate with [requestText] and [userId].
-///   Passes the full [OrchestrateResponse] to [ProcessingScreen].
-///   On error, shows a Snackbar and pops back to HomeScreen.
+/// Simulates live progression of agents while waiting for the backend.
 class ProcessingLoadingScreen extends StatefulWidget {
   final String requestText;
   final String userId;
 
   const ProcessingLoadingScreen({
     super.key,
-    this.requestText = "G-13 mein plumber chahiye",
+    required this.requestText,
     this.userId = "anonymous",
   });
 
@@ -32,59 +33,108 @@ class ProcessingLoadingScreen extends StatefulWidget {
 }
 
 class _ProcessingLoadingScreenState extends State<ProcessingLoadingScreen> {
-  final SpeechToText _speech = SpeechToText();
-  bool _isListening = false;
-  String _recognizedText = '';
   bool _hasNavigated = false;
-  bool _isLoading = true;
+  bool _showWaveform = true;
   String? _errorMessage;
+  int _simulatedStage = 0;
+  Timer? _timer;
+  Timer? _waveTimer;
 
   @override
   void initState() {
     super.initState();
-    _initSpeech();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchLocationAndCallBackend();
+      _startSimulation();
+      
+      _waveTimer = Timer(const Duration(seconds: 3), () {
+        if (mounted) {
+          setState(() {
+            _showWaveform = false;
+          });
+        }
+      });
+    });
   }
 
-  Future<void> _initSpeech() async {
-    try {
-      bool available = await _speech.initialize(
-        onStatus: (status) {
-          if (status == 'notListening') {
-            _callBackend(_recognizedText.isNotEmpty ? _recognizedText : widget.requestText);
-          }
-        },
-        onError: (errorNotification) {
-          print('Speech error: $errorNotification');
-          _callBackend(widget.requestText);
-        },
-      );
-      if (available) {
-        setState(() => _isListening = true);
-        _speech.listen(
-          onResult: (result) {
-            setState(() {
-              _recognizedText = result.recognizedWords;
-            });
-            if (result.finalResult) {
-              setState(() => _isListening = false);
-              _callBackend(_recognizedText.isNotEmpty ? _recognizedText : widget.requestText);
-            }
-          },
-        );
-      } else {
-        _callBackend(widget.requestText);
+  @override
+  void dispose() {
+    _waveTimer?.cancel();
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _startSimulation() {
+    // Stage 0: Intent working
+    // Stage 1: Intent completed, Discovery working (after ~8s)
+    // Stage 2: Discovery completed, Ranking working (after ~14s)
+    _timer = Timer.periodic(const Duration(seconds: 7), (timer) {
+      if (mounted && _simulatedStage < 2) {
+        setState(() {
+          _simulatedStage++;
+        });
       }
+    });
+  }
+
+  Future<Position?> _getCurrentLocation() async {
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        debugPrint('Location services are disabled.');
+        return null;
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          debugPrint('Location permission denied.');
+          return null;
+        }
+      }
+      
+      if (permission == LocationPermission.deniedForever) {
+        debugPrint('Location permission denied forever.');
+        return null;
+      }
+
+      return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.medium,
+        timeLimit: const Duration(seconds: 4),
+      );
     } catch (e) {
-      print('Speech init exception: $e');
-      _callBackend(widget.requestText);
+      debugPrint('Error getting GPS location: $e');
+      try {
+        return await Geolocator.getLastKnownPosition();
+      } catch (_) {
+        return null;
+      }
     }
   }
 
-  Future<void> _callBackend(String text) async {
+  Future<void> _fetchLocationAndCallBackend() async {
+    List<double>? userLocation;
+    try {
+      final position = await _getCurrentLocation();
+      if (position != null) {
+        userLocation = [position.latitude, position.longitude];
+        debugPrint('GPS Location fetched successfully: $userLocation');
+      } else {
+        debugPrint('GPS Location not available, using backend defaults.');
+      }
+    } catch (e) {
+      debugPrint('Failed to resolve GPS coordinates: $e');
+    }
+    _callBackend(widget.requestText, userLocation);
+  }
+
+  Future<void> _callBackend(String text, List<double>? userLocation) async {
     try {
       final response = await ApiService.instance.orchestrate(
         text: text,
         userId: widget.userId,
+        userLocation: userLocation,
       );
       if (!mounted || _hasNavigated) return;
       _hasNavigated = true;
@@ -92,13 +142,11 @@ class _ProcessingLoadingScreenState extends State<ProcessingLoadingScreen> {
     } on ApiException catch (e) {
       if (!mounted) return;
       setState(() {
-        _isLoading = false;
         _errorMessage = e.userFriendlyMessage;
       });
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _isLoading = false;
         _errorMessage = 'Kuch masla aa gaya. Dobara try karein.';
       });
     }
@@ -112,7 +160,7 @@ class _ProcessingLoadingScreenState extends State<ProcessingLoadingScreen> {
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
-        transitionDuration: const Duration(milliseconds: 500),
+        transitionDuration: const Duration(milliseconds: 400),
       ),
     );
   }
@@ -123,16 +171,76 @@ class _ProcessingLoadingScreenState extends State<ProcessingLoadingScreen> {
     }
   }
 
+  List<AgentProgressModel> _buildSimulatedAgents() {
+    return [
+      AgentProgressModel(
+        agentName: 'Intent Agent',
+        description: _errorMessage != null
+            ? 'Error occurred'
+            : _simulatedStage >= 1
+                ? 'Intent extracted'
+                : 'Analyzing request...',
+        status: _errorMessage != null
+            ? AgentStatus.pending
+            : _simulatedStage >= 1
+                ? AgentStatus.completed
+                : AgentStatus.pending,
+        leftIconData: Icons.manage_search_rounded,
+      ),
+      AgentProgressModel(
+        agentName: 'Discovery Agent',
+        description: _errorMessage != null
+            ? 'Error occurred'
+            : _simulatedStage >= 2
+                ? 'Locating providers...'
+                : _simulatedStage == 1
+                    ? 'Searching area...'
+                    : 'Waiting ...',
+        status: AgentStatus.pending,
+        leftIconData: Icons.travel_explore_rounded,
+      ),
+      AgentProgressModel(
+        agentName: 'Ranking Agent',
+        description: _errorMessage != null ? 'Error occurred' : 'Waiting ...',
+        status: AgentStatus.pending,
+        leftIconData: Icons.leaderboard_rounded,
+      ),
+      AgentProgressModel(
+        agentName: 'Pricing Agent',
+        description: _errorMessage != null ? 'Error occurred' : 'Waiting ....',
+        status: AgentStatus.pending,
+        leftIconData: Icons.local_offer_outlined,
+      ),
+      AgentProgressModel(
+        agentName: 'Booking Agent',
+        description: _errorMessage != null ? 'Error occurred' : 'Waiting ......',
+        status: AgentStatus.pending,
+        leftIconData: Icons.inventory_2_outlined,
+      ),
+      AgentProgressModel(
+        agentName: 'Follow-Up Agent',
+        description: _errorMessage != null ? 'Error occurred' : 'Waiting .......',
+        status: AgentStatus.pending,
+        leftIconData: Icons.shield_outlined,
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    if (_showWaveform && _errorMessage == null) {
+      return _buildWaveformScreen(context);
+    }
+    return _buildAgentsScreen(context);
+  }
 
+  Widget _buildWaveformScreen(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAF7), // ── Bulao unified app background
+      backgroundColor: const Color(0xFFFAFAF7),
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // ── Layer 1: Warm gold glow — top-right ──────────────────────────
           Positioned(
             top: -size.height * 0.08,
             right: -size.width * 0.15,
@@ -153,8 +261,6 @@ class _ProcessingLoadingScreenState extends State<ProcessingLoadingScreen> {
               ),
             ),
           ),
-
-          // ── Layer 2: Cool blue glow — bottom-left ─────────────────────────
           Positioned(
             bottom: -size.height * 0.08,
             left: -size.width * 0.15,
@@ -175,13 +281,10 @@ class _ProcessingLoadingScreenState extends State<ProcessingLoadingScreen> {
               ),
             ),
           ),
-
-          // ── Layer 3: Main content ─────────────────────────────────────────
           SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // ── Back button — circular outlined ────────────────────────
                 Padding(
                   padding: const EdgeInsets.only(left: 20, top: 16),
                   child: Align(
@@ -195,29 +298,24 @@ class _ProcessingLoadingScreenState extends State<ProcessingLoadingScreen> {
                           shape: BoxShape.circle,
                           color: Colors.transparent,
                           border: Border.all(
-                            color: const Color(0xFFCCCCCC),
-                            width: 1.2,
+                            color: const Color(0xFFE1E5ED),
+                            width: 1,
                           ),
                         ),
                         child: const Icon(
-                          Icons.arrow_back,
-                          size: 20,
-                          color: Color(0xFF555555),
+                          Icons.arrow_back_rounded,
+                          color: Color(0xFF5A6B87),
+                          size: 22,
                         ),
                       ),
                     ),
                   ),
                 ),
-
                 SizedBox(height: size.height * 0.14),
-
-                // ── Status title ───────────────────────────────────────────
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 28),
                   child: Text(
-                    _isListening 
-                        ? 'Bolain, sun raha hoon...' 
-                        : (_isLoading ? 'Processing Your Request ...' : 'Something went wrong'),
+                    'Processing Your Service .....',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.ibmPlexSans(
                       fontSize: 28,
@@ -227,73 +325,26 @@ class _ProcessingLoadingScreenState extends State<ProcessingLoadingScreen> {
                     ),
                   ),
                 ),
-
-                // ── Request preview ────────────────────────────────────────
-                if (_isLoading) ...[
-                  const SizedBox(height: 12),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40),
-                    child: Text(
-                      _recognizedText.isNotEmpty 
-                          ? '"$_recognizedText"' 
-                          : '"${widget.requestText}"',
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.ibmPlexSans(
-                        fontSize: 14,
-                        color: const Color(0xFF9AA5B8),
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                  ),
-                ],
-
-                // ── Animated waveform / error state ───────────────────────
-                SizedBox(height: size.height * 0.09),
-
-                if (_isLoading)
-                  const AnimatedAudioWaveform(
-                    barCount: 19,
-                    maxBarHeight: 130,
-                    barWidth: 9,
-                    barSpacing: 4,
-                  )
-                else ...[
-                  const Icon(
-                    Icons.wifi_off_rounded,
-                    size: 56,
-                    color: Color(0xFFB0BAC8),
-                  ),
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40),
-                    child: Text(
-                      _errorMessage ?? '',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.ibmPlexSans(
-                        fontSize: 15,
-                        color: const Color(0xFF9AA5B8),
-                      ),
-                    ),
-                  ),
-                ],
-
-                const Spacer(),
-
-                // ── Retry / Cancel button ──────────────────────────────────
+                const SizedBox(height: 12),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 50),
-                  child: _isLoading
-                      ? const SizedBox.shrink()
-                      : _RetryButton(onRetry: () {
-                          setState(() {
-                            _isLoading = true;
-                            _errorMessage = null;
-                            _hasNavigated = false;
-                          });
-                          _callBackend(_recognizedText.isNotEmpty ? _recognizedText : widget.requestText);
-                        }),
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: Text(
+                    widget.requestText,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.ibmPlexSans(
+                      fontSize: 14,
+                      color: const Color(0xFF9AA5B8),
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
+                SizedBox(height: size.height * 0.09),
+                const AnimatedAudioWaveform(
+                  barCount: 19,
+                  maxBarHeight: 130,
+                  barWidth: 9,
+                  barSpacing: 4,
                 ),
               ],
             ),
@@ -302,49 +353,46 @@ class _ProcessingLoadingScreenState extends State<ProcessingLoadingScreen> {
       ),
     );
   }
-}
 
-/// Retry button shown when the backend call fails.
-class _RetryButton extends StatelessWidget {
-  final VoidCallback onRetry;
-  const _RetryButton({required this.onRetry});
+  Widget _buildAgentsScreen(BuildContext context) {
+    final agents = _buildSimulatedAgents();
 
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onRetry,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF2A3A5E), Color(0xFF1E2A45)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: const Color(0xFFC9A84C).withValues(alpha: 0.5),
-            width: 1.5,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF2A3A5E).withValues(alpha: 0.35),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
+    return Scaffold(
+      backgroundColor: const Color(0xFFFAFAF7),
+      body: SafeArea(
+        child: Column(
           children: [
-            const Icon(Icons.refresh_rounded, color: Colors.white, size: 20),
-            const SizedBox(width: 8),
-            Text(
-              'Dobara Try Karein',
-              style: GoogleFonts.ibmPlexSans(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
+            ProcessingHeader(onBack: _goBack),
+            const SizedBox(height: 10),
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    TranscriptCard(
+                      transcript: widget.requestText,
+                      keywords: const [], // Empty keywords while simulating
+                    ),
+                    const SizedBox(height: 16),
+                    ...agents.map((agent) => AgentProgressCard(agent: agent)),
+                    const SizedBox(height: 24),
+                    
+                    if (_errorMessage != null)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          _errorMessage!,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.ibmPlexSans(
+                            color: Colors.redAccent,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                      
+                    const SizedBox(height: 32),
+                  ],
+                ),
               ),
             ),
           ],
