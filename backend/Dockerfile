@@ -32,6 +32,9 @@ LABEL version="2.0.0-local-llm"
 
 WORKDIR /app
 
+# Install libgomp (OpenMP) required by llama-cpp-python compiled from source
+RUN apt-get update && apt-get install -y --no-install-recommends libgomp1 && rm -rf /var/lib/apt/lists/*
+
 # Copy virtualenv and the downloaded model from builder
 COPY --from=builder /app/.venv ./.venv
 COPY --from=builder /app/models ./models
