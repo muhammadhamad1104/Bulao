@@ -7,24 +7,100 @@ import 'widgets/interactive_mic_button.dart';
 import '../booking/processing_loading_screen.dart';
 import '../../core/services/api_service.dart';
 import 'widgets/home_drawer.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
-class HomeScreen extends StatelessWidget {
-  // ── Backend-ready: replace with actual logged-in user's name later ──────
-  // When backend/auth integration happens, pass this from the auth result
-  // e.g. HomeScreen(userName: authResult.name)
+class HomeScreen extends StatefulWidget {
   final String userName;
 
   const HomeScreen({
     super.key,
-    this.userName = 'Wajeeha', // mock default — swap on auth integration
+    this.userName = 'Wajeeha',
   });
 
-  // ── Only the mic triggers processing navigation ──────────────────────────
-  void _navigateToProcessing(BuildContext context) {
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final SpeechToText _speech = SpeechToText();
+  bool _isListening = false;
+  String _recognizedText = '';
+  String _bestRecognizedText = ''; // Tracks longest result seen this session
+
+  @override
+  void initState() {
+    super.initState();
+    _initSpeech();
+  }
+
+  Future<void> _initSpeech() async {
+    await _speech.initialize(
+      onError: (error) => setState(() => _isListening = false),
+    );
+  }
+
+  void _startListening() async {
+    bool available = await _speech.initialize(
+      onError: (error) => setState(() => _isListening = false),
+    );
+    if (available) {
+      setState(() {
+        _isListening = true;
+        _recognizedText = '';
+        _bestRecognizedText = ''; // Reset for new session
+      });
+      _speech.listen(
+        listenMode: ListenMode.dictation,
+        onResult: (result) {
+          final words = result.recognizedWords;
+          setState(() {
+            _recognizedText = words;
+            // Keep the longest version seen — Android can restart mid-session
+            // and return only the tail end of what was said
+            if (words.trim().length > _bestRecognizedText.trim().length) {
+              _bestRecognizedText = words;
+            }
+          });
+        },
+        cancelOnError: true,
+        partialResults: true,
+      );
+    }
+  }
+
+  void _stopListening() async {
+    await _speech.stop();
+    setState(() => _isListening = false);
+    // Wait for speech engine to finalize — Android needs time to flush the last segment
+    await Future.delayed(const Duration(milliseconds: 600));
+    // Use the best (longest) result captured during the full session
+    final text = (_bestRecognizedText.trim().isNotEmpty
+            ? _bestRecognizedText
+            : _recognizedText)
+        .trim();
+    if (text.isNotEmpty) {
+      _navigateToProcessing(context, text);
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Kuch sunai nahi diya. Dobara try karein.',
+                style: GoogleFonts.ibmPlexSans(color: Colors.white)),
+            backgroundColor: const Color(0xFF2A3A5E),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            margin: const EdgeInsets.all(16),
+          ),
+        );
+      }
+    }
+  }
+
+  void _navigateToProcessing(BuildContext context, String text) {
     Navigator.of(context).push(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
-            const ProcessingLoadingScreen(),
+            ProcessingLoadingScreen(requestText: text),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
@@ -33,7 +109,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // ── Service chip tap: informational only, no processing navigation ───────
   void _onServiceChipTapped(BuildContext context, String service) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -54,7 +129,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final user = FirebaseAuth.instance.currentUser;
-    final nameToShow = (user?.displayName != null && user!.displayName!.isNotEmpty) ? user.displayName! : userName;
+    final nameToShow = (user?.displayName != null && user!.displayName!.isNotEmpty) ? user.displayName! : widget.userName;
 
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAF7), // ── Bulao unified app background
@@ -230,7 +305,8 @@ class HomeScreen extends StatelessWidget {
 
                   // ── Microphone — ONLY this navigates to processing ─────────
                   InteractiveMicButton(
-                    onActivated: () => _navigateToProcessing(context),
+                    onStart: _startListening,
+                    onStop: _stopListening,
                   ),
 
                   SizedBox(height: size.height * 0.035),

@@ -50,40 +50,81 @@ async def run(user_text: str) -> Intent:
              service_type=intent.service_type, confidence=intent.confidence)
     return intent
 
-def _fallback_intent(user_text: str, reason: str, confidence: float = 0.3) -> Intent:
+def _fallback_intent(user_text: str, reason: str) -> Intent:
     """Best-effort keyword-based fallback when the LLM fails."""
     keywords = {
-        "plumber": ["plumber", "pani", "leak", "nal", "pipe", "tank", "motor", "sink", "drain", "water"],
-        "electrician": ["electrician", "bijli", "light", "wiring", "switch", "fan", "board", "current", "power", "short"],
-        "ac_technician": ["ac", "air condition", "inverter", "split", "window", "cooling", "gas charge", "chiller"],
-        "geyser_technician": ["geyser", "heater", "garam", "hot water"],
-        "carpenter": ["carpenter", "lakdi", "wood", "furniture", "door", "cabinet", "lock", "bench", "table"],
-        "painter": ["paint", "rang", "color", "wall", "interior", "exterior", "texture"],
-        "beautician": ["beautician", "makeup", "bridal", "mehndi", "facial", "threading", "waxing", "salon"],
-        "tutor": ["tutor", "teacher", "math", "physics", "o levels", "a levels", "matric", "academy", "home tuition"],
-        "appliance_repair": ["fridge", "washing machine", "oven", "microwave", "tv", "refrigerator", "machine"],
-        "gas_leak_specialist": ["gas leak", "gas smell", "cylinder", "regulator", "stove", "chulha"],
+        "plumber": ["plumber", "pani", "leak", "nal", "pipe", "tank", "motor", "sink", "drain", "water", "nalkaa"],
+        "electrician": ["electrician", "electrical", "electric", "engineer", "bijli", "light", "wiring",
+                        "switch", "fan", "board", "current", "power", "short", "voltage", "circuit",
+                        "socket", "plug", "fuse", "meter", "transformer", "electrical engineer"],
+        "ac_technician": ["ac", "air condition", "air conditioning", "inverter ac", "split ac",
+                          "window ac", "cooling", "gas charge", "chiller", "garam ho raha"],
+        "geyser_technician": ["geyser", "heater", "garam pani", "hot water", "water heater"],
+        "carpenter": ["carpenter", "lakdi", "wood", "furniture", "door", "cabinet", "lock", "bench", "table", "barhain"],
+        "painter": ["paint", "rang", "color", "wall", "interior", "exterior", "texture", "painting"],
+        "beautician": ["beautician", "makeup", "bridal", "mehndi", "facial", "threading", "waxing", "salon", "beauty"],
+        "tutor": ["tutor", "teacher", "math", "physics", "o levels", "a levels", "matric", "academy", "home tuition", "padhai"],
+        "appliance_repair": ["fridge", "washing machine", "oven", "microwave", "tv", "refrigerator", "machine", "repair"],
+        "gas_leak_specialist": ["gas leak", "gas smell", "cylinder", "regulator", "stove", "chulha", "gas"],
     }
+
+    # Common Islamabad/Pakistan sectors & areas — catches STT errors like "ji 13" → "G-13"
+    location_patterns = {
+        "G-13": ["g13", "g 13", "ji 13", "gee 13", "g-13"],
+        "G-11": ["g11", "g 11", "ji 11", "g-11"],
+        "G-10": ["g10", "g 10", "ji 10", "g-10"],
+        "G-9":  ["g9",  "g 9",  "ji 9",  "g-9"],
+        "F-10": ["f10", "f 10", "f-10"],
+        "F-11": ["f11", "f 11", "f-11"],
+        "F-7":  ["f7",  "f 7",  "f-7"],
+        "F-8":  ["f8",  "f 8",  "f-8"],
+        "E-11": ["e11", "e 11", "e-11"],
+        "I-8":  ["i8",  "i 8",  "i-8"],
+        "I-10": ["i10", "i 10", "i-10"],
+        "Bahria Town": ["bahria", "bahria town"],
+        "DHA": ["dha"],
+        "Gulberg": ["gulberg"],
+        "Johar Town": ["johar"],
+    }
+
     text_lower = user_text.lower()
-    service = "plumber"
+
+    # Match service
+    service = None
     for svc, kws in keywords.items():
         if any(kw in text_lower for kw in kws):
             service = svc
             break
 
+    # Match location (including STT error variants)
+    location = None
+    for loc, variants in location_patterns.items():
+        if any(v in text_lower for v in variants):
+            location = loc
+            break
+
+    # Confidence: high if service detected, medium if location also found
+    if service is None:
+        service = "plumber"
+        confidence = 0.2   # Completely unknown — will trigger clarification
+    elif location:
+        confidence = 0.85  # Service + location known — proceed confidently
+    else:
+        confidence = 0.75  # Service known, location unknown — still proceed
+
     is_complex = any(x in text_lower for x in ["inverter", "bridal", "pcb", "rewiring", "structural", "expert", "specialist", "heavy", "exterior", "complex"])
     is_basic = any(x in text_lower for x in ["leak", "tap", "unclog", "bulb", "basic", "chota", "halki", "minor"])
     complexity = "complex" if is_complex else "basic" if is_basic else "intermediate"
-    
+
     return Intent(
         service_type=service,
-        location=None,
+        location=location,
         city="Islamabad",
-        time_window="now" if any(x in text_lower for x in ["abhi", "foran", "urgent", "emergency", "jaldi"]) else "flexible",
+        time_window="now" if any(x in text_lower for x in ["abhi", "foran", "urgent", "emergency", "jaldi"]) else "flexible" if any(x in text_lower for x in ["flexible", "kabhi bhi", "whenever", "baad mein"]) else "now",
         urgency="emergency" if any(x in text_lower for x in ["leak", "short", "fire", "emergency", "foran"]) else "normal",
         job_complexity=complexity,
         gender_preference="female" if any(x in text_lower for x in ["female", "bridal", "makeup", "beautician"]) else "any",
         confidence=confidence,
-        clarification_question="Aap kis ilaake mein hain? (jaise G-13, F-10)" if confidence < 0.7 else None,
+        clarification_question=None,  # Let discovery handle missing location
         raw_notes=f"fallback:{reason}"
     )

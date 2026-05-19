@@ -153,18 +153,25 @@ async def run(intent: Intent, user_location: Optional[Tuple[float,float]] = None
     t0 = time.monotonic()
     
     # 1. Resolve Location (Geocoding)
-    target_lat, target_lng = user_location if user_location else (None, None)
-    if target_lat is None and target_lng is None:
-        if intent.location and intent.city:
-            coords = _geocode_location(intent.location, intent.city)
-            if coords:
-                target_lat, target_lng = coords
-                
-    # Fallback to Islamabad center if geocoding fails
+    target_lat, target_lng = None, None
+    
+    # If the user specified a location in the query (not empty, and not generic/current location)
+    if intent.location and intent.location.strip().lower() not in ["", "nearby", "here", "current location", "my location", "islamabad"]:
+        coords = _geocode_location(intent.location, intent.city or "Islamabad")
+        if coords:
+            target_lat, target_lng = coords
+            log.info("discovery_used_query_location", location=intent.location, lat=target_lat, lng=target_lng)
+            
+    # If no query location was found/geocoded, fallback to the user's GPS coordinates
+    if target_lat is None or target_lng is None:
+        if user_location and user_location[0] is not None and user_location[1] is not None:
+            target_lat, target_lng = user_location
+            log.info("discovery_used_gps_location", lat=target_lat, lng=target_lng)
+            
+    # If both query location and GPS fail, fallback to Islamabad center
     if target_lat is None or target_lng is None:
         target_lat, target_lng = 33.6844, 73.0479
-        
-    log.info("discovery_geocoded", lat=target_lat, lng=target_lng)
+        log.info("discovery_fallback_islamabad", lat=target_lat, lng=target_lng)
 
     # 2. Search Live Maps with Expanding Radius
     radii_km = [2, 5, 15, 30] # Colony, District, City, Greater Area
