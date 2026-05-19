@@ -33,8 +33,8 @@ def _get_llm():
                 return None
                 
             log.info("loading_local_llm_into_memory", path=model_path)
-            # n_ctx=512 is plenty for our tasks and saves a lot of RAM on 2GB droplet
-            _llm = Llama(model_path=model_path, n_ctx=512, verbose=False)
+            # n_ctx=2048: safe for 4GB dedicated RAM droplet
+            _llm = Llama(model_path=model_path, n_ctx=2048, verbose=False)
             log.info("local_llm_loaded_successfully")
         except ImportError:
             log.error("llama_cpp_python_not_installed")
