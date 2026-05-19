@@ -8,23 +8,63 @@ import '../booking/processing_loading_screen.dart';
 import '../../core/services/api_service.dart';
 import 'widgets/home_drawer.dart';
 
-class HomeScreen extends StatelessWidget {
-  // ── Backend-ready: replace with actual logged-in user's name later ──────
-  // When backend/auth integration happens, pass this from the auth result
-  // e.g. HomeScreen(userName: authResult.name)
+class HomeScreen extends StatefulWidget {
   final String userName;
 
   const HomeScreen({
     super.key,
-    this.userName = 'Wajeeha', // mock default — swap on auth integration
+    this.userName = 'Wajeeha',
   });
 
-  // ── Only the mic triggers processing navigation ──────────────────────────
-  void _navigateToProcessing(BuildContext context) {
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final SpeechToText _speech = SpeechToText();
+  bool _isListening = false;
+  String _recognizedText = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _initSpeech();
+  }
+
+  Future<void> _initSpeech() async {
+    await _speech.initialize();
+  }
+
+  void _startListening() async {
+    bool available = await _speech.initialize();
+    if (available) {
+      setState(() => _isListening = true);
+      _speech.listen(
+        onResult: (result) {
+          setState(() {
+            _recognizedText = result.recognizedWords;
+          });
+        },
+      );
+    }
+  }
+
+  void _stopListening() async {
+    await _speech.stop();
+    setState(() => _isListening = false);
+    if (_recognizedText.isNotEmpty) {
+      _navigateToProcessing(context, _recognizedText);
+    } else {
+      // Fallback if no text recognized
+      _navigateToProcessing(context, "G-13 mein plumber chahiye");
+    }
+  }
+
+  void _navigateToProcessing(BuildContext context, String text) {
     Navigator.of(context).push(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
-            const ProcessingLoadingScreen(),
+            ProcessingLoadingScreen(requestText: text),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
@@ -33,7 +73,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // ── Service chip tap: informational only, no processing navigation ───────
   void _onServiceChipTapped(BuildContext context, String service) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -54,7 +93,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final user = FirebaseAuth.instance.currentUser;
-    final nameToShow = (user?.displayName != null && user!.displayName!.isNotEmpty) ? user.displayName! : userName;
+    final nameToShow = (user?.displayName != null && user!.displayName!.isNotEmpty) ? user.displayName! : widget.userName;
 
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAF7), // ── Bulao unified app background
@@ -230,7 +269,8 @@ class HomeScreen extends StatelessWidget {
 
                   // ── Microphone — ONLY this navigates to processing ─────────
                   InteractiveMicButton(
-                    onActivated: () => _navigateToProcessing(context),
+                    onStart: _startListening,
+                    onStop: _stopListening,
                   ),
 
                   SizedBox(height: size.height * 0.035),

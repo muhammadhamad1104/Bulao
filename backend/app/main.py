@@ -19,6 +19,11 @@ log = structlog.get_logger()
 async def lifespan(app: FastAPI):
     # Startup
     log.info("startup", service="bulao-backend", version="1.0.0", env="production" if not settings.DEMO_MODE else "demo")
+    try:
+        from app.utils.llm_client import preload_model
+        preload_model()
+    except Exception as e:
+        log.error("preload_failure", error=str(e))
     yield
     # Shutdown
     log.info("shutdown")

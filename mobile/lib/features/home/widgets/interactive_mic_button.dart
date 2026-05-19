@@ -5,11 +5,13 @@ import 'package:google_fonts/google_fonts.dart';
 /// AnimatedScale provides tap/hold visual feedback.
 /// onTap + onLongPressEnd both trigger [onActivated].
 class InteractiveMicButton extends StatefulWidget {
-  final VoidCallback onActivated;
+  final VoidCallback onStart;
+  final VoidCallback onStop;
 
   const InteractiveMicButton({
     super.key,
-    required this.onActivated,
+    required this.onStart,
+    required this.onStop,
   });
 
   @override
@@ -28,17 +30,17 @@ class _InteractiveMicButtonState extends State<InteractiveMicButton> {
       mainAxisSize: MainAxisSize.min,
       children: [
         GestureDetector(
-          onTap: () {
-            _onPressUp();
-            widget.onActivated();
+          onTapDown: (_) {
+            _onPressDown();
+            widget.onStart();
           },
-          onTapDown: (_) => _onPressDown(),
-          onTapUp: (_) => _onPressUp(),
-          onTapCancel: _onPressUp,
-          onLongPressStart: (_) => _onPressDown(),
-          onLongPressEnd: (_) {
+          onTapUp: (_) {
             _onPressUp();
-            widget.onActivated();
+            widget.onStop();
+          },
+          onTapCancel: () {
+            _onPressUp();
+            widget.onStop();
           },
           child: AnimatedScale(
             scale: _scale,

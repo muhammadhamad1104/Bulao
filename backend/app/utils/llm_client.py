@@ -43,6 +43,10 @@ def _get_llm():
             
     return _llm
 
+def preload_model():
+    """Pre-load the model into memory."""
+    _get_llm()
+
 def get_client():
     """
     Returns None since we no longer use a google/groq client object.
