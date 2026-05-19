@@ -87,13 +87,17 @@ async def safe_generate(
     log.info("local_llm_start", agent=agent_name, prompt_length=len(contents))
     
     try:
-        # llama_cpp inference (blocking, so we MUST offload to threadpool to prevent health check timeouts)
-        response = await asyncio.to_thread(
-            llm.create_chat_completion,
-            messages=messages,
-            temperature=config.get("temperature", 0.1),
-            response_format=response_format,
-            max_tokens=250  # Reduced to speed up generation
+        # llama_cpp inference (blocking, so we MUST offload to threadpool)
+        # Timeout after 25s — fall back to keyword detection rather than hanging
+        response = await asyncio.wait_for(
+            asyncio.to_thread(
+                llm.create_chat_completion,
+                messages=messages,
+                temperature=config.get("temperature", 0.1),
+                response_format=response_format,
+                max_tokens=250
+            ),
+            timeout=25.0
         )
         
         result_text = response['choices'][0]['message']['content']
@@ -102,6 +106,10 @@ async def safe_generate(
         log.info("local_llm_success", agent=agent_name, duration_ms=duration, output_length=len(result_text))
         return result_text
         
+    except asyncio.TimeoutError:
+        duration = int((time.monotonic() - t0) * 1000)
+        log.warning("local_llm_timeout", agent=agent_name, duration_ms=duration)
+        return None  # Triggers keyword fallback in intent_agent
     except Exception as e:
         log.error("local_llm_failure", agent=agent_name, error=str(e))
         return None
