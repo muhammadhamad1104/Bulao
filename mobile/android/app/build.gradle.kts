@@ -18,9 +18,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
-    }
+    // Removed kotlinOptions to configure it via tasks.withType instead
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
@@ -51,16 +49,19 @@ configurations.all {
         force("androidx.browser:browser:1.8.0")
         force("androidx.core:core:1.13.1")
         force("androidx.core:core-ktx:1.13.1")
-        force("org.jetbrains.kotlin:kotlin-stdlib:2.0.21")
-        force("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.0.21")
-        force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.21")
-        force("org.jetbrains.kotlin:kotlin-stdlib-common:2.0.21")
+        force("org.jetbrains.kotlin:kotlin-stdlib:2.3.0")
+        force("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.3.0")
+        force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.3.0")
+        force("org.jetbrains.kotlin:kotlin-stdlib-common:2.3.0")
 
     }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     incremental = false
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+    }
 }
 
 
