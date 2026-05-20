@@ -55,6 +55,7 @@ configurations.all {
         force("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.1.0")
         force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.0")
         force("org.jetbrains.kotlin:kotlin-stdlib-common:2.1.0")
+
     }
 }
 
