@@ -14,6 +14,11 @@ subprojects {
 }
 subprojects {
     project.evaluationDependsOn(":app")
+    
+    // Disable Kotlin incremental compilation globally
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        incremental = false
+    }
 }
 
 tasks.register<Delete>("clean") {
