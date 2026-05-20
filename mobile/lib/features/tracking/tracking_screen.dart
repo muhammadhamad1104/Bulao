@@ -204,13 +204,14 @@ class _TrackingScreenState extends State<TrackingScreen> {
 
                 const SizedBox(height: 24),
 
-                // ── Real Google Map ────────────────────────────────────────
+                // ── Static Map (Google Static Maps API) ───────────────────
                 MapPreviewCard(
                   status: status,
                   providerLat: widget.booking.providerLat,
                   providerLng: widget.booking.providerLng,
-                  userLat: 33.595,   // TODO: pass real GPS from home screen
-                  userLng: 73.048,
+                  userLat: widget.booking.userLat ?? 33.595,
+                  userLng: widget.booking.userLng ?? 73.048,
+                  etaMinutes: widget.booking.etaMinutes,
                 ),
 
                 const SizedBox(height: 20),

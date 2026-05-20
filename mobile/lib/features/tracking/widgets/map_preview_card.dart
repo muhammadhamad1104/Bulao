@@ -1,17 +1,25 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-/// Google Maps card for the Tracking Screen.
-/// Shows a styled status overlay until the map renders real tiles.
-/// If tiles never appear (API key not configured), the overlay stays visible.
+/// Static Map Card using Google Maps Static API.
+///
+/// Shows a real satellite/road map image with:
+///  - Blue marker  → user's location
+///  - Red marker   → provider's shop location
+///  - A dashed path between them
+///  - ETA badge overlaid on top
+///
+/// Tapping the card opens Google Maps directions.
+/// No Maps SDK for Android required — just the Static Maps API (billing enabled).
 class MapPreviewCard extends StatefulWidget {
   final String status;
   final double? providerLat;
   final double? providerLng;
   final double? userLat;
   final double? userLng;
+  final int? etaMinutes;
 
   const MapPreviewCard({
     super.key,
@@ -20,6 +28,7 @@ class MapPreviewCard extends StatefulWidget {
     this.providerLng,
     this.userLat,
     this.userLng,
+    this.etaMinutes,
   });
 
   @override
@@ -27,220 +36,288 @@ class MapPreviewCard extends StatefulWidget {
 }
 
 class _MapPreviewCardState extends State<MapPreviewCard> {
-  GoogleMapController? _controller;
-  // Overlay is shown until map camera settles after initial animation
-  bool _showOverlay = true;
-  // If onMapCreated never fires in 5s → map SDK failed → keep overlay permanently
-  bool _mapFailed = false;
-  Timer? _initTimer;
+  static const _apiKey = 'AIzaSyBBFw3aCdVP1L7hfWfOZxTnRlyWv28w7oo';
 
-  static const LatLng _defaultCenter = LatLng(33.595, 73.048);
+  // Default: Islamabad centre
+  static const _defLat = 33.595;
+  static const _defLng = 73.048;
 
-  @override
-  void initState() {
-    super.initState();
-    // If Google Maps SDK fails to initialize (e.g. API key not enabled for Android),
-    // onMapCreated never fires → overlay stays showing → after 5s, mark as permanent
-    _initTimer = Timer(const Duration(seconds: 5), () {
-      if (_showOverlay && mounted && _controller == null) {
-        setState(() => _mapFailed = true);
-      }
-    });
-  }
+  double get _pLat => widget.providerLat ?? (_defLat + 0.006);
+  double get _pLng => widget.providerLng ?? (_defLng + 0.007);
+  double get _uLat => widget.userLat ?? _defLat;
+  double get _uLng => widget.userLng ?? _defLng;
 
-  LatLng get _providerPos =>
-      widget.providerLat != null && widget.providerLng != null
-          ? LatLng(widget.providerLat!, widget.providerLng!)
-          : const LatLng(33.601, 73.055);
-
-  LatLng get _userPos =>
-      widget.userLat != null && widget.userLng != null
-          ? LatLng(widget.userLat!, widget.userLng!)
-          : _defaultCenter;
-
-  LatLng get _mapCenter => LatLng(
-        (_providerPos.latitude + _userPos.latitude) / 2,
-        (_providerPos.longitude + _userPos.longitude) / 2,
-      );
-
-  Set<Marker> get _markers => {
-        Marker(
-          markerId: const MarkerId('user'),
-          position: _userPos,
-          infoWindow: const InfoWindow(title: 'You'),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-        ),
-        Marker(
-          markerId: const MarkerId('provider'),
-          position: _providerPos,
-          infoWindow: const InfoWindow(title: 'Provider'),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
-        ),
-      };
+  double get _centerLat => (_pLat + _uLat) / 2;
+  double get _centerLng => (_pLng + _uLng) / 2;
 
   String get _statusLabel {
     switch (widget.status) {
-      case 'en_route':  return 'Provider is on the way';
-      case 'arrived':   return 'Provider has arrived';
+      case 'en_route':    return 'Provider on the way';
+      case 'arrived':     return 'Provider has arrived';
       case 'in_progress': return 'Service in progress';
-      case 'completed': return 'Service completed';
-      default:          return 'Tracking your booking';
+      case 'completed':   return 'Completed';
+      default:            return 'Booking confirmed';
     }
   }
 
-  @override
-  void dispose() {
-    _initTimer?.cancel();
-    _controller?.dispose();
-    super.dispose();
+  /// Google Static Maps URL — returns a PNG image showing both locations.
+  String get _staticMapUrl {
+    final userMarker   = 'color:blue|label:U|$_uLat,$_uLng';
+    final provMarker   = 'color:red|label:P|$_pLat,$_pLng';
+    final path         = 'color:0x1E2D4EBB|weight:3|$_uLat,$_uLng|$_pLat,$_pLng';
+    final params = {
+      'center':    '$_centerLat,$_centerLng',
+      'zoom':      '13',
+      'size':      '640x320',
+      'scale':     '2',
+      'maptype':   'roadmap',
+      'markers':   userMarker,        // first markers param
+      'path':      path,
+      'key':       _apiKey,
+    };
+
+    final base = 'https://maps.googleapis.com/maps/api/staticmap';
+    // Build manually to allow duplicate 'markers' key
+    final query = [
+      'center=${Uri.encodeComponent('$_centerLat,$_centerLng')}',
+      'zoom=13',
+      'size=640x320',
+      'scale=2',
+      'maptype=roadmap',
+      'markers=${Uri.encodeComponent('color:blue|label:U|$_uLat,$_uLng')}',
+      'markers=${Uri.encodeComponent('color:red|label:P|$_pLat,$_pLng')}',
+      'path=${Uri.encodeComponent('color:0x1E2D4ECC|weight:4|geodesic:true|$_uLat,$_uLng|$_pLat,$_pLng')}',
+      'key=$_apiKey',
+    ].join('&');
+
+    return '$base?$query';
   }
 
-  void _onMapCreated(GoogleMapController controller) {
-    _controller = controller;
-    // Animate to show both markers. onCameraIdle fires AFTER this animation
-    // settles — only then do we reveal the map (hiding the overlay).
-    _controller?.animateCamera(
-      CameraUpdate.newLatLngBounds(
-        LatLngBounds(
-          southwest: LatLng(
-            _providerPos.latitude < _userPos.latitude
-                ? _providerPos.latitude
-                : _userPos.latitude,
-            _providerPos.longitude < _userPos.longitude
-                ? _providerPos.longitude
-                : _userPos.longitude,
-          ),
-          northeast: LatLng(
-            _providerPos.latitude > _userPos.latitude
-                ? _providerPos.latitude
-                : _userPos.latitude,
-            _providerPos.longitude > _userPos.longitude
-                ? _providerPos.longitude
-                : _userPos.longitude,
-          ),
-        ),
-        60.0,
-      ),
-    );
-  }
-
-  // onCameraIdle fires after EVERY animation settles — both our programmatic
-  // animateCamera AND tile-loading-triggered redraws. By the time idle fires
-  // after our initial animation, tiles should be rendering (or not).
-  void _onCameraIdle() {
-    if (_showOverlay && mounted) {
-      setState(() => _showOverlay = false);
+  void _openDirections() async {
+    final url =
+        'https://www.google.com/maps/dir/?api=1'
+        '&origin=$_uLat,$_uLng'
+        '&destination=$_pLat,$_pLng'
+        '&travelmode=driving';
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 240,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.8), width: 4.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.12),
-            blurRadius: 16,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Stack(
-          children: [
-            // ── Real Google Map (always in tree so it initializes) ──────────
-            GoogleMap(
-              initialCameraPosition:
-                  CameraPosition(target: _mapCenter, zoom: 13.5),
-              markers: _markers,
-              onMapCreated: _onMapCreated,
-              onCameraIdle: _onCameraIdle,
-              myLocationButtonEnabled: false,
-              zoomControlsEnabled: false,
-              mapToolbarEnabled: false,
-              compassEnabled: false,
+    return GestureDetector(
+      onTap: _openDirections,
+      child: Container(
+        height: 240,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.8), width: 4.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 16,
+              offset: const Offset(0, 8),
             ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // ── Real map image from Static Maps API ──────────────────────
+              Image.network(
+                _staticMapUrl,
+                fit: BoxFit.cover,
+                loadingBuilder: (ctx, child, progress) {
+                  if (progress == null) return child;
+                  return _buildLoading();
+                },
+                errorBuilder: (ctx, err, st) => _buildFallback(),
+              ),
 
-            // ── Status overlay — hides after camera settles ─────────────────
-            if (_showOverlay)
-              Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFF1E2D4E), Color(0xFF2A3A5E)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+              // ── Top: status pill ─────────────────────────────────────────
+              Positioned(
+                top: 12,
+                left: 12,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1E2D4E).withValues(alpha: 0.88),
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      _mapFailed ? Icons.location_on_rounded : Icons.map_outlined,
-                      size: 48, color: const Color(0xFFC9A84C)),
-                    const SizedBox(height: 12),
-                    Text(
-                      _statusLabel,
-                      style: GoogleFonts.ibmPlexSansCondensed(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'Islamabad / Rawalpindi',
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        color: Colors.white.withValues(alpha: 0.7),
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _legend(const Color(0xFF64B5F6), 'You'),
-                        const SizedBox(width: 24),
-                        _legend(const Color(0xFFC9A84C), 'Provider'),
-                      ],
-                    ),
-                    // Show spinner only while waiting for map to load
-                    if (!_mapFailed) ...([
-                      const SizedBox(height: 10),
-                      const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                              Color(0xFFC9A84C)),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.radio_button_checked,
+                          size: 10, color: Color(0xFFC9A84C)),
+                      const SizedBox(width: 6),
+                      Text(
+                        _statusLabel,
+                        style: GoogleFonts.ibmPlexSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
                         ),
                       ),
-                    ]),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-          ],
+
+              // ── Bottom: ETA badge ─────────────────────────────────────────
+              if (widget.etaMinutes != null && widget.etaMinutes! > 0)
+                Positioned(
+                  bottom: 12,
+                  right: 12,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFC9A84C),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.25),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.access_time_rounded,
+                            size: 16, color: Color(0xFF1E2D4E)),
+                        const SizedBox(width: 5),
+                        Text(
+                          'ETA ~${widget.etaMinutes} min',
+                          style: GoogleFonts.ibmPlexSans(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF1E2D4E),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+              // ── Bottom-left: legend ───────────────────────────────────────
+              Positioned(
+                bottom: 12,
+                left: 12,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1E2D4E).withValues(alpha: 0.85),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _dot(Colors.blue, 'You'),
+                      const SizedBox(width: 10),
+                      _dot(Colors.red, 'Provider'),
+                    ],
+                  ),
+                ),
+              ),
+
+              // ── Tap hint ─────────────────────────────────────────────────
+              Positioned(
+                top: 12,
+                right: 12,
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.9),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.open_in_new_rounded,
+                      size: 16, color: Color(0xFF1E2D4E)),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _legend(Color color, String label) => Row(
+  Widget _dot(Color color, String label) => Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 10,
-            height: 10,
+            width: 8,
+            height: 8,
             decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
-          const SizedBox(width: 5),
+          const SizedBox(width: 4),
           Text(label,
-              style: GoogleFonts.inter(fontSize: 12, color: Colors.white70)),
+              style: GoogleFonts.inter(
+                  fontSize: 11,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500)),
         ],
+      );
+
+  Widget _buildLoading() => Container(
+        color: const Color(0xFF1E2D4E),
+        child: const Center(
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFC9A84C)),
+          ),
+        ),
+      );
+
+  Widget _buildFallback() => Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF1E2D4E), Color(0xFF2A3A5E)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.location_on_rounded,
+                size: 48, color: Color(0xFFC9A84C)),
+            const SizedBox(height: 10),
+            Text(_statusLabel,
+                style: GoogleFonts.ibmPlexSansCondensed(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white)),
+            const SizedBox(height: 4),
+            Text('Islamabad / Rawalpindi',
+                style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: Colors.white.withValues(alpha: 0.65))),
+            if (widget.etaMinutes != null && widget.etaMinutes! > 0) ...[
+              const SizedBox(height: 12),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFC9A84C),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Text('ETA ~${widget.etaMinutes} min',
+                    style: GoogleFonts.ibmPlexSans(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF1E2D4E))),
+              ),
+            ],
+          ],
+        ),
       );
 }
