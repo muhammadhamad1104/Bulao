@@ -82,19 +82,12 @@ def _search_google_places(service_type: str, lat: float, lng: float,
     """
     Search real businesses using Google Places Text Search API.
     Returns the same results the user sees in Google Maps.
-
-    If raw_query is provided (e.g. "mechanic"), it's used directly as the search term
-    instead of the mapped keyword — so ANY service the user asks for works without
-    needing a manual keyword mapping.
     """
     api_key = settings.GOOGLE_MAPS_API_KEY.strip()
     if not api_key:
         return []
 
     if raw_query:
-        # User said something unrecognized — use their exact words for the search
-        # "mechanic chahie Rawalpindi" → "mechanic chahie Rawalpindi in Rawalpindi"
-        # Google Places handles Urdu/mixed queries well
         query = f"{raw_query} in {city}"
     else:
         keyword = _GOOGLE_PLACES_QUERIES.get(service_type, service_type.replace("_", " "))
@@ -129,6 +122,39 @@ def _search_google_places(service_type: str, lat: float, lng: float,
         return []
 
 
+def _get_place_phone(place_id: str) -> str | None:
+    """Fetch the real phone number for a Google Place via the Place Details API.
+    Returns the international phone number string, or None if unavailable."""
+    api_key = settings.GOOGLE_MAPS_API_KEY.strip()
+    if not api_key or not place_id:
+        return None
+    try:
+        params = urllib.parse.urlencode({
+            "place_id": place_id,
+            "fields": "international_phone_number,formatted_phone_number",
+            "key": api_key,
+        })
+        url = f"https://maps.googleapis.com/maps/api/place/details/json?{params}"
+        req = urllib.request.Request(url, headers={"User-Agent": "BulaoHackathon/1.0"})
+        with urllib.request.urlopen(req, timeout=4) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            result = data.get("result", {})
+            phone = result.get("international_phone_number") or result.get("formatted_phone_number")
+            if phone:
+                # Normalise: remove spaces/dashes, ensure starts with +92
+                clean = phone.replace(" ", "").replace("-", "")
+                if clean.startswith("0"):
+                    clean = "+92" + clean[1:]
+                elif not clean.startswith("+"):
+                    clean = "+" + clean
+                log.info("place_details_phone_fetched", place_id=place_id[:8], phone=clean[:8] + "***")
+                return clean
+    except Exception as e:
+        log.warning("place_details_phone_failure", place_id=place_id[:8], error=str(e)[:60])
+    return None
+
+
+
 def _synthesize_from_google_place(place: Dict, base_lat: float, base_lng: float,
                                    service_type: str, intent: Intent) -> ProviderCandidate:
     """Convert a Google Places result into a Bulao ProviderCandidate.
@@ -152,11 +178,9 @@ def _synthesize_from_google_place(place: Dict, base_lat: float, base_lng: float,
 
     # Address for neighborhood field
     address = place.get("formatted_address", place.get("vicinity", ""))
-    # Extract neighborhood-level part (first segment before comma)
     neighborhood = address.split(",")[0].strip() if address else "Nearby"
 
     # Deterministic synthetic operational metrics seeded by place_id
-    # (stable across requests — same place always gets same metrics)
     seed = sum(ord(c) for c in place_id)
     rng = random.Random(seed)
 
@@ -179,8 +203,11 @@ def _synthesize_from_google_place(place: Dict, base_lat: float, base_lng: float,
         availability = "next_slot_today"
         next_slot = (now + timedelta(hours=rng.randint(1, 6))).isoformat() + "+05:00"
 
-    # Gender — unknown from Google, default male (most service workers in PK)
     gender = "male"
+
+    # ── Real phone from Place Details API ─────────────────────────────────────
+    real_phone = _get_place_phone(place_id)
+    phone_masked = real_phone if real_phone else "+92 3XX XXXXXXX"
 
     return ProviderCandidate(
         id=f"gplace_{place_id[:12]}",
@@ -204,7 +231,7 @@ def _synthesize_from_google_place(place: Dict, base_lat: float, base_lng: float,
         years_experience=years_exp,
         languages=["urdu", "punjabi"],
         verified=True,
-        phone_masked="+92 3XX XXXXXXX",  # Real phone requires Place Details API call
+        phone_masked=phone_masked,
         lat=p_lat,
         lng=p_lng,
     )

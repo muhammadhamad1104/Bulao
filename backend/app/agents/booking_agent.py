@@ -151,10 +151,13 @@ async def run(intent: Intent, provider: ProviderCandidate, accepted_quote: Price
 
     # Synthesize clean dialable phone if not found in list (use phone_masked as secondary fallback)
     if not real_phone:
-        # Try phone_masked from the candidate itself
-        masked = getattr(provider, 'phone_masked', None)
-        if masked and masked.strip() and not masked.startswith('+92 3') and masked.replace('+','').replace(' ','').replace('-','').isdigit():
-            real_phone = masked.strip()
+        # Use phone_masked from the provider candidate if it looks like a real number
+        # Real numbers: start with +92 followed by digits (not +92 3XX or +92 300 XXX)
+        masked = getattr(provider, 'phone_masked', None) or ''
+        cleaned = masked.replace(' ', '').replace('-', '').replace('(', '').replace(')', '')
+        # A real number: starts with +92 or 0, has at least 10 digits, no X/non-digit chars
+        if (cleaned and cleaned.replace('+', '').isdigit() and len(cleaned.replace('+', '')) >= 10):
+            real_phone = cleaned if cleaned.startswith('+') else ('+92' + cleaned[1:] if cleaned.startswith('0') else cleaned)
         else:
             # Last resort: generate deterministic phone from provider ID seed
             import random

@@ -30,8 +30,11 @@ class ConfirmedBookingScreen extends StatelessWidget {
   }
 
   void _openWhatsApp(BuildContext context) async {
+    // First try: use the backend-generated WhatsApp URL (has pre-filled Urdu/English message)
+    final waUrl = booking.whatsappUrl;
     final phone = booking.providerPhone;
-    if (phone == null || phone.isEmpty) {
+
+    if ((waUrl == null || waUrl.isEmpty) && (phone == null || phone.isEmpty)) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -46,17 +49,29 @@ class ConfirmedBookingScreen extends StatelessWidget {
       }
       return;
     }
-    // Clean phone: remove spaces/dashes, ensure it starts with country code
-    final cleaned = phone.replaceAll(RegExp(r'[\s\-()]'), '');
-    final waNumber = cleaned.startsWith('+') ? cleaned.substring(1) : cleaned;
-    final uri = Uri.parse('https://wa.me/$waNumber');
+
+    Uri uri;
+    if (waUrl != null && waUrl.isNotEmpty) {
+      // Backend-generated URL has the full pre-filled booking message
+      uri = Uri.parse(waUrl);
+    } else {
+      // Fallback: build our own wa.me link with a simple message
+      final cleaned = phone!.replaceAll(RegExp(r'[\s\-()]'), '');
+      final waNumber = cleaned.startsWith('+') ? cleaned.substring(1) : cleaned;
+      final service = booking.serviceType.replaceAll('_', ' ');
+      final msg = Uri.encodeComponent(
+          'Assalam o Alaikum! Maine Bulao app se aapki $service service book ki hai. '
+          'Booking ID: ${booking.bookingId}');
+      uri = Uri.parse('https://wa.me/$waNumber?text=$msg');
+    }
+
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('No WhatsApp available for this provider.',
+            content: Text('WhatsApp open nahi ho saka.',
                 style: GoogleFonts.ibmPlexSans(color: Colors.white)),
             backgroundColor: const Color(0xFF2A3A5E),
           ),

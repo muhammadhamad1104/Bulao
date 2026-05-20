@@ -28,11 +28,25 @@ class MapPreviewCard extends StatefulWidget {
 
 class _MapPreviewCardState extends State<MapPreviewCard> {
   GoogleMapController? _controller;
-  // Overlay is shown until map reports camera idle after our initial animation
+  // Overlay is shown until map camera settles after initial animation
   bool _showOverlay = true;
-  Timer? _fallbackTimer;
+  // If onMapCreated never fires in 5s → map SDK failed → keep overlay permanently
+  bool _mapFailed = false;
+  Timer? _initTimer;
 
   static const LatLng _defaultCenter = LatLng(33.595, 73.048);
+
+  @override
+  void initState() {
+    super.initState();
+    // If Google Maps SDK fails to initialize (e.g. API key not enabled for Android),
+    // onMapCreated never fires → overlay stays showing → after 5s, mark as permanent
+    _initTimer = Timer(const Duration(seconds: 5), () {
+      if (_showOverlay && mounted && _controller == null) {
+        setState(() => _mapFailed = true);
+      }
+    });
+  }
 
   LatLng get _providerPos =>
       widget.providerLat != null && widget.providerLng != null
@@ -165,8 +179,9 @@ class _MapPreviewCardState extends State<MapPreviewCard> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.location_on_rounded,
-                        size: 48, color: Color(0xFFC9A84C)),
+                    Icon(
+                      _mapFailed ? Icons.location_on_rounded : Icons.map_outlined,
+                      size: 48, color: const Color(0xFFC9A84C)),
                     const SizedBox(height: 12),
                     Text(
                       _statusLabel,
@@ -193,16 +208,19 @@ class _MapPreviewCardState extends State<MapPreviewCard> {
                         _legend(const Color(0xFFC9A84C), 'Provider'),
                       ],
                     ),
-                    const SizedBox(height: 10),
-                    const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                            Color(0xFFC9A84C)),
+                    // Show spinner only while waiting for map to load
+                    if (!_mapFailed) ...([
+                      const SizedBox(height: 10),
+                      const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              Color(0xFFC9A84C)),
+                        ),
                       ),
-                    ),
+                    ]),
                   ],
                 ),
               ),
@@ -225,4 +243,11 @@ class _MapPreviewCardState extends State<MapPreviewCard> {
               style: GoogleFonts.inter(fontSize: 12, color: Colors.white70)),
         ],
       );
+
+  @override
+  void dispose() {
+    _initTimer?.cancel();
+    _controller?.dispose();
+    super.dispose();
+  }
 }
