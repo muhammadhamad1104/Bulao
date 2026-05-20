@@ -115,6 +115,7 @@ class Booking(BaseModel):
     provider_name: Optional[str] = None
     provider_lat: Optional[float] = None
     provider_lng: Optional[float] = None
+    provider_phone: Optional[str] = None
     # Static ETA + WhatsApp tracking fields
     user_lat: Optional[float] = None
     user_lng: Optional[float] = None

@@ -81,10 +81,13 @@ def _fallback_intent(user_text: str, reason: str) -> Intent:
         "G-11": ["g11", "g 11", "ji 11", "g-11"],
         "G-10": ["g10", "g 10", "ji 10", "g-10"],
         "G-9":  ["g9",  "g 9",  "ji 9",  "g-9"],
+        "G-7":  ["g7",  "g 7",  "ji 7",  "gee 7", "g-7"],
+        "G-8":  ["g8",  "g 8",  "ji 8",  "gee 8", "g-8"],
         "F-10": ["f10", "f 10", "f-10"],
         "F-11": ["f11", "f 11", "f-11"],
         "F-7":  ["f7",  "f 7",  "f-7"],
         "F-8":  ["f8",  "f 8",  "f-8"],
+        "F-6":  ["f6",  "f 6",  "f-6"],
         "E-11": ["e11", "e 11", "e-11"],
         "I-8":  ["i8",  "i 8",  "i-8"],
         "I-10": ["i10", "i 10", "i-10"],
@@ -92,7 +95,8 @@ def _fallback_intent(user_text: str, reason: str) -> Intent:
         "DHA": ["dha"],
         "Gulberg": ["gulberg"],
         "Johar Town": ["johar"],
-        "Saddar Rawalpindi": ["rawalpindi", "pindi", "saddar", "shamsabad", "adiala", "satellite town", "murree road", "chandni chowk", "rehmanabad"],
+        "Saddar": ["rawalpindi", "pindi", "saddar", "shamsabad", "adiala", "satellite town", "murree road", "chandni chowk", "rehmanabad"],
+        "Pindi Cantt": ["pindi cantt", "cantt"],
     }
 
     text_lower = user_text.lower()
@@ -137,7 +141,7 @@ def _fallback_intent(user_text: str, reason: str) -> Intent:
     return Intent(
         service_type=service,
         location=location,
-        city="Rawalpindi" if location and "rawalpindi" in (location or "").lower() else "Islamabad",
+        city="Rawalpindi" if location and any(x in (location or "").lower() for x in ["rawalpindi", "pindi", "saddar"]) else "Islamabad",
         time_window="now" if any(x in text_lower for x in ["abhi", "foran", "urgent", "emergency", "jaldi"]) else "flexible" if any(x in text_lower for x in ["flexible", "kabhi bhi", "whenever", "baad mein"]) else "now",
         urgency="emergency" if any(x in text_lower for x in ["leak", "short", "fire", "emergency", "foran"]) else "normal",
         job_complexity=complexity,

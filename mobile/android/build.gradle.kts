@@ -13,6 +13,20 @@ subprojects {
     // Disable Kotlin incremental compilation globally
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
         incremental = false
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+        }
+    }
+}
+
+allprojects {
+    configurations.all {
+        resolutionStrategy {
+            force("org.jetbrains.kotlin:kotlin-stdlib:2.3.0")
+            force("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.3.0")
+            force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.3.0")
+            force("org.jetbrains.kotlin:kotlin-stdlib-common:2.3.0")
+        }
     }
 }
 

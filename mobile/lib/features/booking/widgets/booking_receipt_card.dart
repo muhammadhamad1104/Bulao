@@ -57,12 +57,16 @@ class BookingReceiptCard extends StatelessWidget {
                   ),
                 ],
               ),
-              Text(
-                booking.bookingId,
-                style: GoogleFonts.inter(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w400,
-                  color: const Color(0xFFB8952A), // Gold text
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  booking.bookingId,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
+                    color: const Color(0xFFB8952A), // Gold text
+                  ),
                 ),
               ),
             ],
@@ -157,6 +161,7 @@ class _ReceiptRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
@@ -166,17 +171,24 @@ class _ReceiptRow extends StatelessWidget {
             color: const Color(0xFF6B6B6B),
           ),
         ),
-        if (valueWidget != null)
-          valueWidget!
-        else if (value != null)
-          Text(
-            value!,
-            style: GoogleFonts.inter(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: const Color(0xFF0D0D0D),
-            ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: valueWidget ??
+                (value != null
+                    ? Text(
+                        value!,
+                        textAlign: TextAlign.end,
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: const Color(0xFF0D0D0D),
+                        ),
+                      )
+                    : const SizedBox.shrink()),
           ),
+        ),
       ],
     );
   }

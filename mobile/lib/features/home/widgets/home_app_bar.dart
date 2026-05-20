@@ -4,7 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 /// Top app bar for the Home screen.
 /// Hamburger left | "Find. Book. Relax" center + gradient underline | spacer right.
 class HomeAppBar extends StatelessWidget {
-  const HomeAppBar({super.key});
+  final VoidCallback? onHamburgerTap;
+
+  const HomeAppBar({super.key, this.onHamburgerTap});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,11 @@ class HomeAppBar extends StatelessWidget {
           // ── Hamburger menu ──────────────────────────────────────────
           GestureDetector(
             onTap: () {
-              Scaffold.of(context).openDrawer();
+              if (onHamburgerTap != null) {
+                onHamburgerTap!();
+              } else {
+                Scaffold.of(context).openDrawer();
+              }
             },
             child: Column(
               mainAxisSize: MainAxisSize.min,

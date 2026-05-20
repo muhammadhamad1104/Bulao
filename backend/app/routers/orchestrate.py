@@ -52,6 +52,25 @@ async def orchestrate(req: OrchestrateRequest):
             user_message_urdu=msg_ur,
             user_message_english=msg_en
         )
+    
+    # Check if intent needs clarification (e.g. missing location)
+    if intent.needs_clarification:
+        if req.user_location and intent.service_type:
+            # Bypass clarification since we have user's current location from permission
+            intent.location = "Current Location"
+            intent.needs_clarification = False
+            intent.clarification_question = None
+        else:
+            # Exit early with clarification question
+            log.info("pipeline_early_exit", reason="needs_clarification",
+                     total_ms=int((time.monotonic()-pipeline_start)*1000))
+            return OrchestrateResponse(
+                intent=intent,
+                needs_clarification=True,
+                clarification_question=intent.clarification_question,
+                user_message_urdu=intent.clarification_question or "Aap ki location kya hai?",
+                user_message_english=intent.clarification_question or "What is your location?"
+            )
 
     # ── 2. Discovery Agent ────────────────────────────────────────────────────
     t = time.monotonic()
