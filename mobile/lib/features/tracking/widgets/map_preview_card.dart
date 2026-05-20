@@ -114,7 +114,6 @@ class MapPreviewCard extends StatelessWidget {
                       points: [_userPos, _providerPos],
                       strokeWidth: 4.0,
                       color: const Color(0xFF1E2D4E),
-                      isDotted: false,
                     ),
                   ],
                 ),
