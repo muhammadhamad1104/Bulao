@@ -1,5 +1,182 @@
 [
   {
+    "id": "prov_real_001",
+    "name": "Carpenter Islamabad",
+    "service_categories": [
+      "carpenter"
+    ],
+    "specializations": [
+      "general",
+      "woodwork",
+      "furniture"
+    ],
+    "lat": 33.665,
+    "lng": 73.015,
+    "neighborhood": "G-11",
+    "city": "Islamabad",
+    "rating": 4.9,
+    "completed_jobs": 120,
+    "completed_jobs_by_neighborhood": {
+      "G-11": 74
+    },
+    "on_time_score": 0.98,
+    "cancellation_rate": 0.02,
+    "review_recency_days": 2,
+    "risk_score": 0.04,
+    "current_workload": 0.1,
+    "available_slots": [
+      "2026-05-19T10:00:00+05:00",
+      "2026-05-20T14:00:00+05:00"
+    ],
+    "phone": "+923425429353",
+    "gender": "male",
+    "years_experience": 15,
+    "languages": [
+      "urdu",
+      "punjabi"
+    ],
+    "base_visit_fee_pkr": 800,
+    "rate_per_hour_pkr": 1000,
+    "price_range_pkr": [
+      800,
+      3500
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_real_002",
+    "name": "Carpenters Rawalpindi",
+    "service_categories": [
+      "carpenter"
+    ],
+    "specializations": [
+      "general",
+      "woodwork",
+      "furniture"
+    ],
+    "lat": 33.595,
+    "lng": 73.048,
+    "neighborhood": "Saddar Rawalpindi",
+    "city": "Rawalpindi",
+    "rating": 5.0,
+    "completed_jobs": 85,
+    "completed_jobs_by_neighborhood": {
+      "Saddar Rawalpindi": 54
+    },
+    "on_time_score": 0.97,
+    "cancellation_rate": 0.01,
+    "review_recency_days": 1,
+    "risk_score": 0.03,
+    "current_workload": 0.2,
+    "available_slots": [
+      "2026-05-19T11:00:00+05:00",
+      "2026-05-20T15:00:00+05:00"
+    ],
+    "phone": "+923425429353",
+    "gender": "male",
+    "years_experience": 12,
+    "languages": [
+      "urdu",
+      "punjabi"
+    ],
+    "base_visit_fee_pkr": 800,
+    "rate_per_hour_pkr": 1000,
+    "price_range_pkr": [
+      800,
+      3500
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_real_003",
+    "name": "Muhammad Yasir Khan wood work",
+    "service_categories": [
+      "carpenter"
+    ],
+    "specializations": [
+      "woodwork",
+      "furniture",
+      "cabinetmaker"
+    ],
+    "lat": 33.5855,
+    "lng": 73.0134,
+    "neighborhood": "Misrial Road",
+    "city": "Rawalpindi",
+    "rating": 5.0,
+    "completed_jobs": 95,
+    "completed_jobs_by_neighborhood": {
+      "Misrial Road": 62
+    },
+    "on_time_score": 0.99,
+    "cancellation_rate": 0.01,
+    "review_recency_days": 3,
+    "risk_score": 0.02,
+    "current_workload": 0.3,
+    "available_slots": [
+      "2026-05-19T09:00:00+05:00",
+      "2026-05-20T13:00:00+05:00"
+    ],
+    "phone": "+923339951829",
+    "gender": "male",
+    "years_experience": 18,
+    "languages": [
+      "urdu",
+      "punjabi",
+      "pashto"
+    ],
+    "base_visit_fee_pkr": 1000,
+    "rate_per_hour_pkr": 1200,
+    "price_range_pkr": [
+      1000,
+      4500
+    ],
+    "verified": true
+  },
+  {
+    "id": "prov_real_004",
+    "name": "Haji Bashir Carpentry workshop",
+    "service_categories": [
+      "carpenter"
+    ],
+    "specializations": [
+      "woodwork",
+      "furniture_assembly",
+      "workshop"
+    ],
+    "lat": 33.595,
+    "lng": 73.048,
+    "neighborhood": "Saddar Rawalpindi",
+    "city": "Rawalpindi",
+    "rating": 4.8,
+    "completed_jobs": 340,
+    "completed_jobs_by_neighborhood": {
+      "Saddar Rawalpindi": 180
+    },
+    "on_time_score": 0.94,
+    "cancellation_rate": 0.03,
+    "review_recency_days": 4,
+    "risk_score": 0.05,
+    "current_workload": 0.4,
+    "available_slots": [
+      "2026-05-19T12:00:00+05:00",
+      "2026-05-20T16:00:00+05:00"
+    ],
+    "phone": "+923005551234",
+    "gender": "male",
+    "years_experience": 25,
+    "languages": [
+      "urdu",
+      "punjabi"
+    ],
+    "base_visit_fee_pkr": 500,
+    "rate_per_hour_pkr": 800,
+    "price_range_pkr": [
+      500,
+      3000
+    ],
+    "verified": true
+  },
+  {
     "id": "prov_001",
     "name": "Bilal Hussain Electrician",
     "service_categories": [
@@ -2317,8 +2494,7 @@
     "id": "prov_054",
     "name": "Ayesha Malik Geyser Technician",
     "service_categories": [
-      "geyser_technician",
-      "carpenter"
+      "geyser_technician"
     ],
     "specializations": [],
     "lat": 33.587697,

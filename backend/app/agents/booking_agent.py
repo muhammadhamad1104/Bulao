@@ -1,16 +1,79 @@
 import json
 import time
+import math
 import uuid
+import urllib.parse
 from datetime import datetime
 from pathlib import Path
 import structlog
 from app.models import Intent, ProviderCandidate, PriceQuote, Booking, BookingLifecycle
 from app.tools.pdf_receipt import generate_receipt
 from app.utils.llm_client import get_client, safe_generate
+from typing import Optional, Tuple
 
-async def run(intent: Intent, provider: ProviderCandidate, accepted_quote: PriceQuote, user_id: str, user_name: str = None) -> Booking:
+log = structlog.get_logger()
+
+_SYSTEM_PROMPT = """You are a friendly Pakistani home-service booking assistant. 
+Given a booking payload (JSON), return a JSON object with exactly two fields:
+- "english": a warm, brief English confirmation message (1-2 sentences)
+- "urdu": the same message translated into Urdu in Roman script
+Include the provider's name, service type, booking ID, and a friendly closing."""
+
+
+def _build_whatsapp_url(phone: str, booking_id: str, service_type: str,
+                         location: str, total_pkr: int, user_name: Optional[str],
+                         provider_name: str) -> str:
+    """Generate a wa.me deep link with a pre-filled Urdu/English booking message."""
+    # Sanitize phone: strip spaces/dashes, ensure it starts with country code
+    phone_clean = phone.replace(" ", "").replace("-", "").replace("+", "")
+    if phone_clean.startswith("0"):
+        phone_clean = "92" + phone_clean[1:]  # Pakistan country code
+    elif not phone_clean.startswith("92"):
+        phone_clean = "92" + phone_clean
+
+    service_label = service_type.replace("_", " ").title()
+    name_str = user_name or "Customer"
+
+    msg = (
+        f"Assalam-o-Alaikum {provider_name}! "
+        f"Main {name_str} hoon. Maine Bulao app se aapki {service_label} service book ki hai.\n\n"
+        f"📋 Booking ID: {booking_id}\n"
+        f"📍 Location: {location}\n"
+        f"💰 Estimate: PKR {total_pkr:,}\n\n"
+        f"Kya aap confirm kar sakte hain? Shukriya! 🙏"
+    )
+    encoded = urllib.parse.quote(msg)
+    return f"https://wa.me/{phone_clean}?text={encoded}"
+
+
+def _haversine_km(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
+    R = 6371.0
+    p1, p2 = math.radians(lat1), math.radians(lat2)
+    dp = math.radians(lat2 - lat1)
+    dl = math.radians(lng2 - lng1)
+    a = math.sin(dp / 2)**2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2)**2
+    return 2 * R * math.asin(math.sqrt(a))
+
+
+def _estimate_eta_minutes(provider_lat: float, provider_lng: float,
+                           user_lat: float, user_lng: float) -> int:
     """
-    Finalize the booking: generate ID, PDF, lifecycle, and LLM confirmation message.
+    Static ETA using straight-line Haversine distance + average city speed.
+    Rawalpindi/Islamabad inner-city average: ~25 km/h accounting for traffic.
+    Add a 5-minute fixed overhead for getting out of the shop / parking.
+    """
+    dist_km = _haversine_km(provider_lat, provider_lng, user_lat, user_lng)
+    avg_speed_kmh = 25.0
+    travel_minutes = (dist_km / avg_speed_kmh) * 60
+    eta = max(5, int(travel_minutes) + 5)  # at least 5 min, +5 overhead
+    return eta
+
+
+async def run(intent: Intent, provider: ProviderCandidate, accepted_quote: PriceQuote,
+              user_id: str, user_name: str = None,
+              user_location: Optional[Tuple[float, float]] = None) -> Booking:
+    """
+    Finalize the booking: generate ID, PDF, lifecycle, ETA, WhatsApp link, and LLM confirmation message.
     """
     log.info("agent_start", agent="booking", user_id=user_id)
     t0 = time.monotonic()
@@ -49,7 +112,7 @@ async def run(intent: Intent, provider: ProviderCandidate, accepted_quote: Price
     if client:
         raw = await safe_generate(
             client=client,
-            model="gemini-2.0-flash",
+            model="gpt-4o-mini",
             contents=json.dumps(payload, ensure_ascii=False),
             config={
                 "system_instruction": _SYSTEM_PROMPT,
@@ -86,7 +149,10 @@ async def run(intent: Intent, provider: ProviderCandidate, accepted_quote: Price
         intent_snapshot=intent,
         receipt_url=receipt_url,
         confirmation_message_english=msg_en,
-        confirmation_message_urdu=msg_ur
+        confirmation_message_urdu=msg_ur,
+        provider_name=provider.name,
+        provider_lat=provider.lat,
+        provider_lng=provider.lng
     )
     
     log.info("agent_end", agent="booking", duration_ms=int((time.monotonic()-t0)*1000), booking_id=booking_id)

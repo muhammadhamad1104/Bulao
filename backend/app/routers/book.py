@@ -35,8 +35,9 @@ async def book(payload: dict):
         raise HTTPException(status_code=422, detail=f"Invalid schema: {str(e)}")
 
     # Check expiration
+    from datetime import timezone
     expires_at = datetime.fromisoformat(accepted_quote.expires_at.replace("Z", "+00:00"))
-    if datetime.now().astimezone() > expires_at:
+    if datetime.now(expires_at.tzinfo or timezone.utc) > expires_at:
         raise HTTPException(status_code=409, detail="quote_expired")
 
     # Run Booking Agent (generates PDF, writes to DB)
@@ -48,28 +49,38 @@ async def book(payload: dict):
     # For simplicity, we'll pass the provider_id and mock a candidate.
     from app.models import ProviderCandidate
     provider_id = payload.get("provider_id", "prov_001")
-    # Mocking provider for agent (in production, fetch from DB)
-    provider = ProviderCandidate(
-        id=provider_id,
-        name="Ali Plumbing Works",
-        service_categories=["plumber"],
-        distance_km=1.2,
-        neighborhood="G-13",
-        rating=4.8,
-        completed_jobs_in_area=150,
-        on_time_score=0.98,
-        cancellation_rate=0.02,
-        review_recency_days=2,
-        risk_score=0.05,
-        current_workload=0.4,
-        availability_status="available_now",
-        next_slot=datetime.now().isoformat(),
-        base_visit_fee_pkr=1000,
-        rate_per_hour_pkr=800,
-        gender="male",
-        years_experience=12,
-        phone_masked="+92 300 ******"
-    )
+    provider_data = payload.get("provider")
+    if provider_data:
+        try:
+            provider = ProviderCandidate.model_validate(provider_data)
+        except Exception as e:
+            log.error("provider_validation_failure", error=str(e))
+            raise HTTPException(status_code=422, detail=f"Invalid provider schema: {str(e)}")
+    else:
+        # Fallback if no provider details provided in request
+        provider = ProviderCandidate(
+            id=provider_id,
+            name="Ali Plumbing Works",
+            service_categories=["plumber"],
+            distance_km=1.2,
+            neighborhood="G-13",
+            rating=4.8,
+            completed_jobs_in_area=150,
+            on_time_score=0.98,
+            cancellation_rate=0.02,
+            review_recency_days=2,
+            risk_score=0.05,
+            current_workload=0.4,
+            availability_status="available_now",
+            next_slot=datetime.now().isoformat(),
+            base_visit_fee_pkr=1000,
+            rate_per_hour_pkr=800,
+            gender="male",
+            years_experience=12,
+            phone_masked="+92 300 ******",
+            lat=33.6844,
+            lng=73.0479
+        )
 
     booking = await booking_agent.run(
         intent=intent,
@@ -83,3 +94,10 @@ async def book(payload: dict):
     await firestore_client.save_booking(booking.model_dump())
     
     return booking
+
+@router.get("/user/{user_id}/bookings", response_model=list[Booking])
+async def get_user_bookings_api(user_id: str):
+    """Retrieve all bookings for a user from Firestore."""
+    raw_bookings = await firestore_client.get_user_bookings(user_id)
+    return [Booking.model_validate(b) for b in raw_bookings]
+

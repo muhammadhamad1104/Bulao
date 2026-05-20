@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import structlog
 from contextlib import asynccontextmanager
@@ -19,11 +20,6 @@ log = structlog.get_logger()
 async def lifespan(app: FastAPI):
     # Startup
     log.info("startup", service="bulao-backend", version="1.0.0", env="production" if not settings.DEMO_MODE else "demo")
-    try:
-        from app.utils.llm_client import preload_model
-        preload_model()
-    except Exception as e:
-        log.error("preload_failure", error=str(e))
     yield
     # Shutdown
     log.info("shutdown")
@@ -56,4 +52,7 @@ app.include_router(services.router)
 @app.exception_handler(Exception)
 async def global_exception_handler(request, exc):
     log.error("unhandled_exception", error=str(exc))
-    return {"error": "internal_server_error", "message": str(exc)}, 500
+    return JSONResponse(
+        status_code=500,
+        content={"error": "internal_server_error", "message": str(exc)}
+    )

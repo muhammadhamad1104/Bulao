@@ -56,12 +56,31 @@ class _ProviderCardState extends State<ProviderCard> {
     );
 
     try {
+      ProviderCandidate? selectedCandidate;
+      final candidates = widget.response.discovery?.candidates ?? [];
+      final alternates = widget.response.discovery?.alternates ?? [];
+      for (var c in candidates) {
+        if (c.id == widget.provider.id) {
+          selectedCandidate = c;
+          break;
+        }
+      }
+      if (selectedCandidate == null) {
+        for (var c in alternates) {
+          if (c.id == widget.provider.id) {
+            selectedCandidate = c;
+            break;
+          }
+        }
+      }
+
       final booking = await ApiService.instance.book(
         quoteId: widget.response.pricing?.quoteId ?? 'quote_001',
         userId: userId,
         userName: userName,
         intent: widget.response.intent,
         providerId: widget.provider.id,
+        provider: selectedCandidate,
         acceptedQuote: widget.response.pricing ?? PriceQuote(
           quoteId: 'quote_001',
           subtotalPkr: 0,

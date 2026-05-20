@@ -3,66 +3,60 @@ from app.models import OrchestrateRequest, OrchestrateResponse, PriceQuote
 from app.agents import intent_agent, discovery_agent, ranking_agent, pricing_agent
 from app.db import cache_manager
 from datetime import datetime, timedelta
+import structlog
+
+log = structlog.get_logger()
 
 async def run_pipeline(req: OrchestrateRequest) -> Dict[str, Any]:
     # 1. Intent Agent
     intent = await intent_agent.run(req.text)
     
-    # Needs clarification path
-    if intent.confidence < 0.7:
+    # Only reject if the user is not asking for a valid supported service
+    valid_services = ["plumber","electrician","ac_technician","geyser_technician","carpenter","painter","beautician","tutor","appliance_repair","gas_leak_specialist"]
+    if not intent.service_type or intent.service_type not in valid_services:
         return {
             "intent": intent,
             "needs_clarification": True,
-            "clarification_question": intent.clarification_question
+            "clarification_question": intent.clarification_question or "Aap ko kis kism ki service chahiye? (What type of service do you need?)"
         }
-        
-    # 2. Check Cache First (Saves time and compute)
-    cached_discovery, cached_ranking = cache_manager.get_cached_results(
-        service_type=intent.service_type, 
-        location=intent.location, 
-        city=intent.city,
-        max_age_hours=48 # Cache valid for 2 days as requested
-    )
-    
-    if cached_discovery and cached_ranking:
-        discovery = cached_discovery
-        ranking = cached_ranking
-    else:
-        # 3. Discovery Agent (Live Maps API)
-        discovery = await discovery_agent.run(intent, req.user_location)
-        
-        # No match path
-        if discovery.no_match_reason or len(discovery.candidates) == 0:
-            return {
-                "intent": intent,
-                "discovery": discovery,
-                "user_message_urdu": "Maaf kijiye, abhi is waqt koi available nahi hai.",
-                "user_message_english": discovery.no_match_reason or "No providers found in your area."
-            }
-            
-        # 4. Ranking Agent (Heavy LLM Task)
+
+    # Resolve the target coordinates (GPS takes priority over query text)
+    target_lat = req.user_location[0] if req.user_location else None
+    target_lng = req.user_location[1] if req.user_location else None
+
+    # 2. Discovery Agent — ALWAYS real-time, no caching
+    # Discovery hits the live Overpass API with the user's actual GPS coordinates.
+    # Results are user-specific and time-sensitive (availability slots, distance, etc.)
+    discovery = await discovery_agent.run(intent, req.user_location)
+
+    if discovery.no_match_reason or len(discovery.candidates) == 0:
+        return {
+            "intent": intent,
+            "discovery": discovery,
+            "user_message_urdu": "Maaf kijiye, abhi is waqt koi available nahi hai.",
+            "user_message_english": discovery.no_match_reason or "No providers found in your area."
+        }
+
+    # 3. Ranking Agent — check 5-minute geo-bucket cache to avoid duplicate LLM calls
+    # If another user in the same ~2km area already triggered a ranking call in the last
+    # 5 minutes for the same service, we reuse those scores instead of calling the LLM again.
+    ranking = cache_manager.get_cached_ranking(intent.service_type, target_lat, target_lng)
+
+    if not ranking:
         ranking = await ranking_agent.run(intent, discovery.candidates)
-        
-        # Save to Cache
-        cache_manager.save_results(
-            service_type=intent.service_type,
-            location=intent.location,
-            city=intent.city,
-            discovery=discovery,
-            ranking=ranking
-        )
-    
-    # Find recommended provider
+        # Save ranking result keyed to this geographic cell for 5 minutes
+        cache_manager.save_ranking(intent.service_type, target_lat, target_lng, ranking)
+
+    # Find recommended provider from the fresh discovery pool
     recommended_provider = next((c for c in discovery.candidates if c.id == ranking.recommended_id), None)
     if not recommended_provider and discovery.candidates:
         recommended_provider = discovery.candidates[0]
         ranking.recommended_id = recommended_provider.id
-        
-    # 5. Pricing Agent
+
+    # 4. Pricing Agent — always fresh, calculated per provider per user
     if recommended_provider:
         pricing = await pricing_agent.run(intent, recommended_provider, market_demand=0.65, is_first_booking=True)
     else:
-        # Fallback empty quote (should not be reached if discovery was successful)
         pricing = PriceQuote(quote_id="QT-empty", line_items=[], subtotal_pkr=0, estimated_total_pkr=0, estimated_range_pkr=(0,0), explanation_english="", explanation_urdu="", fairness_note="", expires_at="")
 
     response = OrchestrateResponse(

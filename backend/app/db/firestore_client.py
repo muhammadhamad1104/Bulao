@@ -58,3 +58,21 @@ async def update_lifecycle(booking_id: str, status: str, timestamp_field: str, t
     except Exception as e:
         log.error("db_update_failure", id=booking_id, error=str(e))
         raise
+
+async def get_user_bookings(user_id: str) -> list[dict]:
+    """Retrieve all booking records for a given user from Firestore."""
+    db = get_db()
+    if not db:
+        return []
+    try:
+        docs = db.collection("bookings").where("user_id", "==", user_id).stream()
+        results = []
+        async for doc in docs:
+            results.append(doc.to_dict())
+        # Sort by creation time / ID descending so new bookings show at top
+        results.sort(key=lambda x: x.get("booking_id", ""), reverse=True)
+        return results
+    except Exception as e:
+        log.error("db_list_failure", collection="bookings", user_id=user_id, error=str(e))
+        return []
+

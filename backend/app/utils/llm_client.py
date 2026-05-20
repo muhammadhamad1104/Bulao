@@ -9,107 +9,139 @@ import asyncio
 import structlog
 from typing import Optional
 from pathlib import Path
+from app.config import settings
 
 log = structlog.get_logger()
 
-# Global LLM instance (loaded once into memory when the app boots)
-_llm = None
-
-def _get_llm():
-    global _llm
-    if _llm is None:
-        try:
-            from llama_cpp import Llama
-            
-            # Docker path or local fallback path
-            model_path = "/app/models/qwen.gguf"
-            if not os.path.exists(model_path):
-                # Fallback for local PC execution outside Docker
-                local_path = Path(__file__).parent.parent.parent / "models" / "qwen.gguf"
-                model_path = str(local_path)
-                
-            if not os.path.exists(model_path):
-                log.warning("local_model_not_found", path=model_path)
-                return None
-                
-            log.info("loading_local_llm_into_memory", path=model_path)
-            # n_ctx=2048, n_threads=4: use all dedicated CPU cores for faster inference
-            _llm = Llama(model_path=model_path, n_ctx=2048, n_threads=4, verbose=False)
-            log.info("local_llm_loaded_successfully")
-        except ImportError:
-            log.error("llama_cpp_python_not_installed")
-        except Exception as e:
-            log.error("llm_initialization_failure", error=str(e))
-            
-    return _llm
-
-def preload_model():
-    """Pre-load the model into memory."""
-    _get_llm()
+# Global client helper
+_INVALID_KEYS = {"", "paste-your-key-here", "fake", "your_gemini_api_key_here"}
 
 def get_client():
-    """
-    Returns None since we no longer use a google/groq client object.
-    The agents will pass None, and safe_generate handles the rest.
-    """
+    """Return a google-genai Client if a valid API key is set, else None."""
+    try:
+        from google.genai import Client
+        key = settings.GEMINI_API_KEY.strip() or settings.API_KEY.strip()
+        if key and key not in _INVALID_KEYS:
+            return Client(api_key=key)
+    except Exception as e:
+        log.warning("google_genai_import_or_client_failed", error=str(e))
     return None
 
 async def safe_generate(
-    client,  # Ignored now
-    model: str, # Ignored now
+    client,
+    model: str,
     contents: str,
     config: dict,
-    max_retries: int = 1, # Local models don't have rate limits, so no retries needed
+    max_retries: int = 3,
     agent_name: str = "unknown",
 ) -> Optional[str]:
     """
-    Generate content using the bundled local GGUF model.
-    Guarantees strict JSON output if requested.
+    Generate content. Prioritizes the cloud APIs (DigitalOcean GenAI / Google Gemini)
+    if an API key is present, otherwise falls back to the self-hosted local model.
     """
     system_instruction = config.get("system_instruction", "")
+    key = settings.GEMINI_API_KEY.strip() or settings.API_KEY.strip()
     
-    llm = _get_llm()
-    if not llm:
-        log.warning("bundled_llm_unavailable", agent=agent_name)
-        return None
+    # --- 1. Cloud DigitalOcean or Google Gemini API Path ---
+    if key and key not in _INVALID_KEYS:
+        t0 = time.monotonic()
         
-    messages = []
-    if system_instruction:
-        messages.append({"role": "system", "content": system_instruction})
-    messages.append({"role": "user", "content": contents})
+        # A. Route via DigitalOcean Serverless GenAI Platform if base URL is configured and NOT a Gemini API key
+        is_gemini_key = key.startswith("AIzaSy")
+        
+        if settings.DIGITALOCEAN_BASE_URL and not is_gemini_key:
+            do_model = settings.DIGITALOCEAN_MODEL
+            log.info("cloud_digitalocean_start", agent=agent_name, model=do_model)
+            
+            headers = {
+                "Authorization": f"Bearer {key}",
+                "Content-Type": "application/json"
+            }
+            
+            messages = []
+            if system_instruction:
+                messages.append({"role": "system", "content": system_instruction})
+            messages.append({"role": "user", "content": contents})
+            
+            payload = {
+                "model": do_model,
+                "messages": messages,
+                "temperature": config.get("temperature", 0.1),
+            }
+            
+            if config.get("response_mime_type") == "application/json":
+                payload["response_format"] = {"type": "json_object"}
+                
+            import httpx
+            
+            do_success = False
+            for attempt in range(max_retries):
+                try:
+                    async with httpx.AsyncClient() as http_client:
+                        response = await http_client.post(
+                            f"{settings.DIGITALOCEAN_BASE_URL}/chat/completions",
+                            json=payload,
+                            headers=headers,
+                            timeout=30.0
+                        )
+                        
+                        if response.status_code == 200:
+                            data = response.json()
+                            result_text = data["choices"][0]["message"]["content"]
+                            duration = int((time.monotonic() - t0) * 1000)
+                            log.info("cloud_digitalocean_success", agent=agent_name, duration_ms=duration)
+                            return result_text
+                        
+                        log.warning(
+                            "cloud_digitalocean_status_error",
+                            status_code=response.status_code,
+                            response_text=response.text[:200]
+                        )
+                        
+                        if response.status_code == 429 and attempt < max_retries - 1:
+                            wait = 2 ** attempt
+                            await asyncio.sleep(wait)
+                            continue
+                        # 403 = permanent auth failure — no point retrying
+                        break
+                except Exception as e:
+                    log.error("cloud_digitalocean_exception", agent=agent_name, attempt=attempt + 1, error=str(e))
+                    if attempt < max_retries - 1:
+                        await asyncio.sleep(2 ** attempt)
+                        continue
+                    break
+                    
+        # B. Fallback to direct Google Gemini API — only if this IS a Gemini key.
+        # A DigitalOcean/other key will always get 400 INVALID_ARGUMENT from Gemini, so don't try.
+        if client and is_gemini_key:
+            gemini_model = "gemini-1.5-flash" if "flash" in model else "gemini-1.5-flash"
+            log.info("cloud_gemini_start", agent=agent_name, model=gemini_model)
+            
+            for attempt in range(max_retries):
+                try:
+                    # offload blocking SDK call to threadpool to keep FastAPI responsive
+                    response = await asyncio.to_thread(
+                        client.models.generate_content,
+                        model=gemini_model,
+                        contents=contents,
+                        config=config
+                    )
+                    duration = int((time.monotonic() - t0) * 1000)
+                    log.info("cloud_gemini_success", agent=agent_name, duration_ms=duration)
+                    return response.text
+                except Exception as e:
+                    err_str = str(e)
+                    is_quota = "429" in err_str or "RESOURCE_EXHAUSTED" in err_str or "quota" in err_str.lower()
+                    
+                    if is_quota and attempt < max_retries - 1:
+                        wait = 2 ** attempt
+                        log.warning("cloud_gemini_quota_retry", agent=agent_name, attempt=attempt + 1, wait_s=wait)
+                        await asyncio.sleep(wait)
+                        continue
+                        
+                    log.error("cloud_gemini_failure", agent=agent_name, attempt=attempt + 1, error=err_str[:200])
+                    break # Fall back to local LLM path
 
-    # Determine if JSON format is required
-    response_format = None
-    if config.get("response_mime_type") == "application/json":
-        response_format = {"type": "json_object"}
-
-    t0 = time.monotonic()
-    log.info("local_llm_start", agent=agent_name, prompt_length=len(contents))
-    
-    try:
-        # llama_cpp inference (blocking, so we MUST offload to threadpool)
-        # Timeout after 60s — fall back to keyword detection rather than hanging
-        response = await asyncio.wait_for(
-            asyncio.to_thread(
-                llm.create_chat_completion,
-                messages=messages,
-                temperature=config.get("temperature", 0.1),
-                response_format=response_format,
-                max_tokens=250
-            ),
-            timeout=60.0
-        )
-        
-        result_text = response['choices'][0]['message']['content']
-        duration = int((time.monotonic() - t0) * 1000)
-        
-        log.info("local_llm_success", agent=agent_name, duration_ms=duration, output_length=len(result_text))
-        return result_text
-        
-    except asyncio.TimeoutError:
-        duration = int((time.monotonic() - t0) * 1000)
-        log.warning("local_llm_timeout", agent=agent_name, duration_ms=duration)
-        return None  # Triggers keyword fallback in intent_agent
-    except Exception as e:
-        log.error("local_llm_failure", agent=agent_name, error=str(e))
-        return None
+    # --- 2. Deterministic Fallback Path ---
+    log.warning("llm_unavailable_using_keyword_fallback", agent=agent_name)
+    return None

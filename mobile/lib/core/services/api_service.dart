@@ -89,6 +89,7 @@ class ApiService {
     required Intent intent,
     required String providerId,
     required PriceQuote acceptedQuote,
+    ProviderCandidate? provider,
   }) async {
     final uri = Uri.parse('$_backendBaseUrl/book');
     final body = {
@@ -106,6 +107,7 @@ class ApiService {
       },
       'provider_id': providerId,
       'accepted_quote': acceptedQuote.toJson(),
+      if (provider != null) 'provider': provider.toJson(),
     };
 
     late http.Response response;
@@ -268,6 +270,49 @@ class ApiService {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         final list = json['services'] as List<dynamic>;
         return list.map((e) => e.toString()).toList();
+      } catch (e) {
+        throw ApiException(
+          message: 'Failed to parse backend response: $e',
+          statusCode: response.statusCode,
+        );
+      }
+    } else {
+      String errorMsg = 'Backend error (${response.statusCode})';
+      try {
+        final errJson = jsonDecode(response.body) as Map<String, dynamic>;
+        errorMsg = errJson['detail'] as String? ?? errorMsg;
+      } catch (_) {}
+      throw ApiException(message: errorMsg, statusCode: response.statusCode);
+    }
+  }
+
+  // ── GET /user/{user_id}/bookings ───────────────────────────────────────────
+
+  /// Fetches the booking history for the current user.
+  Future<List<Booking>> getBookings(String userId) async {
+    final uri = Uri.parse('$_backendBaseUrl/user/$userId/bookings');
+    
+    late http.Response response;
+    try {
+      response = await _client
+          .get(
+            uri,
+            headers: {
+              'Accept': 'application/json',
+            },
+          )
+          .timeout(_orchestrateTimeout);
+    } on Exception catch (e) {
+      throw ApiException(
+        message: 'Network error: ${e.toString()}',
+        statusCode: null,
+      );
+    }
+
+    if (response.statusCode == 200) {
+      try {
+        final list = jsonDecode(response.body) as List<dynamic>;
+        return list.map((e) => Booking.fromJson(e as Map<String, dynamic>)).toList();
       } catch (e) {
         throw ApiException(
           message: 'Failed to parse backend response: $e',

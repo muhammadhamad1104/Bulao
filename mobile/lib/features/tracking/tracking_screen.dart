@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'models/tracking_models.dart';
 import 'widgets/tracking_header.dart';
@@ -82,6 +83,14 @@ class _TrackingScreenState extends State<TrackingScreen> {
     );
   }
 
+  void _callProvider() async {
+    final phone = widget.booking.providerPhone ?? '03001234567';
+    final uri = Uri(scheme: 'tel', path: phone);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    }
+  }
+
   String _formatTime(String isoTime) {
     try {
       final dt = DateTime.parse(isoTime);
@@ -144,7 +153,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
       providerName: widget.providerName,
       providerInitials: widget.providerInitials,
       statusText: statusText,
-      phoneNumber: '+92000000000',
+      phoneNumber: widget.booking.providerPhone ?? '+92 300 0000000',
       timelineSteps: [
         TrackingStepModel(
           title: 'Booking Confirmed',
@@ -184,8 +193,14 @@ class _TrackingScreenState extends State<TrackingScreen> {
 
                 const SizedBox(height: 24),
 
-                // ── Map Mock Card ────────────────────────────────────────────
-                MapPreviewCard(status: status),
+                // ── Real Google Map ────────────────────────────────────────
+                MapPreviewCard(
+                  status: status,
+                  providerLat: widget.booking.providerLat,
+                  providerLng: widget.booking.providerLng,
+                  userLat: 33.595,   // TODO: pass real GPS from home screen
+                  userLng: 73.048,
+                ),
 
                 const SizedBox(height: 20),
 

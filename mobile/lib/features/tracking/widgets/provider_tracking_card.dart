@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../models/tracking_models.dart';
 
 /// Card showing the provider's current status and a contact button.
@@ -69,13 +70,20 @@ class ProviderTrackingCard extends StatelessWidget {
           
           // Green Phone Button
           GestureDetector(
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Calling will be connected later'),
-                  duration: Duration(seconds: 2),
-                ),
-              );
+            onTap: () async {
+              final uri = Uri(scheme: 'tel', path: model.phoneNumber);
+              if (await canLaunchUrl(uri)) {
+                await launchUrl(uri);
+              } else {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Call function not supported on this device'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
+              }
             },
             child: Container(
               width: 42,

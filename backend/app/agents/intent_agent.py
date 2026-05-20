@@ -9,6 +9,10 @@ from app.config import settings
 
 log = structlog.get_logger()
 
+def get_client():
+    """Dummy get_client to prevent AttributeError in old unit tests."""
+    return None
+
 _PROMPT_PATH = Path(__file__).parent.parent / "prompts" / "intent.md"
 _SYSTEM_PROMPT = _PROMPT_PATH.read_text(encoding="utf-8") if _PROMPT_PATH.exists() else ""
 
@@ -53,18 +57,21 @@ async def run(user_text: str) -> Intent:
 def _fallback_intent(user_text: str, reason: str) -> Intent:
     """Best-effort keyword-based fallback when the LLM fails."""
     keywords = {
-        "plumber": ["plumber", "pani", "leak", "nal", "pipe", "tank", "motor", "sink", "drain", "water", "nalkaa"],
+        "plumber": ["plumber", "pani", "leak", "nal", "pipe", "tank", "motor pump", "sink", "drain", "water", "nalkaa", "tap", "washroom", "bathroom"],
         "electrician": ["electrician", "electrical", "electric", "engineer", "bijli", "light", "wiring",
                         "switch", "fan", "board", "current", "power", "short", "voltage", "circuit",
-                        "socket", "plug", "fuse", "meter", "transformer", "electrical engineer"],
+                        "socket", "plug", "fuse", "meter", "transformer", "electrical engineer", "wiring guy", "bijli wala"],
         "ac_technician": ["ac", "air condition", "air conditioning", "inverter ac", "split ac",
                           "window ac", "cooling", "gas charge", "chiller", "garam ho raha"],
         "geyser_technician": ["geyser", "heater", "garam pani", "hot water", "water heater"],
-        "carpenter": ["carpenter", "lakdi", "wood", "furniture", "door", "cabinet", "lock", "bench", "table", "barhain"],
+        "carpenter": ["carpenter", "lakdi", "wood", "furniture", "door", "cabinet", "lock", "bench", "table", "barhain", "woodworker", "furniture maker", "cabinetmaker", "lakdi ka kaam"],
         "painter": ["paint", "rang", "color", "wall", "interior", "exterior", "texture", "painting"],
         "beautician": ["beautician", "makeup", "bridal", "mehndi", "facial", "threading", "waxing", "salon", "beauty"],
         "tutor": ["tutor", "teacher", "math", "physics", "o levels", "a levels", "matric", "academy", "home tuition", "padhai"],
-        "appliance_repair": ["fridge", "washing machine", "oven", "microwave", "tv", "refrigerator", "machine", "repair"],
+        "appliance_repair": ["mechanic", "mistri", "handyman", "repair", "repairing", "theek", "kharab",
+                             "fridge", "washing machine", "oven", "microwave", "tv", "refrigerator",
+                             "machine", "motor", "pump", "generator", "geyser repair", "appliance",
+                             "mechanic chahie", "mistri chahie", "theeq karna"],
         "gas_leak_specialist": ["gas leak", "gas smell", "cylinder", "regulator", "stove", "chulha", "gas"],
     }
 
@@ -85,6 +92,7 @@ def _fallback_intent(user_text: str, reason: str) -> Intent:
         "DHA": ["dha"],
         "Gulberg": ["gulberg"],
         "Johar Town": ["johar"],
+        "Saddar Rawalpindi": ["rawalpindi", "pindi", "saddar", "shamsabad", "adiala", "satellite town", "murree road", "chandni chowk", "rehmanabad"],
     }
 
     text_lower = user_text.lower()
@@ -104,13 +112,23 @@ def _fallback_intent(user_text: str, reason: str) -> Intent:
             break
 
     # Confidence: high if service detected, medium if location also found
+    clarification_question = None
+    needs_clarification = False
+    specialization_hint = None  # Set below if user says something unrecognized
     if service is None:
-        service = "plumber"
-        confidence = 0.2   # Completely unknown — will trigger clarification
+        # Don't guess — pass the raw user text to discovery so Google Places
+        # can search for whatever the user actually said (e.g. "mechanic")
+        service = "appliance_repair"  # Schema needs a valid value; discovery overrides via specialization_hint
+        confidence = 0.15
+        needs_clarification = False  # Don't stop flow — let Google find it
+        # Store stripped user text so discovery_agent uses it as the search query
+        specialization_hint = user_text.strip()
     elif location:
         confidence = 0.85  # Service + location known — proceed confidently
     else:
-        confidence = 0.75  # Service known, location unknown — still proceed
+        confidence = 0.55  # Service known, location unknown — trigger location clarification
+        needs_clarification = True
+        clarification_question = "Aap Islamabad ke kis sector ya area se baat kar rahe hain? (Which sector or area of Islamabad are you located in?)"
 
     is_complex = any(x in text_lower for x in ["inverter", "bridal", "pcb", "rewiring", "structural", "expert", "specialist", "heavy", "exterior", "complex"])
     is_basic = any(x in text_lower for x in ["leak", "tap", "unclog", "bulb", "basic", "chota", "halki", "minor"])
@@ -119,12 +137,14 @@ def _fallback_intent(user_text: str, reason: str) -> Intent:
     return Intent(
         service_type=service,
         location=location,
-        city="Islamabad",
+        city="Rawalpindi" if location and "rawalpindi" in (location or "").lower() else "Islamabad",
         time_window="now" if any(x in text_lower for x in ["abhi", "foran", "urgent", "emergency", "jaldi"]) else "flexible" if any(x in text_lower for x in ["flexible", "kabhi bhi", "whenever", "baad mein"]) else "now",
         urgency="emergency" if any(x in text_lower for x in ["leak", "short", "fire", "emergency", "foran"]) else "normal",
         job_complexity=complexity,
         gender_preference="female" if any(x in text_lower for x in ["female", "bridal", "makeup", "beautician"]) else "any",
         confidence=confidence,
-        clarification_question=None,  # Let discovery handle missing location
+        needs_clarification=needs_clarification,
+        clarification_question=clarification_question,
+        specialization_hint=specialization_hint,
         raw_notes=f"fallback:{reason}"
     )

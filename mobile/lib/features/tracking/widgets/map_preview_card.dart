@@ -1,11 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-/// A dynamic visual placeholder for the map.
-/// Animates pin positions based on tracking status.
-class MapPreviewCard extends StatelessWidget {
+/// Real interactive Google Map showing provider and user locations.
+/// Falls back to a styled placeholder if lat/lng not available.
+class MapPreviewCard extends StatefulWidget {
   final String status;
+  final double? providerLat;
+  final double? providerLng;
+  final double? userLat;
+  final double? userLng;
 
-  const MapPreviewCard({super.key, required this.status});
+  const MapPreviewCard({
+    super.key,
+    required this.status,
+    this.providerLat,
+    this.providerLng,
+    this.userLat,
+    this.userLng,
+  });
+
+  @override
+  State<MapPreviewCard> createState() => _MapPreviewCardState();
+}
+
+class _MapPreviewCardState extends State<MapPreviewCard> {
+  GoogleMapController? _controller;
+
+  // Default center: Saddar Rawalpindi
+  static const LatLng _defaultCenter = LatLng(33.595, 73.048);
+
+  LatLng get _providerPos => widget.providerLat != null && widget.providerLng != null
+      ? LatLng(widget.providerLat!, widget.providerLng!)
+      : const LatLng(33.601, 73.055); // slightly offset as placeholder
+
+  LatLng get _userPos => widget.userLat != null && widget.userLng != null
+      ? LatLng(widget.userLat!, widget.userLng!)
+      : _defaultCenter;
+
+  LatLng get _mapCenter {
+    // Center between provider and user
+    return LatLng(
+      (_providerPos.latitude + _userPos.latitude) / 2,
+      (_providerPos.longitude + _userPos.longitude) / 2,
+    );
+  }
+
+  Set<Marker> get _markers => {
+        Marker(
+          markerId: const MarkerId('user'),
+          position: _userPos,
+          infoWindow: const InfoWindow(title: 'You'),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+        ),
+        Marker(
+          markerId: const MarkerId('provider'),
+          position: _providerPos,
+          infoWindow: const InfoWindow(title: 'Provider'),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+        ),
+      };
 
   @override
   Widget build(BuildContext context) {
@@ -13,166 +66,55 @@ class MapPreviewCard extends StatelessWidget {
       height: 240,
       width: double.infinity,
       decoration: BoxDecoration(
-        color: const Color(0xFFF0EBE1), // Light cream map base
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.8), // Glassy border
-          width: 4.0,
-        ),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.8), width: 4.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withValues(alpha: 0.12),
             blurRadius: 16,
             offset: const Offset(0, 8),
-          ),
-          // Inner subtle shadow to match reference depth
-          BoxShadow(
-            color: const Color(0xFFD9C9A8).withValues(alpha: 0.5),
-            blurRadius: 4,
-            spreadRadius: 1,
           ),
         ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
-        child: CustomPaint(
-          painter: _MockMapPainter(),
-          child: _buildPins(context),
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(
+            target: _mapCenter,
+            zoom: 13.5,
+          ),
+          markers: _markers,
+          onMapCreated: (controller) {
+            _controller = controller;
+            // Auto-fit bounds to show both markers
+            _controller?.animateCamera(
+              CameraUpdate.newLatLngBounds(
+                LatLngBounds(
+                  southwest: LatLng(
+                    _providerPos.latitude < _userPos.latitude ? _providerPos.latitude : _userPos.latitude,
+                    _providerPos.longitude < _userPos.longitude ? _providerPos.longitude : _userPos.longitude,
+                  ),
+                  northeast: LatLng(
+                    _providerPos.latitude > _userPos.latitude ? _providerPos.latitude : _userPos.latitude,
+                    _providerPos.longitude > _userPos.longitude ? _providerPos.longitude : _userPos.longitude,
+                  ),
+                ),
+                60.0, // padding in pixels
+              ),
+            );
+          },
+          myLocationButtonEnabled: false,
+          zoomControlsEnabled: false,
+          mapToolbarEnabled: false,
+          compassEnabled: false,
         ),
       ),
     );
   }
 
-  Widget _buildPins(BuildContext context) {
-    // Default positions (Coordinates on our custom paint canvas)
-    double userTop = 160;
-    double userLeft = 50;
-    
-    double providerTop = 40;
-    double providerLeft = 250;
-    
-    // Move provider pin based on status
-    if (status == 'en_route') {
-      providerTop = 100;
-      providerLeft = 150;
-    } else if (status == 'arrived' || status == 'in_progress' || status == 'completed') {
-      providerTop = 140;
-      providerLeft = 80; // Close to user
-    }
-
-    return Stack(
-      children: [
-        // User Pin (Navy)
-        Positioned(
-          top: userTop,
-          left: userLeft,
-          child: _buildPin(color: const Color(0xFF1E2D4E), label: 'You'),
-        ),
-        // Provider Pin (Gold)
-        Positioned(
-          top: providerTop,
-          left: providerLeft,
-          child: _buildPin(color: const Color(0xFFC9A84C), label: 'Provider'),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPin({required Color color, required String label}) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(4),
-            boxShadow: [
-              BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 2),
-            ],
-          ),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 10, 
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
-          ),
-        ),
-        const SizedBox(height: 2),
-        Icon(
-          Icons.location_on,
-          size: 32,
-          color: color,
-        ),
-      ],
-    );
-  }
-}
-
-/// A simple painter to draw mock map roads and green areas.
-class _MockMapPainter extends CustomPainter {
   @override
-  void paint(Canvas canvas, Size size) {
-    final paintRoad = Paint()
-      ..color = Colors.white.withValues(alpha: 0.6)
-      ..strokeWidth = 6.0
-      ..style = PaintingStyle.stroke;
-
-    final paintPark = Paint()
-      ..color = const Color(0xFFDDE3CE) // Soft green park
-      ..style = PaintingStyle.fill;
-      
-    final paintWater = Paint()
-      ..color = const Color(0xFFC9DEE3) // Soft blue water
-      ..style = PaintingStyle.fill;
-
-    // Draw a park block
-    final parkPath = Path()
-      ..moveTo(0, size.height * 0.2)
-      ..lineTo(size.width * 0.3, size.height * 0.4)
-      ..lineTo(0, size.height * 0.6)
-      ..close();
-    canvas.drawPath(parkPath, paintPark);
-    
-    // Draw another park block
-    canvas.drawRect(
-      Rect.fromLTWH(size.width * 0.6, size.height * 0.7, size.width * 0.3, size.height * 0.3), 
-      paintPark
-    );
-    
-    // Draw a water body
-    final waterPath = Path()
-      ..moveTo(0, size.height * 0.7)
-      ..lineTo(size.width * 0.4, size.height)
-      ..lineTo(0, size.height)
-      ..close();
-    canvas.drawPath(waterPath, paintWater);
-
-    // Draw some intersecting roads
-    canvas.drawLine(
-      Offset(size.width * 0.1, 0),
-      Offset(size.width * 0.5, size.height),
-      paintRoad,
-    );
-    canvas.drawLine(
-      Offset(0, size.height * 0.4),
-      Offset(size.width, size.height * 0.2),
-      paintRoad,
-    );
-    canvas.drawLine(
-      Offset(size.width * 0.4, 0),
-      Offset(size.width * 0.9, size.height),
-      paintRoad,
-    );
-    canvas.drawLine(
-      Offset(0, size.height * 0.8),
-      Offset(size.width, size.height * 0.6),
-      paintRoad,
-    );
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
   }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

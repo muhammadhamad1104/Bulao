@@ -19,7 +19,9 @@ def intent_examples():
 async def test_intent_accuracy(intent_examples, monkeypatch):
     monkeypatch.setattr("app.agents.intent_agent.get_client", lambda: None)
     from app.config import settings
-    if settings.GEMINI_API_KEY == "fake":
+    from app.utils.llm_client import _INVALID_KEYS
+    key = getattr(settings, "GEMINI_API_KEY", "").strip()
+    if not key or key in _INVALID_KEYS:
         pytest.skip("Skipping accuracy test in mock mode")
     
     if not intent_examples:

@@ -32,16 +32,25 @@ async def orchestrate(req: OrchestrateRequest):
              service=intent.service_type, confidence=round(intent.confidence, 2),
              location=intent.location, elapsed_ms=int((time.monotonic()-t)*1000))
     
-    # Clarification Path — only if service type itself is unknown (confidence < 0.4)
-    # Missing location alone should NOT block discovery
-    if intent.needs_clarification or intent.confidence < 0.4:
-        log.info("pipeline_early_exit", reason="clarification_needed",
+    # Only reject or prompt if the user is not asking for a valid supported service
+    valid_services = ["plumber","electrician","ac_technician","geyser_technician","carpenter","painter","beautician","tutor","appliance_repair","gas_leak_specialist"]
+    if not intent.service_type or intent.service_type not in valid_services:
+        log.info("pipeline_early_exit", reason="irrelevant_request",
                  confidence=round(intent.confidence, 2),
                  total_ms=int((time.monotonic()-pipeline_start)*1000))
+        
+        msg_ur = "Maaf kijiye! Main sirf plumbing, bijli, AC, geyser, carpentry, painting, beautician, tutoring, appliance repair, ya gas leak specialist jaisi home services book karne mein madad kar sakta hoon. Main in mein se kis service ke liye aap ki madad karoon?"
+        msg_en = "Sorry! I can only help you book home services like plumbers, electricians, AC/geyser techs, carpenters, painters, beauticians, tutors, or appliance repair. What service can I help you with today?"
+        
+        intent.needs_clarification = True
+        intent.clarification_question = f"{msg_ur} ({msg_en})"
+        
         return OrchestrateResponse(
             intent=intent,
             needs_clarification=True,
-            clarification_question=intent.clarification_question
+            clarification_question=intent.clarification_question,
+            user_message_urdu=msg_ur,
+            user_message_english=msg_en
         )
 
     # ── 2. Discovery Agent ────────────────────────────────────────────────────

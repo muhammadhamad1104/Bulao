@@ -95,6 +95,8 @@ class ProviderCandidate {
   final bool verified;
   final String phoneMasked;
   final String? alternateSlotReason;
+  final double? lat;
+  final double? lng;
 
   const ProviderCandidate({
     required this.id,
@@ -120,6 +122,8 @@ class ProviderCandidate {
     this.verified = true,
     required this.phoneMasked,
     this.alternateSlotReason,
+    this.lat,
+    this.lng,
   });
 
   factory ProviderCandidate.fromJson(Map<String, dynamic> json) =>
@@ -147,7 +151,38 @@ class ProviderCandidate {
         verified: json['verified'] as bool? ?? true,
         phoneMasked: json['phone_masked'] as String? ?? '**********',
         alternateSlotReason: json['alternate_slot_reason'] as String?,
+        lat: (json['lat'] as num?)?.toDouble(),
+        lng: (json['lng'] as num?)?.toDouble(),
       );
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'service_categories': serviceCategories,
+        'specializations': specializations,
+        'distance_km': distanceKm,
+        'neighborhood': neighborhood,
+        'rating': rating,
+        'completed_jobs_in_area': completedJobsInArea,
+        'on_time_score': onTimeScore,
+        'cancellation_rate': cancellationRate,
+        'review_recency_days': reviewRecencyDays,
+        'risk_score': riskScore,
+        'current_workload': currentWorkload,
+        'availability_status': availabilityStatus,
+        'next_slot': nextSlot,
+        'base_visit_fee_pkr': baseVisitFeePkr,
+        'rate_per_hour_pkr': ratePerHourPkr,
+        'gender': gender,
+        'years_experience': yearsExperience,
+        'languages': languages,
+        'verified': verified,
+        'phone_masked': phoneMasked,
+        if (alternateSlotReason != null) 'alternate_slot_reason': alternateSlotReason,
+        if (lat != null) 'lat': lat,
+        if (lng != null) 'lng': lng,
+      };
+
 }
 
 // ── Discovery Result ─────────────────────────────────────────────────────────
@@ -424,6 +459,11 @@ class Booking {
   final String? receiptUrl;
   final String confirmationMessageEnglish;
   final String confirmationMessageUrdu;
+  final String? whatsappUrl;      // Pre-filled WhatsApp deep link from backend
+  final double? providerLat;      // Provider shop latitude (for map)
+  final double? providerLng;      // Provider shop longitude (for map)
+  final String? providerPhone;    // Provider phone number
+  final String? providerName;     // Provider name
 
   const Booking({
     required this.bookingId,
@@ -441,6 +481,11 @@ class Booking {
     this.receiptUrl,
     this.confirmationMessageEnglish = '',
     this.confirmationMessageUrdu = '',
+    this.whatsappUrl,
+    this.providerLat,
+    this.providerLng,
+    this.providerPhone,
+    this.providerName,
   });
 
   factory Booking.fromJson(Map<String, dynamic> json) => Booking(
@@ -461,6 +506,11 @@ class Booking {
         receiptUrl: json['receipt_url'] as String?,
         confirmationMessageEnglish: json['confirmation_message_english'] as String? ?? '',
         confirmationMessageUrdu: json['confirmation_message_urdu'] as String? ?? '',
+        whatsappUrl: json['whatsapp_url'] as String?,
+        providerLat: (json['provider_lat'] as num?)?.toDouble(),
+        providerLng: (json['provider_lng'] as num?)?.toDouble(),
+        providerPhone: json['provider_phone'] as String?,
+        providerName: json['provider_name'] as String?,
       );
 }
 

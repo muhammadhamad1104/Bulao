@@ -43,6 +43,8 @@ class ProviderCandidate(BaseModel):
     languages: List[str] = []
     verified: bool = True
     phone_masked: str
+    lat: Optional[float] = None
+    lng: Optional[float] = None
     alternate_slot_reason: Optional[str] = None # only on alternates
 
 class DiscoveryResult(BaseModel):
@@ -110,6 +112,14 @@ class Booking(BaseModel):
     receipt_url: Optional[str] = None
     confirmation_message_english: str = ""
     confirmation_message_urdu: str = ""
+    provider_name: Optional[str] = None
+    provider_lat: Optional[float] = None
+    provider_lng: Optional[float] = None
+    # Static ETA + WhatsApp tracking fields
+    user_lat: Optional[float] = None
+    user_lng: Optional[float] = None
+    eta_minutes: Optional[int] = None
+    whatsapp_url: Optional[str] = None
 
 class FollowupResult(BaseModel):
     mode: Literal["reminder","checkin","dispute"]

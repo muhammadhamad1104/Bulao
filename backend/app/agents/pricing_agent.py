@@ -106,6 +106,10 @@ async def run(intent: Intent, provider: ProviderCandidate, market_demand: float 
     else:
         log.warning("pricing_agent_mock_mode", reason="no_api_key")
 
+    from datetime import timezone
+    pkt_tz = timezone(timedelta(hours=5))
+    expires = datetime.now(pkt_tz) + timedelta(minutes=15)
+
     quote = PriceQuote(
         quote_id=f"QT-{datetime.now().strftime('%Y%m%d')}-{uuid.uuid4().hex[:6].upper()}",
         line_items=line_items,
@@ -115,7 +119,7 @@ async def run(intent: Intent, provider: ProviderCandidate, market_demand: float 
         explanation_english=explanation_en,
         explanation_urdu=explanation_ur,
         fairness_note=fairness,
-        expires_at=(datetime.now() + timedelta(minutes=15)).isoformat() + "+05:00",
+        expires_at=expires.isoformat(),
     )
     
     log.info("agent_end", agent="pricing", duration_ms=int((time.monotonic()-t0)*1000), estimated_total_pkr=total)

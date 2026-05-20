@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'models/confirmed_booking_model.dart';
 import 'widgets/confirmation_message_bubble.dart';
@@ -28,13 +29,32 @@ class ConfirmedBookingScreen extends StatelessWidget {
     Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
-  void _showComingSoon(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+  void _openWhatsApp(BuildContext context) async {
+    // Use backend-generated pre-filled WhatsApp URL if available
+    final url = booking.whatsappUrl ?? 
+        'https://wa.me/?text=Assalam%20o%20Alaikum%2C%20I%20booked%20a%20${booking.serviceType}%20service%20via%20Bulao';
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('WhatsApp nahi mila. Please manually contact provider.',
+                style: GoogleFonts.ibmPlexSans(color: Colors.white)),
+            backgroundColor: const Color(0xFF2A3A5E),
+          ),
+        );
+      }
+    }
+  }
+
+  void _callProvider(BuildContext context) async {
+    final phone = booking.providerPhone ?? '03001234567';
+    final uri = Uri(scheme: 'tel', path: phone);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    }
   }
 
   void _navigateToTracking(BuildContext context) {
@@ -164,22 +184,20 @@ class ConfirmedBookingScreen extends StatelessWidget {
 
                 const SizedBox(height: 32),
 
-                // ── Action Buttons (Calendar & WhatsApp) ────────────────────
+                // ── Action Buttons (Call, WhatsApp, Track) ──────────────────
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     BookingActionButton(
-                      icon: Icons.calendar_month_outlined,
-                      label: 'Calendar',
-                      onTap: () => _showComingSoon(
-                          context, 'Calendar integration will be connected later'),
+                      icon: Icons.call_rounded,
+                      label: 'Call',
+                      onTap: () => _callProvider(context),
                     ),
                     const SizedBox(width: 16),
                     BookingActionButton(
                       icon: Icons.chat_bubble_outline_rounded,
                       label: 'WhatsApp',
-                      onTap: () => _showComingSoon(
-                          context, 'WhatsApp sharing will be connected later'),
+                      onTap: () => _openWhatsApp(context),
                     ),
                   ],
                 ),

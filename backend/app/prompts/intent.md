@@ -13,8 +13,8 @@ confidence: 0.0-1.0
 clarification_question: null unless confidence<0.7, then {"urdu":"...","english":"..."}
 raw_notes: extra context
 
-Key Urdu: bijli wala=electrician, pani wala=plumber, AC wala=ac_technician, geyser wala=geyser_technician, abhi/foran=now, kal=tomorrow, jaldi=high urgency, ghar pe=need location
-STT fixes: "number"/"lamber"->plumber, "easy technician"->ac_technician, "teaser"/"geezer"->geyser_technician
+Key Urdu & Mappings: bijli wala=electrician, pani wala=plumber, AC wala=ac_technician, geyser wala=geyser_technician, abhi/foran=now, kal=tomorrow, jaldi=high urgency, ghar pe=need location
+STT/Synonym fixes: "woodworker"/"furniture"/"furniture maker"/"cabinetmaker"/"lakdi ka kaam"->carpenter, "number"/"lamber"->plumber, "easy technician"->ac_technician, "teaser"/"geezer"->geyser_technician, "wiring guy"->electrician
 
 OUTPUT JSON ONLY:
 {"service_type":"","location":null,"city":"Islamabad","time_window":"flexible","urgency":"normal","gender_preference":"any","budget_range":null,"raw_notes":"","job_complexity":"intermediate","specialization_hint":null,"confidence":0.9,"clarification_question":null}

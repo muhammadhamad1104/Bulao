@@ -27,10 +27,20 @@ class _HomeScreenState extends State<HomeScreen> {
   String _recognizedText = '';
   String _bestRecognizedText = ''; // Tracks longest result seen this session
 
+  // Text input mode
+  bool _isTextMode = false;
+  final TextEditingController _textController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
     _initSpeech();
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
   }
 
   Future<void> _initSpeech() async {
@@ -93,6 +103,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
       }
+    }
+  }
+
+  void _submitTextRequest() {
+    final text = _textController.text.trim();
+    if (text.isNotEmpty) {
+      _textController.clear();
+      _navigateToProcessing(context, text);
     }
   }
 
@@ -303,11 +321,134 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   SizedBox(height: size.height * 0.015),
 
-                  // ── Microphone — ONLY this navigates to processing ─────────
-                  InteractiveMicButton(
-                    onStart: _startListening,
-                    onStop: _stopListening,
+                  // ── Mode Toggle: Voice ↔ Text ──────────────────────────────
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 80),
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE8EDF5),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Voice mode button
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => setState(() => _isTextMode = false),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 220),
+                              curve: Curves.easeInOut,
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              decoration: BoxDecoration(
+                                color: !_isTextMode ? const Color(0xFF2A3A5E) : Colors.transparent,
+                                borderRadius: BorderRadius.circular(26),
+                              ),
+                              child: Icon(
+                                Icons.mic_rounded,
+                                size: 20,
+                                color: !_isTextMode ? Colors.white : const Color(0xFF7A8FAE),
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Text mode button
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => setState(() => _isTextMode = true),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 220),
+                              curve: Curves.easeInOut,
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              decoration: BoxDecoration(
+                                color: _isTextMode ? const Color(0xFF2A3A5E) : Colors.transparent,
+                                borderRadius: BorderRadius.circular(26),
+                              ),
+                              child: Icon(
+                                Icons.keyboard_rounded,
+                                size: 20,
+                                color: _isTextMode ? Colors.white : const Color(0xFF7A8FAE),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+
+                  const SizedBox(height: 16),
+
+                  // ── Voice mic OR text field depending on mode ──────────────
+                  if (!_isTextMode) ...[
+                    // Original mic button
+                    InteractiveMicButton(
+                      onStart: _startListening,
+                      onStop: _stopListening,
+                    ),
+                  ] else ...[
+                    // Text input field
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: const Color(0xFFD0DAE8), width: 1.5),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.06),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: TextField(
+                                controller: _textController,
+                                textInputAction: TextInputAction.send,
+                                onSubmitted: (_) => _submitTextRequest(),
+                                style: GoogleFonts.ibmPlexSans(
+                                  fontSize: 15,
+                                  color: const Color(0xFF0D0D0D),
+                                ),
+                                decoration: InputDecoration(
+                                  hintText: 'Likhen... (e.g. mechanic chahie Saddar)',
+                                  hintStyle: GoogleFonts.ibmPlexSans(
+                                    fontSize: 14,
+                                    color: const Color(0xFF9AA5B8),
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                  border: InputBorder.none,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          GestureDetector(
+                            onTap: _submitTextRequest,
+                            child: Container(
+                              width: 48,
+                              height: 48,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF2A3A5E),
+                                borderRadius: BorderRadius.circular(14),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFF2A3A5E).withValues(alpha: 0.35),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(Icons.send_rounded, color: Colors.white, size: 20),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
 
                   SizedBox(height: size.height * 0.035),
                 ],

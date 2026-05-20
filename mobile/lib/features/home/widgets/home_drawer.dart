@@ -4,6 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../../core/widgets/bulao_toast.dart';
 import '../../tracking/tracking_screen.dart';
 import '../../auth/auth_gate.dart';
+import '../../booking/my_bookings_screen.dart';
+import '../../../core/services/api_service.dart';
+import '../../../core/models/orchestrate_models.dart';
 
 /// Side drawer for the HomeScreen.
 /// Provides navigation to Live Tracking, My Bookings, and Logout.
@@ -24,9 +27,69 @@ class HomeDrawer extends StatelessWidget {
     BulaoToast.show(context, message: message, type: ToastType.info);
   }
 
-  void _navigateToTracking(BuildContext context) {
-    Navigator.of(context).pop(); // Close drawer first
-    _showComingSoon(context, 'Live Tracking is available after booking');
+  void _navigateToTracking(BuildContext context) async {
+    // Show a small loader in a dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFC9A84C)),
+        ),
+      ),
+    );
+
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      final userId = user?.uid ?? 'anonymous';
+      final bookings = await ApiService.instance.getBookings(userId);
+      
+      // Pop loading dialog
+      if (context.mounted) Navigator.of(context).pop();
+
+      // Find the first active booking
+      Booking? activeBooking;
+      for (var b in bookings) {
+        final status = b.status.toLowerCase();
+        if (status == 'confirmed' || status == 'en_route' || status == 'arrived' || status == 'in_progress') {
+          activeBooking = b;
+          break;
+        }
+      }
+
+      if (context.mounted) {
+        if (activeBooking != null) {
+          Navigator.of(context).pop(); // Close drawer
+          final providerName = activeBooking.providerName ?? 
+              (activeBooking.acceptedQuote.lineItems.isNotEmpty
+                  ? activeBooking.acceptedQuote.lineItems[0].labelEnglish.split(' booked')[0]
+                  : 'Provider');
+          final initials = providerName.isNotEmpty
+              ? providerName.split(' ').map((e) => e[0]).join().toUpperCase()
+              : 'P';
+          
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => TrackingScreen(
+                booking: activeBooking!,
+                providerName: providerName,
+                providerInitials: initials,
+              ),
+            ),
+          );
+        } else {
+          Navigator.of(context).pop(); // Close drawer
+          _showComingSoon(context, 'Live Tracking is available after booking');
+        }
+      }
+    } catch (e) {
+      // Pop loading dialog
+      if (context.mounted) Navigator.of(context).pop();
+      if (context.mounted) {
+        Navigator.of(context).pop(); // Close drawer
+        _showComingSoon(context, 'Masla aa gaya: ${e.toString()}');
+      }
+    }
   }
 
   @override
@@ -104,8 +167,10 @@ class HomeDrawer extends StatelessWidget {
             icon: Icons.receipt_long_rounded,
             title: 'My Bookings',
             onTap: () {
-              Navigator.of(context).pop();
-              _showComingSoon(context, 'My Bookings will be connected later');
+              Navigator.of(context).pop(); // Close drawer
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const MyBookingsScreen()),
+              );
             },
           ),
 
