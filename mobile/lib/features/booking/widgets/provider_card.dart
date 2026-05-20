@@ -7,6 +7,7 @@ import 'star_rating_display.dart';
 import '../confirmed_booking_screen.dart';
 import '../../../core/models/orchestrate_models.dart';
 import '../../../core/services/api_service.dart';
+import '../../../core/services/local_booking_store.dart';
 
 /// Expandable provider card — data driven by [ProviderModel].
 ///
@@ -92,6 +93,9 @@ class _ProviderCardState extends State<ProviderCard> {
         ),
       );
 
+      // ── Save to local store so drawer tracking works immediately ─────────
+      LocalBookingStore.instance.save(booking);
+
       // Pop loading dialog
       if (mounted) Navigator.of(context).pop();
 
@@ -109,6 +113,7 @@ class _ProviderCardState extends State<ProviderCard> {
           ),
         );
       }
+
     } catch (e) {
       // Pop loading dialog
       if (mounted) Navigator.of(context).pop();

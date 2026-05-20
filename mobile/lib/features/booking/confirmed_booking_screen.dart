@@ -30,17 +30,33 @@ class ConfirmedBookingScreen extends StatelessWidget {
   }
 
   void _openWhatsApp(BuildContext context) async {
-    // Use backend-generated pre-filled WhatsApp URL if available
-    final url = booking.whatsappUrl ?? 
-        'https://wa.me/?text=Assalam%20o%20Alaikum%2C%20I%20booked%20a%20${booking.serviceType}%20service%20via%20Bulao';
-    final uri = Uri.parse(url);
+    final phone = booking.providerPhone;
+    if (phone == null || phone.isEmpty) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('No WhatsApp available for this provider.',
+                style: GoogleFonts.ibmPlexSans(color: Colors.white)),
+            backgroundColor: const Color(0xFF2A3A5E),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            margin: const EdgeInsets.all(16),
+          ),
+        );
+      }
+      return;
+    }
+    // Clean phone: remove spaces/dashes, ensure it starts with country code
+    final cleaned = phone.replaceAll(RegExp(r'[\s\-()]'), '');
+    final waNumber = cleaned.startsWith('+') ? cleaned.substring(1) : cleaned;
+    final uri = Uri.parse('https://wa.me/$waNumber');
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('WhatsApp nahi mila. Please manually contact provider.',
+            content: Text('No WhatsApp available for this provider.',
                 style: GoogleFonts.ibmPlexSans(color: Colors.white)),
             backgroundColor: const Color(0xFF2A3A5E),
           ),
@@ -50,7 +66,22 @@ class ConfirmedBookingScreen extends StatelessWidget {
   }
 
   void _callProvider(BuildContext context) async {
-    final phone = booking.providerPhone ?? '03001234567';
+    final phone = booking.providerPhone;
+    if (phone == null || phone.isEmpty) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Provider ka number available nahi hai.',
+                style: GoogleFonts.ibmPlexSans(color: Colors.white)),
+            backgroundColor: const Color(0xFF2A3A5E),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            margin: const EdgeInsets.all(16),
+          ),
+        );
+      }
+      return;
+    }
     final uri = Uri(scheme: 'tel', path: phone);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);

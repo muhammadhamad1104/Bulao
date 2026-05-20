@@ -6,6 +6,7 @@ import '../../tracking/tracking_screen.dart';
 import '../../auth/auth_gate.dart';
 import '../../booking/my_bookings_screen.dart';
 import '../../../core/services/api_service.dart';
+import '../../../core/services/local_booking_store.dart';
 import '../../../core/models/orchestrate_models.dart';
 
 /// Side drawer for the HomeScreen.
@@ -42,20 +43,28 @@ class HomeDrawer extends StatelessWidget {
     try {
       final user = FirebaseAuth.instance.currentUser;
       final userId = user?.uid ?? 'anonymous';
-      final bookings = await ApiService.instance.getBookings(userId);
+
+      // First check in-memory local store (instant, works even offline)
+      Booking? activeBooking = LocalBookingStore.instance.firstActive;
+
+      // Then try the backend (may have more bookings from previous sessions)
+      if (activeBooking == null) {
+        try {
+          final bookings = await ApiService.instance.getBookings(userId);
+          for (var b in bookings) {
+            final status = b.status.toLowerCase();
+            if (status == 'confirmed' || status == 'en_route' || status == 'arrived' || status == 'in_progress') {
+              activeBooking = b;
+              break;
+            }
+          }
+        } catch (_) {
+          // Backend unavailable — local store already checked above
+        }
+      }
       
       // Pop loading dialog
       if (context.mounted) Navigator.of(context).pop();
-
-      // Find the first active booking
-      Booking? activeBooking;
-      for (var b in bookings) {
-        final status = b.status.toLowerCase();
-        if (status == 'confirmed' || status == 'en_route' || status == 'arrived' || status == 'in_progress') {
-          activeBooking = b;
-          break;
-        }
-      }
 
       if (context.mounted) {
         if (activeBooking != null) {
