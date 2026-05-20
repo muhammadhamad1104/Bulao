@@ -82,11 +82,14 @@ class BookingReceiptCard extends StatelessWidget {
             valueWidget: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  booking.providerName,
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    color: const Color(0xFF0D0D0D),
+                Flexible(
+                  child: Text(
+                    booking.providerName,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      color: const Color(0xFF0D0D0D),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 4),

@@ -149,13 +149,19 @@ async def run(intent: Intent, provider: ProviderCandidate, accepted_quote: Price
                 real_lng = p.get("lng")
             break
 
-    # Synthesize clean dialable phone if not found in list (fallback)
+    # Synthesize clean dialable phone if not found in list (use phone_masked as secondary fallback)
     if not real_phone:
-        import random
-        seed = sum(ord(c) for c in str(provider.id))
-        rng = random.Random(seed)
-        digits = "".join([str(rng.randint(0, 9)) for _ in range(7)])
-        real_phone = f"+92300{digits}"
+        # Try phone_masked from the candidate itself
+        masked = getattr(provider, 'phone_masked', None)
+        if masked and masked.strip() and not masked.startswith('+92 3') and masked.replace('+','').replace(' ','').replace('-','').isdigit():
+            real_phone = masked.strip()
+        else:
+            # Last resort: generate deterministic phone from provider ID seed
+            import random
+            seed = sum(ord(c) for c in str(provider.id))
+            rng = random.Random(seed)
+            digits = "".join([str(rng.randint(0, 9)) for _ in range(7)])
+            real_phone = f"+92300{digits}"
 
     # Build WhatsApp pre-filled deep link
     whatsapp_url = _build_whatsapp_url(

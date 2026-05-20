@@ -71,7 +71,17 @@ class ProviderTrackingCard extends StatelessWidget {
           // Green Phone Button
           GestureDetector(
             onTap: () async {
-              final uri = Uri(scheme: 'tel', path: model.phoneNumber);
+              final phone = model.phoneNumber;
+              if (phone.isEmpty || phone == '+92 300 0000000') {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Provider ka number available nahi hai.'),
+                    backgroundColor: Color(0xFF2A3A5E),
+                  ),
+                );
+                return;
+              }
+              final uri = Uri(scheme: 'tel', path: phone);
               if (await canLaunchUrl(uri)) {
                 await launchUrl(uri);
               } else {
