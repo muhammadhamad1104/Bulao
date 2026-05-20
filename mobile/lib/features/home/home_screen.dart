@@ -22,6 +22,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final SpeechToText _speech = SpeechToText();
   bool _isListening = false;
   String _recognizedText = '';
@@ -150,6 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final nameToShow = (user?.displayName != null && user!.displayName!.isNotEmpty) ? user.displayName! : widget.userName;
 
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: const Color(0xFFFAFAF7), // ── Bulao unified app background
       drawer: HomeDrawer(userName: nameToShow), // Drawer attached here
       body: SafeArea(
@@ -162,7 +164,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // ── App Bar (hamburger + heading + underline) ──────────────
-                  const HomeAppBar(),
+                  HomeAppBar(
+                    onHamburgerTap: () {
+                      _scaffoldKey.currentState?.openDrawer();
+                    },
+                  ),
                   SizedBox(height: size.height * 0.025),
 
                   // ── Decorative icons row (bolt left, snowflake right) ──────
