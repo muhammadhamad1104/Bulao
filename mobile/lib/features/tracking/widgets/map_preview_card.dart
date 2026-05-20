@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-/// Real interactive Google Map showing provider and user locations.
-/// Shows a styled placeholder if the map is blank (API key not enabled).
+/// Google Maps card for the Tracking Screen.
+/// Shows a styled status overlay until the map renders real tiles.
+/// If tiles never appear (API key not configured), the overlay stays visible.
 class MapPreviewCard extends StatefulWidget {
   final String status;
   final double? providerLat;
@@ -26,8 +28,9 @@ class MapPreviewCard extends StatefulWidget {
 
 class _MapPreviewCardState extends State<MapPreviewCard> {
   GoogleMapController? _controller;
-  // Start with fallback visible; hide it once map renders tiles
-  bool _showFallback = true;
+  // Overlay is shown until map reports camera idle after our initial animation
+  bool _showOverlay = true;
+  Timer? _fallbackTimer;
 
   static const LatLng _defaultCenter = LatLng(33.595, 73.048);
 
@@ -57,23 +60,62 @@ class _MapPreviewCardState extends State<MapPreviewCard> {
           markerId: const MarkerId('provider'),
           position: _providerPos,
           infoWindow: const InfoWindow(title: 'Provider'),
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
         ),
       };
 
   String get _statusLabel {
     switch (widget.status) {
-      case 'en_route':
-        return 'Provider is on the way';
-      case 'arrived':
-        return 'Provider has arrived';
-      case 'in_progress':
-        return 'Service in progress';
-      case 'completed':
-        return 'Service completed';
-      default:
-        return 'Tracking your booking';
+      case 'en_route':  return 'Provider is on the way';
+      case 'arrived':   return 'Provider has arrived';
+      case 'in_progress': return 'Service in progress';
+      case 'completed': return 'Service completed';
+      default:          return 'Tracking your booking';
+    }
+  }
+
+  @override
+  void dispose() {
+    _fallbackTimer?.cancel();
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  void _onMapCreated(GoogleMapController controller) {
+    _controller = controller;
+    // Animate to show both markers. onCameraIdle fires AFTER this animation
+    // settles — only then do we reveal the map (hiding the overlay).
+    _controller?.animateCamera(
+      CameraUpdate.newLatLngBounds(
+        LatLngBounds(
+          southwest: LatLng(
+            _providerPos.latitude < _userPos.latitude
+                ? _providerPos.latitude
+                : _userPos.latitude,
+            _providerPos.longitude < _userPos.longitude
+                ? _providerPos.longitude
+                : _userPos.longitude,
+          ),
+          northeast: LatLng(
+            _providerPos.latitude > _userPos.latitude
+                ? _providerPos.latitude
+                : _userPos.latitude,
+            _providerPos.longitude > _userPos.longitude
+                ? _providerPos.longitude
+                : _userPos.longitude,
+          ),
+        ),
+        60.0,
+      ),
+    );
+  }
+
+  // onCameraIdle fires after EVERY animation settles — both our programmatic
+  // animateCamera AND tile-loading-triggered redraws. By the time idle fires
+  // after our initial animation, tiles should be rendering (or not).
+  void _onCameraIdle() {
+    if (_showOverlay && mounted) {
+      setState(() => _showOverlay = false);
     }
   }
 
@@ -97,51 +139,21 @@ class _MapPreviewCardState extends State<MapPreviewCard> {
         borderRadius: BorderRadius.circular(16),
         child: Stack(
           children: [
-            // ── Real Google Map ─────────────────────────────────────────────
+            // ── Real Google Map (always in tree so it initializes) ──────────
             GoogleMap(
               initialCameraPosition:
                   CameraPosition(target: _mapCenter, zoom: 13.5),
               markers: _markers,
-              onMapCreated: (controller) {
-                _controller = controller;
-                _controller?.animateCamera(
-                  CameraUpdate.newLatLngBounds(
-                    LatLngBounds(
-                      southwest: LatLng(
-                        _providerPos.latitude < _userPos.latitude
-                            ? _providerPos.latitude
-                            : _userPos.latitude,
-                        _providerPos.longitude < _userPos.longitude
-                            ? _providerPos.longitude
-                            : _userPos.longitude,
-                      ),
-                      northeast: LatLng(
-                        _providerPos.latitude > _userPos.latitude
-                            ? _providerPos.latitude
-                            : _userPos.latitude,
-                        _providerPos.longitude > _userPos.longitude
-                            ? _providerPos.longitude
-                            : _userPos.longitude,
-                      ),
-                    ),
-                    60.0,
-                  ),
-                );
-              },
-              // When the camera moves, tiles have loaded — hide fallback
-              onCameraMove: (_) {
-                if (_showFallback && mounted) {
-                  setState(() => _showFallback = false);
-                }
-              },
+              onMapCreated: _onMapCreated,
+              onCameraIdle: _onCameraIdle,
               myLocationButtonEnabled: false,
               zoomControlsEnabled: false,
               mapToolbarEnabled: false,
               compassEnabled: false,
             ),
 
-            // ── Fallback overlay — shown until real tiles appear ─────────────
-            if (_showFallback)
+            // ── Status overlay — hides after camera settles ─────────────────
+            if (_showOverlay)
               Container(
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
@@ -182,11 +194,13 @@ class _MapPreviewCardState extends State<MapPreviewCard> {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    Text(
-                      'Loading map...',
-                      style: GoogleFonts.inter(
-                        fontSize: 11,
-                        color: Colors.white.withValues(alpha: 0.4),
+                    const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            Color(0xFFC9A84C)),
                       ),
                     ),
                   ],
@@ -211,10 +225,4 @@ class _MapPreviewCardState extends State<MapPreviewCard> {
               style: GoogleFonts.inter(fontSize: 12, color: Colors.white70)),
         ],
       );
-
-  @override
-  void dispose() {
-    _controller?.dispose();
-    super.dispose();
-  }
 }

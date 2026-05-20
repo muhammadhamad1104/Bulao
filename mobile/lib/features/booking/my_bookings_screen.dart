@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/models/orchestrate_models.dart';
 import '../../core/services/api_service.dart';
+import '../../core/services/local_booking_store.dart';
 import '../tracking/tracking_screen.dart';
 
 class MyBookingsScreen extends StatefulWidget {
@@ -34,17 +35,37 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
     try {
       final user = FirebaseAuth.instance.currentUser;
       final userId = user?.uid ?? 'anonymous';
-      final list = await ApiService.instance.getBookings(userId);
+
+      // Always start with locally persisted bookings (works even without Firestore)
+      final localBookings = LocalBookingStore.instance.all.toList();
+
+      // Try API — merge remote bookings (may add older bookings from previous installs)
+      List<Booking> apiBookings = [];
+      try {
+        apiBookings = await ApiService.instance.getBookings(userId);
+      } catch (_) {
+        // API unavailable — local store is enough
+      }
+
+      // Merge: local takes priority, then append any API bookings not in local
+      final localIds = localBookings.map((b) => b.bookingId).toSet();
+      final merged = [
+        ...localBookings,
+        ...apiBookings.where((b) => !localIds.contains(b.bookingId)),
+      ];
+
       if (mounted) {
         setState(() {
-          _bookings = list;
+          _bookings = merged;
           _isLoading = false;
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() {
-          _errorMessage = e.toString();
+          // Even on error, show local bookings if available
+          _bookings = LocalBookingStore.instance.all.toList();
+          _errorMessage = _bookings.isEmpty ? e.toString() : null;
           _isLoading = false;
         });
       }
