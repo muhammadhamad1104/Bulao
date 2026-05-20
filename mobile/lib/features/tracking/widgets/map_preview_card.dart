@@ -90,7 +90,7 @@ class _MapPreviewCardState extends State<MapPreviewCard> {
 
   @override
   void dispose() {
-    _fallbackTimer?.cancel();
+    _initTimer?.cancel();
     _controller?.dispose();
     super.dispose();
   }
@@ -243,11 +243,4 @@ class _MapPreviewCardState extends State<MapPreviewCard> {
               style: GoogleFonts.inter(fontSize: 12, color: Colors.white70)),
         ],
       );
-
-  @override
-  void dispose() {
-    _initTimer?.cancel();
-    _controller?.dispose();
-    super.dispose();
-  }
 }
