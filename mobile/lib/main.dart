@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:mobile/features/splash/splash_screen.dart';
+import 'core/services/local_booking_store.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  // Load persisted bookings so drawer works immediately after restart
+  await LocalBookingStore.instance.load();
   runApp(const BulaoApp());
 }
 

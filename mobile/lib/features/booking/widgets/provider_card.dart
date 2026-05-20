@@ -94,7 +94,7 @@ class _ProviderCardState extends State<ProviderCard> {
       );
 
       // ── Save to local store so drawer tracking works immediately ─────────
-      LocalBookingStore.instance.save(booking);
+      await LocalBookingStore.instance.save(booking);
 
       // Pop loading dialog
       if (mounted) Navigator.of(context).pop();
