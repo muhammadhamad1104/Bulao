@@ -462,6 +462,9 @@ class Booking {
   final String? whatsappUrl;      // Pre-filled WhatsApp deep link from backend
   final double? providerLat;      // Provider shop latitude (for map)
   final double? providerLng;      // Provider shop longitude (for map)
+  final double? userLat;          // User GPS latitude at booking time
+  final double? userLng;          // User GPS longitude at booking time
+  final int? etaMinutes;          // Estimated arrival time in minutes
   final String? providerPhone;    // Provider phone number
   final String? providerName;     // Provider name
 
@@ -484,6 +487,9 @@ class Booking {
     this.whatsappUrl,
     this.providerLat,
     this.providerLng,
+    this.userLat,
+    this.userLng,
+    this.etaMinutes,
     this.providerPhone,
     this.providerName,
   });
@@ -509,6 +515,9 @@ class Booking {
         whatsappUrl: json['whatsapp_url'] as String?,
         providerLat: (json['provider_lat'] as num?)?.toDouble(),
         providerLng: (json['provider_lng'] as num?)?.toDouble(),
+        userLat: (json['user_lat'] as num?)?.toDouble(),
+        userLng: (json['user_lng'] as num?)?.toDouble(),
+        etaMinutes: (json['eta_minutes'] as num?)?.toInt(),
         providerPhone: json['provider_phone'] as String?,
         providerName: json['provider_name'] as String?,
       );

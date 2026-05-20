@@ -98,6 +98,9 @@ class LocalBookingStore {
         'provider_name': b.providerName,
         'provider_lat': b.providerLat,
         'provider_lng': b.providerLng,
+        'user_lat': b.userLat,
+        'user_lng': b.userLng,
+        'eta_minutes': b.etaMinutes,
         'provider_phone': b.providerPhone,
         'whatsapp_url': b.whatsappUrl,
       };
